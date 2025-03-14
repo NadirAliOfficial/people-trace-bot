@@ -88,4 +88,48 @@ FINDER_CONSTANT = {
         "number_added": "号码 <b>{number}</b> 已成功添加。",
         "invalid_otp": "无效的验证码。请重试。",
     },
+    "ms": {
+        "choose_province": "Sila pilih sebuah negeri:",
+        "more_provinces": "Negeri lain...",
+        "case_list": "Kes yang tersedia:",
+        "case_details": "Butiran Kes:",
+        "save_case": "Simpan Kes",
+        "found_case": "Kes Ditemui",
+        "upload_proof": "Sila muat naik gambar atau video sebagai bukti.",
+        "invalid_proof": "Bukti tidak sah. Sila muat naik gambar atau video.",
+        "enter_location": "Masukkan lokasi di mana orang tersebut ditemui:",
+        "notify_advertiser": "Pengiklan telah dimaklumkan. Terima kasih!",
+        "province_not_found": "Tiada negeri yang sepadan ditemui. Sila cuba lagi:",
+        "province_multi": "Beberapa negeri ditemui (Halaman {page} daripada {total}):",
+        "province_selected": "Anda telah memilih",
+        "missing_information": "❌ Maklumat tidak lengkap. Sila mulakan semula.",
+        "notification_text": (
+            "🚨 Notifikasi Padanan Berpotensi! 🚨\n\n"
+            "Kes #{case_no}: {person_name}\n"
+            "📍 Lokasi Dilaporkan: {location}\n"
+            "🔗 Fail Bukti: {proof_path}"
+        ),
+        "reply_to_advertiser": "✅ Pemilik kes telah dimaklumkan!\n\n"
+        "Terima kasih atas sumbangan anda. Kami akan menghubungi anda jika memerlukan maklumat tambahan.",
+        "error_sending_notification": "❌ Ralat menghantar notifikasi. Sila cuba lagi kemudian.",
+        "proof_upload": "Sila muat naik bukti dalam bentuk gambar/video:",
+        "error_processing_proof": "❌ Ralat memproses bukti anda. Sila cuba lagi.",
+        "case_not_found": "❌ Kes tidak ditemui.",
+        "proof_received": "✅ Bukti diterima. \n \n Sila masukkan lokasi di mana anda menemui orang ini:",
+        "error_upload_proof": "❌ Sila muat naik gambar atau video.",
+        "no_case_selected": "Ralat: Tiada kes dipilih. Sila mulakan semula.",
+        "error_loading_case": "Ralat memuatkan butiran kes, sila cuba lagi.",
+        "mark_as_found": "✅ Tandakan Sebagai Ditemui",
+        "back_to_list": "🔙 Kembali ke Senarai",
+        "case_not_found_in_province": "Tiada kes ditemui di negeri ini.",
+        "select_province": "Sila pilih sebuah negeri terlebih dahulu.",
+        "no_case_found_in_province": "Tiada kes ditemui untuk {province}.",
+        "choose_number_or_add_new": "Pilih nombor atau tambah nombor baru:",
+        "add_new_number": "Tambah Nombor Baru",
+        "enter_new_number": "Sila masukkan nombor baru:",
+        "number_already_exists": "Nombor <b>{number}</b> sudah wujud.",
+        "otp_sent": "OTP telah dihantar ke <b>{number}</b>. Sila masukkan OTP untuk pengesahan.",
+        "number_added": "Nombor <b>{number}</b> telah berjaya ditambah.",
+        "invalid_otp": "OTP tidak sah. Sila cuba lagi.",
+    },
 }

@@ -167,4 +167,88 @@ LISTING_CONSTANT = {
         "transfer_failed": "❌ 转账失败，请检查钱包余额后重试。",
         "case_or_extend_not_found": "❌ 未找到案例或扩展请求。",
     },
+    "ms": {
+        "no_advertise_cases": "Tiada kes IKLAN ditemui.",
+        "select_case_details": "📋 **Pilih Kes untuk Lihat Butiran:**",
+        "case_not_found": "❌ Kes tidak ditemui.",
+        "error_fetching_cases": "Ralat berlaku semasa mengambil kes.",
+        "error_fetching_case_details": "❌ Ralat berlaku semasa mengambil butiran kes.",
+        "error_paginating_cases": "❌ Ralat berlaku semasa memfailkan kes.",
+        "invalid_case_id": "❌ ID kes tidak sah.",
+        "not_authorized_edit": "❌ Anda tidak dibenarkan untuk mengedit kes ini.",
+        "not_authorized_delete": "❌ Anda tidak dibenarkan untuk memadam kes ini.",
+        "case_deleted_successfully": "✅ Kes telah berjaya dipadam.",
+        "edit_canceled": "📋 Pengeditan dibatalkan. Kembali ke senarai kes.",
+        "enter_new_value": "✏️ Sila masukkan nilai baru untuk **{field_name}**: ",
+        "field_updated_successfully": "✅ **{field_name}** dikemas kini kepada: **{new_value}**",
+        "invalid_value": "❌ {error_message} Sila masukkan nilai yang sah.",
+        "edit_field_prompt": "📝 **Medan mana yang ingin anda edit?**",
+        "cancel_edit_button": "Batal",
+        "edit_button": "📝 Edit",
+        "delete_button": "🗑 Padam",
+        "previous_button": "⬅️ Sebelumnya",
+        "next_button": "➡️ Seterusnya",
+        "editable_fields": {
+            "Nama": "name",
+            "Nama Individu": "person_name",
+            "Hubungan": "relationship",
+            "Lokasi Terakhir Dilihat": "last_seen_location",
+            "Jantina": "gender",
+            "Umur": "age",
+            "Warna Rambut": "hair_color",
+            "Warna Mata": "eye_color",
+            "Ketinggian": "height",
+            "Berat Badan": "weight",
+            "Ciri-ciri Ketara": "distinctive_features",
+            "Negara": "country",
+            "Bandar": "city",
+        },
+        "case_details_template": (
+            "📌 **Butiran Kes**\n"
+            "👤 **Nama Individu:** {person_name}\n"
+            "📍 **Lokasi Terakhir Dilihat:** {last_seen_location}\n"
+            "💰 **Hadiah:** {reward} {reward_type}\n"
+            "💼 **Dompet:** {wallet}\n"
+            "👤 **Jantina:** {gender}\n"
+            "🧒 **Umur:** {age}\n"
+            "📏 **Ketinggian:** {height} cm\n"
+        ),
+        "invalid_reward_amount": "❌ Jumlah hadiah tidak sah. Jumlah hadiah maksimum adalah {max_amount}.",
+        "reward_success": "✅ Hadiah berjaya dihantar kepada pencari {finder_id}.",
+        "error_transferring_reward": "❌ Ralat berlaku semasa menghantar hadiah.",
+        "case_or_finder_not_found": "❌ Kes atau pencari tidak ditemui.",
+        "no_finders_for_case": "❌ Tiada pencari ditemui untuk kes ini.",
+        "finder_list_header": "👤 **Pencari untuk kes ini:**",
+        "reward_this_finder": "💰 Beri hadiah kepada pencari ini",
+        "enter_reward_amount": "✏️ Sila masukkan jumlah hadiah untuk kes ini (maks {max_amount}): ",
+        "reward_confirmation": "Adakah anda pasti ingin menghantar {amount} hadiah kepada Pencari ID {finder_id} untuk Kes {case_no}?",
+        "reward_cancelled": "Proses hadiah dibatalkan",
+        "confirm_button": "✅ Sahkan",
+        "cancel_button": "❌ Batal",
+        # ----- Delete Start ------
+        "case_not_found": "⚠️ Kes tidak ditemui.",
+        "not_authorized_delete": "🚫 Anda tidak dibenarkan untuk memadam kes ini.",
+        "case_deleted_successfully": "✅ Kes telah berjaya dipadam.",
+        "confirm_delete": "❗ Adakah anda pasti ingin memadam kes ini?",
+        "yes": "✅ Ya",
+        "no": "❌ Tidak",
+        "delete_cancelled": "❌ Pemadaman kes telah dibatalkan.",
+        "error_deleting_case": "⚠️ Ralat berlaku semasa memadam kes. Sila cuba lagi.",
+        # ----- Delete End ------
+        # ----------- Extend Reward Constants ----------
+        "extend_reward_button": "Tambah Hadiah ➕",
+        "extend_reward_not_found": "❌ Tiada permintaan tambahan hadiah aktif ditemui.",
+        "insufficient_funds": "❌ Baki dompet {wallet_type} tidak mencukupi. Diperlukan: {required_amount}",
+        "extend_reward_confirmation": (
+            "🔄 *Sahkan Penambahan Hadiah*\n\n"
+            "💰 Jumlah: {amount} {wallet_type}\n"
+            "📤 Dari: `{from_wallet}`\n"
+            "📥 Ke: `{to_wallet}`\n"
+            "Adakah anda pasti ingin meneruskan?"
+        ),
+        "extend_success": "✅ Berjaya menambah {amount} {wallet_type} hadiah!",
+        "extend_cancelled": "❌ Penambahan hadiah dibatalkan.",
+        "transfer_failed": "❌ Pemindahan gagal. Sila semak baki dompet dan cuba lagi.",
+        "case_or_extend_not_found": "❌ Kes atau permintaan tambahan tidak ditemui.",
+    },
 }
