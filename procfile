@@ -1,4 +1,3 @@
-release: pip install -r requirements.txt
 
 bot: python bot_runner.py
 
