@@ -104,6 +104,8 @@ async def handle_select_mobile(
 
         res = await send_otp(selected_mobile)
 
+        print(f"Response would be :{res}")
+
         context.user_data["case"]["otp_id"] = res["otp_id"]
 
         # Notify the user that the mobile number was selected
@@ -133,6 +135,8 @@ async def handle_new_mobile(update: Update, context: ContextTypes.DEFAULT_TYPE) 
         print(f"Tac are: {tac}")
 
         res = await send_otp(mobile_number)
+
+        print(f"Getting the otp: ${res}")
 
         context.user_data["case"]["otp_id"] = res["otp_id"]
 

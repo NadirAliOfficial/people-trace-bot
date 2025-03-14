@@ -42,6 +42,14 @@ WALLET_LANG_DATA = {
             "Deleting a wallet is irreversible. All funds in the wallet will be lost.\n"
             "Make sure you have transferred all funds before proceeding."
         ),
+        "no_wallets": "You don't have any wallets yet.",
+        "select_wallet": "Select a wallet to view its transaction history:",
+        "wallet_details": "**Wallet Name:** {name} \n\n **Public Address:** `{public_key}`",
+        "wallet_not_found": "Wallet not found.",
+        "back_button": "Back",
+        "sol_wallets_header": "<b>Your SOL Wallets:</b>\n",
+        "wallet_balance": "<b>Name:</b> {name}, <b>Balance:</b> {balance} SOL\n",
+        "wallet_error": "<b>Name:</b> {name}, <b>Error:</b> {error}\n",
     },
     "zh": {
         "choose_wallet": "请选择要创建的钱包类型：",
@@ -86,6 +94,14 @@ WALLET_LANG_DATA = {
             "删除钱包是不可逆的。钱包中的所有资金将丢失。\n"
             "在继续之前，请确保已转移所有资金。"
         ),
+        "no_wallets": "您还没有任何钱包。",
+        "select_wallet": "选择一个钱包以查看其交易记录：",
+        "wallet_details": "**钱包名称:** {name} \n\n **公共地址:** `{public_key}`",
+        "wallet_not_found": "未找到钱包。",
+        "back_button": "返回",
+        "sol_wallets_header": "<b>您的 SOL 钱包：</b>\n",
+        "wallet_balance": "<b>名称：</b> {name}, <b>余额：</b> {balance} SOL\n",
+        "wallet_error": "<b>名称：</b> {name}, <b>错误：</b> {error}\n",
     },
     "ms": {
         "choose_wallet": "Sila pilih jenis dompet:",
@@ -130,5 +146,13 @@ WALLET_LANG_DATA = {
             "Memadam dompet adalah tindakan yang tidak boleh dibatalkan. Semua dana dalam dompet akan hilang.\n"
             "Pastikan anda telah memindahkan semua dana sebelum meneruskan."
         ),
+        "no_wallets": "Anda belum mempunyai dompet lagi.",
+        "select_wallet": "Pilih dompet untuk melihat sejarah transaksi:",
+        "wallet_details": "**Nama Dompet:** {name} \n\n **Alamat Awam:** `{public_key}`",
+        "wallet_not_found": "Dompet tidak ditemui.",
+        "back_button": "Kembali",
+        "sol_wallets_header": "<b>Dompet SOL Anda:</b>\n",
+        "wallet_balance": "<b>Nama:</b> {name}, <b>Baki:</b> {balance} SOL\n",
+        "wallet_error": "<b>Nama:</b> {name}, <b>Ralat:</b> {error}\n",
     },
 }

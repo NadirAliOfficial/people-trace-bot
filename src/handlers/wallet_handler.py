@@ -217,19 +217,41 @@ async def show_address(update: Update, context: ContextTypes.DEFAULT_TYPE):
 async def show_specific_address(update: Update, context: ContextTypes.DEFAULT_TYPE):
     """Show the specific wallet address."""
     query = update.callback_query
+    await query.answer()
+    user_id = update.effective_user.id
+
+    # Get the user's language preference (default to 'en' if not set)
+    user_language = context.user_data.get("language", "en")
+
+    # Fetch the appropriate language data
+
+    # Extract wallet ID from callback data
     wallet_id = query.data.split("_")[-1]
     wallet = await WalletService.get_wallet_by_id(wallet_id)
 
-    print(f"Inside show_specific_address: {wallet}")
-
     if wallet:
-        message = f"**Wallet Name:** {wallet["name"]} \n\n **Public Address:** {wallet['public_key']}"
-    else:
-        message = "Wallet not found."
+        # Format the wallet details using the language-specific template
+        message = get_text(user_id, "wallet_details").format(
+            name=wallet["name"], public_key=wallet["public_key"]
+        )
 
+        # Add a back button for navigation
+        kb = [
+            [
+                InlineKeyboardButton(
+                    get_text(user_id, "back_button"),
+                    callback_data="back_to_wallet_menu",
+                )
+            ]
+        ]
+    else:
+        message = get_text(user_id, "wallet_not_found")
+        kb = []  # No keyboard if wallet is not found
+
+    # Edit the message with the formatted text and keyboard
     await update.callback_query.message.edit_text(
-        message, parse_mode="Markdown"
-    )  # TODO: Add parse_mode properly
+        message, parse_mode="Markdown", reply_markup=InlineKeyboardMarkup(kb)
+    )
     return State.WALLET_MENU
 
 
@@ -239,11 +261,16 @@ async def view_history(update: Update, context: ContextTypes.DEFAULT_TYPE):
     query = update.callback_query
     await query.answer()
 
+    # Get the user's language preference (default to 'en' if not set)
+    user_language = context.user_data.get("language", "en")
+
+    # Fetch the appropriate language data
+
     user_id = update.effective_user.id
     wallets = await WalletService.get_wallet_by_user(user_id)
 
     if not wallets or wallets == []:
-        message = "You don't have any wallets yet."
+        message = get_text(user_id, "no_wallets")
         kb = []  # Define an empty keyboard if there are no wallets
     else:
         kb = [
@@ -254,7 +281,7 @@ async def view_history(update: Update, context: ContextTypes.DEFAULT_TYPE):
             ]
             for wallet in wallets
         ]
-        message = "Select a wallet to view its transaction history:"
+        message = get_text(user_id, "select_wallet")  # Use the translated message
 
     # Ensure `kb` is always defined before using it
     await update.callback_query.message.edit_text(
@@ -407,7 +434,7 @@ async def process_delete_wallet(update: Update, context: ContextTypes.DEFAULT_TY
     """Process the deletion of a wallet."""
     query = update.callback_query
     wallet_id = query.data.split("_")[-1]
-
+    
     success = await WalletService.soft_delete_wallet(wallet_id)
     message = "Wallet deleted successfully." if success else "Failed to delete wallet."
 
