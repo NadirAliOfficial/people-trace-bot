@@ -24,6 +24,7 @@ share/python-wheels/
 # Virtual environments
 venv/
 .env/
+.env
 .envrc
 *.venv
 pip-log.txt
