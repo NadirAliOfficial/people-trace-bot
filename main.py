@@ -4,6 +4,8 @@ import subprocess
 from watchdog.observers import Observer
 from watchdog.events import FileSystemEventHandler
 
+print("Hello i am from the main root file.")
+
 BOT_SCRIPT = "src/main.py"  # The name of your bot script
 process = None
 
