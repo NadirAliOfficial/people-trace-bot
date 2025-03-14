@@ -1,5 +1,5 @@
 
-bot: python bot_runner.py
+worker: python ./src/main.py
 
 
 
