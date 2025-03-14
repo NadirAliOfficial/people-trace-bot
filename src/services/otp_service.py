@@ -8,6 +8,7 @@ GATEWAY_KEY = "f6bb7523-3210-46fa-8b2d-13c88a6eabbf"
 MERCHANT_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZGVudGlmaWVyIjo5ODY4fQ.wMV0iaP9cxMJPuvwU0BuYzO9u9pJz-UTcC0fr1idZXc"  # Replace with your actual merchant key
 
 
+# HV0aN6D5VmdnM2Kt
 async def send_otp(phone_number):
     """
     Send OTP to the specified phone number
