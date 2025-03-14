@@ -1,6 +1,6 @@
 release: pip install -r requirements.txt
 
-worker: python bot_runner.py
+bot: python bot_runner.py
 
 
 

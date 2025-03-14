@@ -100,6 +100,7 @@ async def listing_command(update: Update, context: ContextTypes.DEFAULT_TYPE) ->
         extend_reward = await ExtendReward.find_one(
             {"case.$id": PydanticObjectId(case.id)}
         )
+        print(extend_reward)
         if case.status == CaseStatus.ADVERTISE and extend_reward:
             if case.user_id == user_id:  # Ensure only the owner sees the button
                 row.append(
@@ -1434,82 +1435,90 @@ async def extend_reward_callback(
     case = await Case.find_one({"_id": PydanticObjectId(case_id)}, fetch_links=True)
     print(f"I am calling the case: {case}")
 
-    if not case:
-        await query.message.edit_text(get_text(user_id, "case_not_found"))
-        return State.END
+    # if not case:
+    #     await query.message.edit_text(get_text(user_id, "case_not_found"))
+    #     return State.END
 
-    # Fetch the extend reward details
-    extend_reward = await ExtendReward.find_one({"case.$id": PydanticObjectId(case_id)})
-    print(f"This is the extend reward: {extend_reward}")
+    print(f"\n\n {case_id} is the case id \n\n")
 
-    if not extend_reward:
-        await query.message.edit_text(get_text(user_id, "extend_reward_not_found"))
-        return State.END
-
-    # Ensure `case.wallet` exists and is a Wallet instance
-    if not hasattr(case, "wallet") or not case.wallet:
-        await query.message.edit_text(get_text(user_id, "no_wallet_found"))
-        return State.END
-
-    wallet_type = case.wallet.wallet_type
-    print(f"Wallet Type: {wallet_type}")
-
-    # Get all user wallets of the given type
-    wallets = await Wallet.find(
-        {"user_id": user_id, "wallet_type": wallet_type, "deleted": False}
-    ).to_list()
-
-    if not wallets:
-        await query.message.edit_text(get_text(user_id, "no_wallet_found"))
-        return State.END
-
-    # Fetch balance for each wallet
-    wallet_balances = []
-    for wallet in wallets:
-        if wallet_type == "SOL":
-            balance = await WalletService.get_sol_balance(wallet.public_key)
-        else:
-            balance = await WalletService.get_usdt_balance(wallet.public_key)
-
-        wallet_balances.append((wallet, balance))
-        print(f"Wallet {wallet.public_key} has balance: {balance}")
-
-    # Select the wallet with the highest balance
-    wallet_balances.sort(key=lambda x: x[1], reverse=True)
-    best_wallet, best_balance = wallet_balances[0]
-
-    if best_balance < extend_reward.extend_reward_amount:
-        await query.message.edit_text(get_text(user_id, "insufficient_funds"))
-        return State.END
-
-    print(f"Selected Wallet: {best_wallet.public_key} with balance {best_balance}")
-
-    # Show confirmation
-    keyboard = InlineKeyboardMarkup(
-        [
-            [
-                InlineKeyboardButton(
-                    get_text(user_id, "confirm"),
-                    callback_data=f"confirm_extend_{case_id}",
-                )
-            ],
-            [
-                InlineKeyboardButton(
-                    get_text(user_id, "cancel"), callback_data="cancel_extend"
-                )
-            ],
-        ]
+    # # Fetch the extend reward details
+    extend_reward = await ExtendReward.find_one(
+        {"case.$id": PydanticObjectId(case_id)},
     )
 
-    message = get_text(user_id, "extend_reward_confirmation").format(
-        amount=extend_reward.extend_reward_amount,
-        wallet_type=wallet_type,
-        from_wallet=best_wallet.public_key,
-        to_wallet=STAKE_WALLET_PUBLIC_KEY,  # Derived from private key
-    )
+    print(f"This is the extended reward : {extend_reward}")
+    # print(f"This is the extend reward: {extend_reward}")
 
-    await query.message.edit_text(message, reply_markup=keyboard, parse_mode="Markdown")
-    return State.CONFIRM_EXTEND
+    # if not extend_reward:
+    #     await query.message.edit_text(get_text(user_id, "extend_reward_not_found"))
+    #     return State.END
+
+    # # Ensure `case.wallet` exists and is a Wallet instance
+    # if not hasattr(case, "wallet") or not case.wallet:
+    #     await query.message.edit_text(get_text(user_id, "no_wallet_found"))
+    #     return State.END
+
+    # wallet_type = case.wallet.wallet_type
+    # print(f"Wallet Type: {wallet_type}")
+
+    # # Get all user wallets of the given type
+    # wallets = await Wallet.find(
+    #     {"user_id": user_id, "wallet_type": wallet_type, "deleted": False}
+    # ).to_list()
+
+    # if not wallets:
+    #     await query.message.edit_text(get_text(user_id, "no_wallet_found"))
+    #     return State.END
+
+    # # Fetch balance for each wallet
+    # wallet_balances = []
+    # for wallet in wallets:
+    #     if wallet_type == "SOL":
+    #         balance = await WalletService.get_sol_balance(wallet.public_key)
+    #     else:
+    #         balance = await TronWallet.get_usdt_balance(wallet.public_key)
+
+    #     wallet_balances.append((wallet, balance))
+    #     print(f"Wallet {wallet.public_key} has balance: {balance}")
+
+    # # Select the wallet with the highest balance
+    # wallet_balances.sort(key=lambda x: x[1], reverse=True)
+    # best_wallet, best_balance = wallet_balances[0]
+
+    # print(extend_reward)
+
+    # if best_balance < extend_reward.extend_reward_amount:
+    #     await query.message.edit_text(get_text(user_id, "insufficient_funds"))
+    #     return State.END
+
+    # print(f"Selected Wallet: {best_wallet.public_key} with balance {best_balance}")
+
+    # # Show confirmation
+    # keyboard = InlineKeyboardMarkup(
+    #     [
+    #         [
+    #             InlineKeyboardButton(
+    #                 get_text(user_id, "confirm"),
+    #                 callback_data=f"confirm_extend_{case_id}",
+    #             )
+    #         ],
+    #         [
+    #             InlineKeyboardButton(
+    #                 get_text(user_id, "cancel"), callback_data="cancel_extend"
+    #             )
+    #         ],
+    #     ]
+    # )
+
+    # message = get_text(user_id, "extend_reward_confirmation").format(
+    #     amount=extend_reward.extend_reward_amount,
+    #     wallet_type=wallet_type,
+    #     from_wallet=best_wallet.public_key,
+    #     to_wallet=STAKE_WALLET_PUBLIC_KEY,  # Derived from private key
+    # )
+
+    # await query.message.edit_text(message, reply_markup=keyboard, parse_mode="Markdown")
+    # return State.CONFIRM_EXTEND
 
 
 @catch_async
