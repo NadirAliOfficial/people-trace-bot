@@ -41,6 +41,9 @@ async def start(update: Update, context: ContextTypes.DEFAULT_TYPE) -> int:
             InlineKeyboardButton(
                 LANG_DATA["zh"]["lang_button"], callback_data="lang_zh"
             ),
+            InlineKeyboardButton(
+                LANG_DATA["ms"]["lang_button"], callback_data="lang_ms"
+            ),
         ]
     ]
     await update.message.reply_text(
