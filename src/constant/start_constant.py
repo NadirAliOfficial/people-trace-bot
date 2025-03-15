@@ -1,3 +1,4 @@
+# "This is the commented code "
 START_LANG_DATA = {
     "en": {
         "lang_choice": "English",
