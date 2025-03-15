@@ -553,6 +553,7 @@ async def wallet_name_handler(
         print(f"This is the wallet type: {wallet_type}")
 
         context.user_data["wallet"] = wallet
+        await update_or_create_case(user_id, wallet=str(wallet.id))
         msg = get_text(user_id, "wallet_create_details").format(
             name=wallet.name,
             public_key=wallet.public_key,
