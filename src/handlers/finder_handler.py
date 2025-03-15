@@ -97,6 +97,7 @@ async def choose_province(update: Update, context: ContextTypes.DEFAULT_TYPE) ->
     matches = get_province_matches(txt, country)
     print(f"Matched Provinces are: {matches}")
 
+    print(matches, len(matches))
     if len(matches) == 1:
         # If there's only one match, fetch and display cases
         selected_province = matches[0]
@@ -160,6 +161,13 @@ async def choose_province(update: Update, context: ContextTypes.DEFAULT_TYPE) ->
             parse_mode="Markdown",
         )
         return State.CASE_DETAILS  # Transition to case details handling
+
+    elif len(matches) == 0:
+        await update.message.reply_text(
+            get_text(user_id, "province_not_exist"),
+            parse_mode="Markdown",
+        )
+        return State.CHOOSE_PROVINCE
 
     else:
         # If multiple matches, show province selection UI

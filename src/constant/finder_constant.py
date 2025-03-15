@@ -35,6 +35,7 @@ FINDER_CONSTANT = {
         "case_not_found_in_province": "No cases found in this province.",
         "select_province": "Please select a province first.",
         "no_case_found_in_province": "No cases found for {province}.",
+        "province_not_exist": "Province does not exist.",
         # Remaining messages
         "choose_number_or_add_new": "Choose a number or add a new one:",
         "add_new_number": "Add New Number",
@@ -87,6 +88,7 @@ FINDER_CONSTANT = {
         "otp_sent": "已向 <b>{number}</b> 发送验证码。请输入验证码以验证。",
         "number_added": "号码 <b>{number}</b> 已成功添加。",
         "invalid_otp": "无效的验证码。请重试。",
+        "province_not_exist": "省份不存在。",
     },
     "ms": {
         "choose_province": "Sila pilih sebuah negeri:",
@@ -131,5 +133,6 @@ FINDER_CONSTANT = {
         "otp_sent": "OTP telah dihantar ke <b>{number}</b>. Sila masukkan OTP untuk pengesahan.",
         "number_added": "Nombor <b>{number}</b> telah berjaya ditambah.",
         "invalid_otp": "OTP tidak sah. Sila cuba lagi.",
+        "province_not_exist": "Negeri tidak wujud.",
     },
 }
