@@ -489,6 +489,11 @@ async def back_to_wallet_menu(update: Update, context: ContextTypes.DEFAULT_TYPE
 
     welcome_text = get_text(user_id, "welcome_text")
 
+    # Ensure there are no unescaped MarkdownV2 special characters
+    special_chars = r"_*[]()~`>#+-=|{}.!"
+    for char in special_chars:
+        welcome_text = welcome_text.replace(char, f"\\{char}")
+
     await query.message.edit_text(
         welcome_text, parse_mode="MarkdownV2", reply_markup=InlineKeyboardMarkup(kb)
     )
