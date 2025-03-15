@@ -1,4 +1,4 @@
-from typing import  List
+from typing import List
 from beanie import PydanticObjectId
 from solders.pubkey import Pubkey
 from spl.token.client import Token
@@ -18,7 +18,7 @@ from solders.message import Message
 from solders.keypair import Keypair
 
 # Connect to the Tron Shasta testnet
-tron_client = Tron(network='shasta')
+tron_client = Tron(network="shasta")
 
 
 from solana.rpc.async_api import AsyncClient
@@ -128,13 +128,17 @@ class WalletService:
         :param include_deleted: Whether to include soft-deleted wallets.
         :return: A list of Wallet objects.
         """
-        query = Wallet.find(Wallet.user_id == user_id)
+        query = Wallet.find(
+            Wallet.user_id == user_id,
+        )
         if not include_deleted:
             query = query.find(Wallet.deleted == False)
         return await query.to_list()
 
     @staticmethod
-    async def get_sol_wallet_of_user(user_id: int) -> list[Wallet]:  # Return a list, not a FindMany object
+    async def get_sol_wallet_of_user(
+        user_id: int,
+    ) -> list[Wallet]:  # Return a list, not a FindMany object
         return await Wallet.find({"user_id": user_id, "wallet_type": "SOL"}).to_list()
 
     @staticmethod
@@ -155,21 +159,23 @@ class WalletService:
         """
         try:
             # Load contract with ABI
-            contract = tron_client.get_contract(USDT_CONTRACT).with_abi([
-                {
-                    "constant": True,
-                    "inputs": [{"name": "_owner", "type": "address"}],
-                    "name": "balanceOf",
-                    "outputs": [{"name": "balance", "type": "uint256"}],
-                    "payable": False,
-                    "stateMutability": "View",
-                    "type": "Function",
-                }
-            ])
-            
+            contract = tron_client.get_contract(USDT_CONTRACT).with_abi(
+                [
+                    {
+                        "constant": True,
+                        "inputs": [{"name": "_owner", "type": "address"}],
+                        "name": "balanceOf",
+                        "outputs": [{"name": "balance", "type": "uint256"}],
+                        "payable": False,
+                        "stateMutability": "View",
+                        "type": "Function",
+                    }
+                ]
+            )
+
             # Call balanceOf function
             balance = contract.functions.balanceOf(address)
-            
+
             return balance / 10**6  # Convert from SUN to USDT
         except Exception as e:
             print(f"Error fetching USDT balance: {e}")

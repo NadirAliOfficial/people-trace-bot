@@ -30,7 +30,7 @@ def escape_markdown_v2(text: str) -> str:
 async def wallet_command(update: Update, context: ContextTypes.DEFAULT_TYPE):
     """Entry point for /wallet command."""
     user_id = update.effective_user.id
-    wallets = await WalletService.get_wallet_by_user(user_id)
+    wallets = await WalletService.get_wallet_by_user(user_id, True)
     if wallets is None:
         wallets = []
 
@@ -84,7 +84,7 @@ async def wallet_command(update: Update, context: ContextTypes.DEFAULT_TYPE):
 async def refresh_wallets(update: Update, context: ContextTypes.DEFAULT_TYPE):
     """Refresh the wallet list."""
     user_id = update.effective_user.id
-    wallets = await WalletService.get_wallet_by_user(user_id)
+    wallets = await WalletService.get_wallet_by_user(user_id, True)
     if wallets is None:
         wallets = []
 
@@ -133,7 +133,7 @@ async def refresh_wallets(update: Update, context: ContextTypes.DEFAULT_TYPE):
 async def sol_wallets(update: Update, context: ContextTypes.DEFAULT_TYPE):
     """Display SOL wallet balances."""
     user_id = update.effective_user.id
-    wallets = await WalletService.get_wallet_by_user(user_id)
+    wallets = await WalletService.get_wallet_by_user(user_id, True)
 
     if not wallets:
         message = get_text(user_id, "no_wallet")
@@ -162,7 +162,7 @@ async def sol_wallets(update: Update, context: ContextTypes.DEFAULT_TYPE):
 async def usdt_wallets(update: Update, context: ContextTypes.DEFAULT_TYPE):
     """Display USDT wallet balances."""
     user_id = update.effective_user.id
-    wallets = await WalletService.get_wallet_by_user(user_id)
+    wallets = await WalletService.get_wallet_by_user(user_id, True)
 
     if not wallets:
         message = "You don't have any USDT wallets yet."
@@ -268,7 +268,7 @@ async def view_history(update: Update, context: ContextTypes.DEFAULT_TYPE):
     # Fetch the appropriate language data
 
     user_id = update.effective_user.id
-    wallets = await WalletService.get_wallet_by_user(user_id)
+    wallets = await WalletService.get_wallet_by_user(user_id, True)
 
     if not wallets or wallets == []:
         message = get_text(user_id, "no_wallets")
@@ -387,7 +387,7 @@ async def delete_wallet(update: Update, context: ContextTypes.DEFAULT_TYPE):
     await query.answer()
 
     user_id = update.effective_user.id
-    wallets = await WalletService.get_wallet_by_user(user_id)
+    wallets = await WalletService.get_wallet_by_user(user_id, True)
 
     if not wallets:
         message = "You don't have any wallets to delete."
@@ -488,11 +488,6 @@ async def back_to_wallet_menu(update: Update, context: ContextTypes.DEFAULT_TYPE
     ]
 
     welcome_text = get_text(user_id, "welcome_text")
-
-    # Ensure there are no unescaped MarkdownV2 special characters
-    special_chars = r"_*[]()~`>#+-=|{}.!"
-    for char in special_chars:
-        welcome_text = welcome_text.replace(char, f"\\{char}")
 
     await query.message.edit_text(
         welcome_text, parse_mode="MarkdownV2", reply_markup=InlineKeyboardMarkup(kb)
