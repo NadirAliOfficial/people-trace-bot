@@ -434,7 +434,7 @@ async def process_delete_wallet(update: Update, context: ContextTypes.DEFAULT_TY
     """Process the deletion of a wallet."""
     query = update.callback_query
     wallet_id = query.data.split("_")[-1]
-    
+
     success = await WalletService.soft_delete_wallet(wallet_id)
     message = "Wallet deleted successfully." if success else "Failed to delete wallet."
 

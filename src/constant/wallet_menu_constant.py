@@ -10,7 +10,7 @@ WALLET_MENU_CONSTANT = {
         "delete_wallet_btn": "❌ Delete Wallet",
         "welcome_text": "Welcome to the Wallet Menu!",
         "refresh_wallet_text": "Wallets refreshed!",
-        "no_wallet": "You don't have any {wallet_name} wallets yet.",
+        "no_wallet": "You don't have any  wallets yet.",
     },
     "zh": {
         "refresh_btn": "🔄 刷新",
@@ -22,7 +22,7 @@ WALLET_MENU_CONSTANT = {
         "delete_wallet_btn": "❌ 删除钱包",
         "welcome_text": "欢迎来到钱包菜单!",
         "refresh_wallet_text": "钱包已刷新!",
-        "no_wallet": "你还没有 {wallet_name} 钱包。",
+        "no_wallet": "你还没有  钱包。",
     },
     "ms": {
         # Butang
@@ -35,6 +35,6 @@ WALLET_MENU_CONSTANT = {
         "delete_wallet_btn": "❌ Padam Dompet",
         "welcome_text": "Selamat datang ke Menu Dompet!",
         "refresh_wallet_text": "Dompet telah dikemas kini!",
-        "no_wallet": "Anda belum mempunyai dompet {wallet_name} lagi.",
+        "no_wallet": "Anda belum mempunyai dompet  lagi.",
     },
 }
