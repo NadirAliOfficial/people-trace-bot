@@ -196,6 +196,7 @@ async def show_address(update: Update, context: ContextTypes.DEFAULT_TYPE):
 
     if not wallets:
         message = "<b>You don't have any wallets yet. </b>"
+        kb = []
     else:
         kb = [
             [
