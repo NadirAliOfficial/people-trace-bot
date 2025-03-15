@@ -444,8 +444,6 @@ async def process_delete_wallet(update: Update, context: ContextTypes.DEFAULT_TY
 
 
 #  ----------------------- Back to the Wallet Menu ------------------------
-
-
 @catch_async
 async def back_to_wallet_menu(update: Update, context: ContextTypes.DEFAULT_TYPE):
     """Handles going back to the wallet menu."""
@@ -489,8 +487,15 @@ async def back_to_wallet_menu(update: Update, context: ContextTypes.DEFAULT_TYPE
         ],
     ]
 
-    await update.callback_query.message.edit_text(
-        get_text(user_id, "welcome_text"), reply_markup=InlineKeyboardMarkup(kb)
+    welcome_text = get_text(user_id, "welcome_text")
+
+    # Ensure there are no unescaped MarkdownV2 special characters
+    special_chars = r"_*[]()~`>#+-=|{}.!"
+    for char in special_chars:
+        welcome_text = welcome_text.replace(char, f"\\{char}")
+
+    await query.message.edit_text(
+        welcome_text, parse_mode="MarkdownV2", reply_markup=InlineKeyboardMarkup(kb)
     )
 
     return State.WALLET_MENU
