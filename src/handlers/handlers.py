@@ -64,6 +64,7 @@ from handlers.listing_handler import (
     update_choose_country,
 )
 from handlers.wallet_handler import (
+    back_to_wallet_menu,
     confirm_delete_wallet,
     create_wallet,
     delete_wallet,
@@ -303,6 +304,7 @@ wallet_handler = ConversationHandler(
                 create_wallet, pattern="^create_wallet$"
             ),  # Entry point for wallet creation
             CallbackQueryHandler(delete_wallet, pattern="^delete_wallet$"),
+            CallbackQueryHandler(back_to_wallet_menu, pattern="^back_to_wallet_menu$"),
         ],
         State.SHOW_ADDRESS: [
             CallbackQueryHandler(show_specific_address, pattern="^show_address_"),

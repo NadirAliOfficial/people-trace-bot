@@ -440,3 +440,56 @@ async def process_delete_wallet(update: Update, context: ContextTypes.DEFAULT_TY
 
     await query.message.edit_text(message)
     return State.WALLET_MENU
+
+
+#  ----------------------- Back to the Wallet Menu ------------------------
+
+
+@catch_async
+async def back_to_wallet_menu(update: Update, context: ContextTypes.DEFAULT_TYPE):
+    """Handles going back to the wallet menu."""
+    query = update.callback_query
+    await query.answer()
+
+    user_id = update.effective_user.id
+    message = get_text(user_id, "wallet_menu_message")  # Load the wallet menu message
+
+    kb = [
+        [
+            InlineKeyboardButton(
+                get_text(user_id, "refresh_btn"), callback_data="refresh_wallets"
+            )
+        ],
+        [
+            InlineKeyboardButton(
+                get_text(user_id, "sol_btn"), callback_data="sol_wallets"
+            ),
+            InlineKeyboardButton(
+                get_text(user_id, "usdt_btn"), callback_data="usdt_wallets"
+            ),
+        ],
+        [
+            InlineKeyboardButton(
+                get_text(user_id, "address_btn"), callback_data="show_address"
+            )
+        ],
+        [
+            InlineKeyboardButton(
+                get_text(user_id, "history_btn"), callback_data="view_history"
+            )
+        ],
+        [
+            InlineKeyboardButton(
+                get_text(user_id, "create_wallet_btn"), callback_data="create_wallet"
+            ),
+            InlineKeyboardButton(
+                get_text(user_id, "delete_wallet_btn"), callback_data="delete_wallet"
+            ),
+        ],
+    ]
+
+    await update.callback_query.message.edit_text(
+        get_text(user_id, "welcome_text"), reply_markup=InlineKeyboardMarkup(kb)
+    )
+
+    return State.WALLET_MENU
