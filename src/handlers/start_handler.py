@@ -88,6 +88,11 @@ async def choose_country(update: Update, context: ContextTypes.DEFAULT_TYPE) -> 
     if len(matches) == 1:
         context.user_data["country"] = matches[0]
         await update_or_create_case(user_id, country=matches[0])
+        await update.message.reply_text(
+            f"{get_text(user_id, 'country_selected')} {matches[0]}",
+            parse_mode="HTML",
+        )
+
         await show_disclaimer(update, context)
         return State.SHOW_DISCLAIMER
     else:
@@ -128,10 +133,11 @@ async def country_callback(update: Update, context: ContextTypes.DEFAULT_TYPE) -
         context.user_data["country"] = country
         await update_or_create_case(user_id, country=country)
 
-        await query.edit_message_text(
-            f"{get_text(user_id, 'country_selected')} {country}.",
+        await update.message.reply_text(
+            f"{get_text(user_id, 'country_selected')} {country}",
             parse_mode="HTML",
         )
+
         await show_disclaimer(update, context)
         return State.SHOW_DISCLAIMER
     elif data.startswith("country_page_"):
@@ -199,9 +205,7 @@ async def show_disclaimer(update: Update, context: ContextTypes.DEFAULT_TYPE) ->
         ]
     )
     if update.callback_query:
-        await update.callback_query.edit_message_text(
-            text, parse_mode="HTML", reply_markup=kb
-        )
+        await update.callback_query.answer(text, parse_mode="HTML", reply_markup=kb)
     else:
         await update.message.reply_text(text, parse_mode="HTML", reply_markup=kb)
     return State.SHOW_DISCLAIMER
@@ -438,7 +442,7 @@ async def wallet_type_callback(
         )
         return State.CHOOSE_WALLET_TYPE
     else:
-        msg = get_text(user_id, "wallet_name_prompt")
+        msg = get_text(user_id, "wallet_name_prompt").format(wallet_type=wallet_type)
         if update.message:
             await update.message.reply_text(msg, parse_mode="HTML")
         elif update.callback_query:
@@ -510,12 +514,14 @@ async def wallet_selection_callback(
 async def wallet_name_handler(
     update: Update, context: ContextTypes.DEFAULT_TYPE
 ) -> int:
+    wallet_type = context.user_data.get("wallet_type")  # 'sol' or 'usdt'
     user_id = update.effective_user.id
     if update.callback_query:
         # If it's a callback query, prompt the user to enter a wallet name
         await update.callback_query.answer()
         await update.callback_query.edit_message_text(
-            get_text(user_id, "wallet_name_prompt"), parse_mode="HTML"
+            get_text(user_id, "wallet_name_prompt").format(wallet_type=wallet_type),
+            parse_mode="HTML",
         )
         return State.NAME_WALLET
 

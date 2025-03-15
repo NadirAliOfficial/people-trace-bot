@@ -6,7 +6,7 @@ START_LANG_DATA = {
         "choose_country": "Please enter your country name (partial name allowed):",
         "country_not_found": "No matching countries found. Please try again:",
         "country_multi": "Multiple countries found (Page {page} of {total}):",
-        "country_selected": "You have selected",
+        "country_selected": "Country recorded:",
         "disclaimer_title": "Disclaimer\n\n",
         "disclaimer_text": (
             "1. All bounties are held in escrow.\n"

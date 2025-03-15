@@ -4,7 +4,7 @@ WALLET_LANG_DATA = {
         "sol_wallet": "Solana (SOL)",
         "usdt_wallet": "USD Tether (USDT)",
         "choose_existing_or_new_wallet": "Choose Existing Wallet or Create New One",
-        "wallet_name_prompt": "You've chosen a Solana wallet.\nPlease enter a name for your wallet:",
+        "wallet_name_prompt": "You've chosen a {wallet_type} wallet.\nPlease enter a name for your wallet:",
         "wallet_name_empty": "❌ Wallet name cannot be empty. Please try again.",
         "wallet_create_ok": "✅ Wallet Created Successfully!\n\n",
         "wallet_create_details": (
@@ -56,7 +56,7 @@ WALLET_LANG_DATA = {
         "sol_wallet": "Solana (SOL)",
         "usdt_wallet": "比特币 (BTC)",
         "choose_existing_or_new_wallet": "选择现有钱包或创建新钱包：",
-        "wallet_name_prompt": "您选择了 Solana 钱包。\n请输入钱包名称：",
+        "wallet_name_prompt": "您选择了 {wallet_type} 钱包。\n请输入钱包名称：",
         "wallet_name_empty": "❌ 钱包名称不能为空。请重试。",
         "wallet_create_ok": "✅ 成功创建钱包！\n\n",
         "wallet_create_details": (
@@ -108,7 +108,7 @@ WALLET_LANG_DATA = {
         "sol_wallet": "Solana (SOL)",
         "usdt_wallet": "USD Tether (USDT)",
         "choose_existing_or_new_wallet": "Pilih Dompet Sedia Ada atau Buat Yang Baru",
-        "wallet_name_prompt": "Anda telah memilih dompet Solana.\nSila masukkan nama untuk dompet anda:",
+        "wallet_name_prompt": "Anda telah memilih dompet {wallet_type}.\nSila masukkan nama untuk dompet anda:",
         "wallet_name_empty": "❌ Nama dompet tidak boleh kosong. Sila cuba lagi.",
         "wallet_create_ok": "✅ Dompet berjaya dicipta!\n\n",
         "wallet_create_details": (
