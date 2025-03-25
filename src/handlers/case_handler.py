@@ -54,6 +54,8 @@ async def handle_name(update: Update, context: ContextTypes.DEFAULT_TYPE) -> int
     # Check if the user has existing mobile numbers
     existing_mobiles = await get_user_mobiles(user_id)
 
+    print(f"Mobile numbers: {existing_mobiles}")
+
     if existing_mobiles:
         # Show existing mobile numbers with an option to select one
         kb = [
@@ -104,11 +106,11 @@ async def handle_select_mobile(
 
         # TODO: Fix this
 
-        # res = await send_otp(selected_mobile)
+        res = await send_otp(selected_mobile)
 
-        # print(f"Response would be :{res}")
+        print(f"Response would be :{res}")
 
-        # context.user_data["case"]["otp_id"] = res["otp_id"]
+        context.user_data["case"]["otp_id"] = res["otp_id"]
 
         # Notify the user that the mobile number was selected
         await query.edit_message_text(
@@ -138,11 +140,11 @@ async def handle_new_mobile(update: Update, context: ContextTypes.DEFAULT_TYPE) 
 
         # TODO: Fix this
 
-        # res = await send_otp(mobile_number)
+        res = await send_otp(mobile_number)
 
-        # print(f"Getting the otp: ${res}")
+        print(f"Getting the otp: ${res}")
 
-        # context.user_data["case"]["otp_id"] = res["otp_id"]
+        context.user_data["case"]["otp_id"] = res["otp_id"]
 
         await update.message.reply_text(
             f"Mobile number {mobile_number} added. A TAC has been sent to your number."
@@ -164,9 +166,8 @@ async def handle_tac(update: Update, context: ContextTypes.DEFAULT_TYPE) -> int:
     stored_tac = context.user_data.get("tac")
     selected_number = context.user_data.get("selected_number")
 
-    # otp_verify = await verify_otp(context.user_data["case"]["otp_id"], user_tac)
-    # if otp_verify["success"]:
-    if True:
+    otp_verify = await verify_otp(context.user_data["case"]["otp_id"], user_tac)
+    if otp_verify["success"]:
         await update.message.reply_text(get_text(user_id, "tac_verified"))
 
         # After TAC verification, update the case with the mobile reference

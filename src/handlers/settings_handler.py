@@ -11,6 +11,7 @@ from services.user_service import (
     save_user_mobiles,
     validate_mobile,
 )
+from utils.error_wrapper import catch_async
 from utils.helper import generate_tac
 
 
@@ -192,21 +193,18 @@ async def handle_setting_mobile(update: Update, context: ContextTypes.DEFAULT_TY
         user_data_store[user_id] = {}
     user_data_store[user_id]["mobile"] = mobile
 
-    # Notify the user that your VERIFICATION CODE IS THIS NUMBER
     res = await send_otp(mobile)
 
-    user_data_store[user_id]["otp_id"] = res["otp_id"]
+    print(f"Getting the otp: ${res}")
 
-    print(f"Response: {res}")
-
-    # Simulate sending TAC via SMS
-    print(f"Sending TAC {tac} to mobile {mobile}")
+    context.user_data["otp_id"] = res["otp_id"]
 
     # Prompt user to enter TAC
     await update.message.reply_text(get_text(user_id, "enter_tac"))
     return State.CREATE_CASE_TAC
 
 
+# @catch_async
 async def handle_setting_tac(update: Update, context: ContextTypes.DEFAULT_TYPE) -> int:
     """Handle TAC verification."""
     user_id = update.effective_user.id
@@ -216,8 +214,7 @@ async def handle_setting_tac(update: Update, context: ContextTypes.DEFAULT_TYPE)
 
     print(f"Getting the number which is: {mobile}")
 
-    # Verify TAC
-    otp_verify = await verify_otp(user_data_store[user_id]["otp_id"], user_tac)
+    otp_verify = await verify_otp(context.user_data["otp_id"], user_tac)
     if otp_verify["success"]:
         # Save the verified mobile number
         mobiles = await get_user_mobiles(user_id)

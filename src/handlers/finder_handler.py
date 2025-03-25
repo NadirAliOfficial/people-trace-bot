@@ -210,6 +210,7 @@ async def province_callback(update: Update, context: ContextTypes.DEFAULT_TYPE) 
             parse_mode="HTML",
         )
         # Proceed to the next step (case listing or whatever is next)
+
         return await show_advertisements(update, context)
 
     elif data.startswith("province_page_"):

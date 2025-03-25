@@ -34,7 +34,8 @@ async def save_user_mobiles(user_id: int, new_mobile: str):
     # Get the user
     user = await User.find_one({"tl_id": user_id})
     if not user:
-        raise ValueError("User not found.")
+        user = User(tl_id=user_id, lang="en")
+        await user.save()
 
     # Create a new mobile entry linked to the user
     mobile_entry = MobileNumber(
@@ -43,12 +44,22 @@ async def save_user_mobiles(user_id: int, new_mobile: str):
     await mobile_entry.insert()
 
 
+from beanie import PydanticObjectId
+
+
 async def get_user_mobiles(user_id: PydanticObjectId):
     """
     Retrieve all mobile numbers linked to a user.
     """
     user = await User.find_one(User.tl_id == user_id)
+
+    print("user is in get user mobiles", user)
+    if not user:
+        user = User(tl_id=user_id, lang="en")
+        await user.save()
+
     mobile_numbers = await MobileNumber.find({"user.$id": user.id}).to_list()
+
     print("These are the numbers", mobile_numbers)
     return [mobile.number for mobile in mobile_numbers]  # Extract numbers
 

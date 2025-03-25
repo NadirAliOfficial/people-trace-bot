@@ -1,3 +1,52 @@
+# import json
+# import requests
+
+
+# async def send_whatsapp_otp(wa_number, otp):
+#     url = "https://graph.facebook.com/v18.0/173790305822177/messages"
+
+#     headers = {
+#         "Content-Type": "application/json",
+#         "Authorization": "Bearer EAANkvcPwc9QBOwyaFQEPZAbUOaPI0ZBkfvGQu5l4aHhEAOSe5svSa16YNZAVQ1bPYNFO1YZCyWTPnj07jFDvLOCpz2DZBMeUbZCyvZBJfLDYHrfRreXZCYxNUVIl1UlqBzV6KbO255m0jdF4jwKo0llFAL9BUrGqvGp1MAeY38YhD2fTKZBb78UExd5kD2kZAW7FRIJhx0tvPYza7H5GAwhZBcm6d6wwzUZD"
+#     }
+
+#     data = {
+#         "messaging_product": "whatsapp",
+#         "recipient_type": "individual",
+#         "to": wa_number,
+#         "type": "template",
+#         "template": {
+#             "name": "otp",
+#             "language": {"code": "en"},
+#             "components": [
+#                 {
+#                     "type": "body",
+#                     "parameters": [
+#                         {
+#                             "type": "text",
+#                             "text": otp
+#                         }
+#                     ]
+#                 },
+#                 {
+#                     "type": "button",
+#                     "sub_type": "url",
+#                     "index": "0",
+#                     "parameters": [
+#                         {
+#                             "type": "text",
+#                             "text": otp
+#                         }
+#                     ]
+#                 }
+#             ]
+#         }
+#     }
+
+#     response = requests.post(url, headers=headers, data=json.dumps(data))
+
+#     return response.json()
+
 import requests
 import json
 
@@ -91,27 +140,3 @@ async def verify_otp(otp_id, otp_code):
         return {"success": False, "message": f"Request error: {str(e)}"}
     except json.JSONDecodeError:
         return {"success": False, "message": "Invalid JSON response from server"}
-
-
-# Example usage
-if __name__ == "__main__":
-    # Send OTP Example
-    phone_number = "+1234567890"
-    send_result = send_otp(phone_number)
-
-    if send_result["success"]:
-        print("OTP Sent Successfully!")
-        otp_id = send_result["otp_id"]
-        print(f"OTP ID: {otp_id}")
-
-        # In real usage, you would get the OTP code from user input
-        otp_code = input("Enter OTP code: ")
-
-        # Verify OTP Example
-        verify_result = verify_otp(otp_id, otp_code)
-        if verify_result["success"]:
-            print("OTP Verification Successful!")
-        else:
-            print(f"Verification Failed: {verify_result['message']}")
-    else:
-        print(f"Failed to send OTP: {send_result['message']}")
