@@ -12,11 +12,7 @@ from config.config_manager import (
 from constant.language_constant import get_text, user_data_store
 from constants import State
 from models.case_model import Case, CaseStatus
-from telegram import (
-    Update,
-    InlineKeyboardMarkup,
-    InlineKeyboardButton,
-)
+from telegram import Update, InlineKeyboardMarkup, InlineKeyboardButton, error
 from telegram.ext import (
     ContextTypes,
 )
@@ -52,7 +48,12 @@ async def listing_command(update: Update, context: ContextTypes.DEFAULT_TYPE) ->
         user_data_store[user_id] = {"lang": user_lang}
         context.user_data["lang"] = user_lang
     if not all_cases:
-        await update.message.reply_text(get_text(user_id, "no_advertise_cases"))
+        if update.message:
+            await update.message.reply_text(get_text(user_id, "no_advertise_cases"))
+        elif update.callback_query:
+            await update.callback_query.message.edit_text(
+                get_text(user_id, "no_advertise_cases")
+            )
         return State.END
     context.user_data["page"] = 1
     context.user_data["cases"] = all_cases
@@ -126,11 +127,26 @@ async def listing_command(update: Update, context: ContextTypes.DEFAULT_TYPE) ->
     if navigation_buttons:
         keyboard.append(navigation_buttons)
     reply_markup = InlineKeyboardMarkup(keyboard)
-    await update.message.reply_text(
-        get_text(user_id, "select_case_details"),
-        reply_markup=reply_markup,
-        parse_mode="Markdown",
-    )
+
+    try:
+        if update.message:
+            await update.message.reply_text(
+                get_text(user_id, "select_case_details"),
+                reply_markup=reply_markup,
+                parse_mode="Markdown",
+            )
+        elif update.callback_query:
+            await update.callback_query.message.edit_text(
+                get_text(user_id, "select_case_details"),
+                reply_markup=reply_markup,
+                parse_mode="Markdown",
+            )
+    except error.BadRequest as e:
+        if "Message is not modified" in str(e):
+            await update.callback_query.answer(
+                "Cases are already updated.", show_alert=True
+            )
+
     return State.CASE_DETAILS
 
 
@@ -758,70 +774,49 @@ async def delete_case_callback(
     query = update.callback_query
     await query.answer()
 
-    try:
-        case_id = query.data.removeprefix("delete_")  # Extract case ID
-        user_id = update.effective_user.id
+    case_id = query.data.removeprefix("delete_")
 
-        # Check if user is confirming deletion
-        if case_id.startswith("confirm_"):
-            case_id = case_id.removeprefix("confirm_")
-            case = await Case.find_one({"_id": PydanticObjectId(case_id)})
+    # Extract case ID
+    user_id = update.effective_user.id
 
-            if not case:
-                await query.edit_message_text(get_text(user_id, "case_not_found"))
-                return State.END
+    # Check if user is confirming deletion
+    if case_id.startswith("confirm_"):
+        case_id = case_id.removeprefix("confirm_")
+        case = await Case.find_one({"_id": PydanticObjectId(case_id)})
+        if not case:
+            await query.edit_message_text(get_text(user_id, "case_not_found"))
+            return State.END
+        if case.user_id != user_id:
+            await query.edit_message_text(get_text(user_id, "not_authorized_delete"))
+            return State.END
+        await update_case(case_id=PydanticObjectId(case_id), deleted=True)
+        await query.edit_message_text(get_text(user_id, "case_deleted_successfully"))
 
-            if case.user_id != user_id:
-                await query.edit_message_text(
-                    get_text(user_id, "not_authorized_delete")
-                )
-                return State.END
+        return await listing_command(update, context)
 
-            # Soft delete: update `deleted` field to `True`
-            await update_case(case_id=PydanticObjectId(case_id), deleted=True)
-
-            await query.edit_message_text(
-                get_text(user_id, "case_deleted_successfully")
-            )
-
-            # Refresh listing after deletion
-            return await listing_command(update, context)
-
-        # Ask for confirmation before soft deleting
-        keyboard = [
-            [
-                InlineKeyboardButton(
-                    get_text(user_id, "yes"), callback_data=f"delete_confirm_{case_id}"
-                ),
-                InlineKeyboardButton(
-                    get_text(user_id, "no"), callback_data="delete_cancel"
-                ),
-            ]
+    keyboard = [
+        [
+            InlineKeyboardButton(
+                get_text(user_id, "yes"), callback_data=f"delete_confirm_{case_id}"
+            ),
+            InlineKeyboardButton(
+                get_text(user_id, "no"), callback_data="delete_cancel"
+            ),
         ]
-        reply_markup = InlineKeyboardMarkup(keyboard)
-
-        # Check if message exists before editing
-        if query.message:
-            await query.edit_message_text(
-                get_text(user_id, "confirm_delete"), reply_markup=reply_markup
-            )
-        else:
-            await context.bot.send_message(
-                chat_id=user_id,
-                text=get_text(user_id, "confirm_delete"),
-                reply_markup=reply_markup,
-            )
-
-        return State.CASE_DETAILS
-
-    except Exception as e:
-        logger.error(
-            f"Error in delete_case_callback: {str(e)}\n{traceback.format_exc()}"
-        )
+    ]
+    reply_markup = InlineKeyboardMarkup(keyboard)
+    # Check if message exists before editing
+    if query.message:
         await query.edit_message_text(
-            get_text(update.effective_user.id, "error_deleting_case")
+            get_text(user_id, "confirm_delete"), reply_markup=reply_markup
         )
-        return State.END
+    else:
+        await context.bot.send_message(
+            chat_id=user_id,
+            text=get_text(user_id, "confirm_delete"),
+            reply_markup=reply_markup,
+        )
+    return State.CASE_DETAILS
 
 
 @catch_async
@@ -832,6 +827,7 @@ async def cancel_delete_callback(
     query = update.callback_query
     await query.answer()
 
+    print("calling the cancel delete callback button ")
     try:
         if query.message:
             await query.edit_message_text(
