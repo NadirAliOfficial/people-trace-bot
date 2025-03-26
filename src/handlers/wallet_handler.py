@@ -1,14 +1,12 @@
-from telegram import InlineKeyboardButton, InlineKeyboardMarkup, Update
+from telegram import InlineKeyboardButton, InlineKeyboardMarkup, Update, error
 from constant.language_constant import get_text
 from constants import State
-from helpers import get_sol_balance
 from services.tron_wallet_service import TronWallet
 from services.wallet_service import WalletService
 from solders.pubkey import Pubkey
 from utils.error_wrapper import catch_async
-from utils.solana_config import solana_client
 from telegram.ext import ContextTypes
-from solders.token.associated import get_associated_token_address
+
 from constant.language_constant import USDT_MINT_ADDRESS
 
 # Utility functions
@@ -123,9 +121,22 @@ async def refresh_wallets(update: Update, context: ContextTypes.DEFAULT_TYPE):
         ],
     ]
 
-    await update.callback_query.message.edit_text(
-        get_text(user_id, "refresh_wallet_text"), reply_markup=InlineKeyboardMarkup(kb)
-    )
+    new_text = get_text(user_id, "refresh_wallet_text")
+
+    try:
+        if update.callback_query.message.text != new_text:
+            await update.callback_query.message.edit_text(
+                new_text, reply_markup=InlineKeyboardMarkup(kb)
+            )
+        else:
+            await update.callback_query.answer(
+                get_text(user_id, "wallets_already_updated"), show_alert=True
+            )
+    except error.BadRequest:
+        await update.callback_query.answer(
+            get_text(user_id, "wallets_already_updated"), show_alert=True
+        )
+
     return State.WALLET_MENU
 
 
@@ -135,25 +146,32 @@ async def sol_wallets(update: Update, context: ContextTypes.DEFAULT_TYPE):
     user_id = update.effective_user.id
     wallets = await WalletService.get_wallet_by_user(user_id, True)
 
-    if not wallets:
-        message = get_text(user_id, "no_wallet")
+    sol_wallets = [wallet for wallet in wallets if wallet.wallet_type.upper() == "SOL"]
+
+    if not sol_wallets:
+        message = "You don't have any SOL wallets yet."
     else:
         message = "<b>Your SOL Wallets:</b>\n"
-        for wallet in wallets:
-            if wallet.wallet_type == "SOL":
-                try:
-                    balance = await WalletService.get_sol_balance(wallet.public_key)
-                    message += (
-                        f"<b>Name:</b> {wallet.name}, <b>Balance:</b> {balance} SOL\n"
-                    )
-                except Exception as e:
-                    message += f"<b>Name:</b> {wallet.name}, <b>Error:</b> {str(e)}\n"
+        for wallet in sol_wallets:
+            try:
+                balance = await WalletService.get_sol_balance(wallet.public_key)
+                message += (
+                    f"<b>Name:</b> {wallet.name}, <b>Balance:</b> {balance} SOL\n"
+                )
+            except Exception as e:
+                message += f"<b>Name:</b> {wallet.name}, <b>Error:</b> {str(e)}\n"
 
-    # Check if the update is from a callback query or a command
-    if update.callback_query:
-        await update.callback_query.message.edit_text(message, parse_mode="HTML")
-    else:
-        await update.message.reply_text(message, parse_mode="HTML")
+    # Handle both command and callback cases
+    try:
+        if update.callback_query:
+            await update.callback_query.message.edit_text(message, parse_mode="HTML")
+        else:
+            await update.message.reply_text(message, parse_mode="HTML")
+    except error.BadRequest as e:
+        if "Message is not modified" in str(e):
+            await update.callback_query.answer(
+                "Wallets are already updated.", show_alert=True
+            )
 
     return State.WALLET_MENU
 
@@ -164,24 +182,35 @@ async def usdt_wallets(update: Update, context: ContextTypes.DEFAULT_TYPE):
     user_id = update.effective_user.id
     wallets = await WalletService.get_wallet_by_user(user_id, True)
 
-    if not wallets:
+    usdt_wallets = [
+        wallet for wallet in wallets if wallet.wallet_type.upper() == "USDT"
+    ]
+
+    if not usdt_wallets:
         message = "You don't have any USDT wallets yet."
     else:
-        message = "Your USDT Wallets:\n"
-        for wallet in wallets:
-            if wallet.wallet_type == "USDT":
-                try:
+        message = "<b>Your USDT Wallets:</b>\n"
+        for wallet in usdt_wallets:
+            try:
+                balance = await TronWallet.get_usdt_balance(wallet.public_key)
+                message += (
+                    f"<b>Name:</b> {wallet.name}, <b>Balance:</b> {balance} USDT\n"
+                )
+            except Exception as e:
+                message += f"<b>Name:</b> {wallet.name}, <b>Error:</b> {str(e)}\n"
 
-                    # Fetch the USDT balance using get_token_account_balance
-                    balance = TronWallet.get_usdt_balance(wallet.public_key)
-                    message += f"Name: {wallet.name}, Balance: {balance} USDT\n"
+    # Handle both command and callback cases
+    try:
+        if update.callback_query:
+            await update.callback_query.message.edit_text(message, parse_mode="HTML")
+        else:
+            await update.message.reply_text(message, parse_mode="HTML")
+    except error.BadRequest as e:
+        if "Message is not modified" in str(e):
+            await update.callback_query.answer(
+                "Wallets are already updated.", show_alert=True
+            )
 
-                except Exception as e:
-                    message += (
-                        f"Name: {wallet.name}, Error fetching balance: {str(e)}\n"
-                    )
-
-    await update.callback_query.message.edit_text(message)
     return State.WALLET_MENU
 
 

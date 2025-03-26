@@ -18,6 +18,7 @@ SETTINGS_CONSTANT = {
         "selected_mobile_options": "Selected mobile: {mobile}\nWhat would you like to do?",
         "mobile_removed": "✅ Removed mobile: {mobile}",
         "mobile_verified_and_saved": "✅ Mobile number verified and saved successfully!\nYour saved mobile numbers:",
+        "wallets_already_updated": "Wallets are already up to date.",
     },
     "zh": {
         "btn_language": "🌍 更改语言",
@@ -38,6 +39,7 @@ SETTINGS_CONSTANT = {
         "selected_mobile_options": "已选手机号码：{mobile}\n您想做什么？",
         "mobile_removed": "✅ 已移除手机号码：{mobile}",
         "mobile_verified_and_saved": "✅ 手机号码验证并保存成功！\n您的保存的手机号码：",
+        "wallets_already_updated": "钱包已经是最新的。",
     },
     "ms": {  # Malay (Malaysia)
         "btn_language": "🌍 Tukar Bahasa",
@@ -58,5 +60,6 @@ SETTINGS_CONSTANT = {
         "selected_mobile_options": "Nombor telefon dipilih: {mobile}\nApa yang ingin anda lakukan?",
         "mobile_removed": "✅ Nombor telefon telah dibuang: {mobile}",
         "mobile_verified_and_saved": "✅ Nombor telefon berjaya disahkan dan disimpan!\nNombor telefon yang disimpan:",
+        "wallets_already_updated": "Dompet sudah dikemaskini.",
     },
 }

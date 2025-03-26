@@ -34,35 +34,33 @@ class WalletService:
         :param wallet_name: The name of the wallet.
         :return: The created Wallet object.
         """
-        try:
-            if wallet_type == "SOL":
-                sol_wallet = create_sol_wallet(wallet_name)
-                wallet = Wallet(
-                    public_key=sol_wallet["public_key"],
-                    private_key=sol_wallet["secret_key"],
-                    user_id=user_id,
-                    name=sol_wallet["name"],
-                    wallet_type="SOL",
-                    deleted=False,
-                )
-            elif wallet_type == "USDT":
-                usdt_wallet = TronWallet.create_wallet(wallet_name)
-                wallet = Wallet(
-                    public_key=usdt_wallet["public_key"],
-                    private_key=usdt_wallet["private_key"],
-                    user_id=user_id,
-                    name=usdt_wallet["name"],
-                    wallet_type="USDT",
-                    deleted=False,
-                )
-            else:
-                raise ValueError("Unsupported wallet type.")
+        # TODO: ###Doing the same thing as the above function, but with a different approach
+        # Check whether the wallet already exist with the same name & type
 
-            await wallet.insert()
-            return wallet
-        except Exception as e:
-            print(f"Error creating wallet: {e}")
-            return None
+        if wallet_type == "SOL":
+            sol_wallet = create_sol_wallet(wallet_name)
+            wallet = Wallet(
+                public_key=sol_wallet["public_key"],
+                private_key=sol_wallet["secret_key"],
+                user_id=user_id,
+                name=sol_wallet["name"],
+                wallet_type="SOL",
+                deleted=False,
+            )
+        elif wallet_type == "USDT":
+            usdt_wallet = TronWallet.create_wallet(wallet_name)
+            wallet = Wallet(
+                public_key=usdt_wallet["public_key"],
+                private_key=usdt_wallet["private_key"],
+                user_id=user_id,
+                name=usdt_wallet["name"],
+                wallet_type="USDT",
+                deleted=False,
+            )
+        else:
+            raise ValueError("Unsupported wallet type.")
+        await wallet.insert()
+        return wallet
 
     @staticmethod
     async def transfer_sol(
@@ -422,6 +420,23 @@ class WalletService:
         """
         wallet = await Wallet.find_one(
             Wallet.user_id == user_id, Wallet.name == wallet_name
+        )
+        return wallet is not None
+
+    @staticmethod
+    async def check_wallet_name_used_with_type(
+        user_id: int, wallet_name: str, wallet_type: str
+    ) -> bool:
+        """
+        Check if a wallet name is already used by a specific user.
+        :param user_id: The Telegram user ID.
+        :param wallet_name: The name of the wallet to check.
+        :return: True if the name is already used, False otherwise.
+        """
+        wallet = await Wallet.find_one(
+            Wallet.user_id == user_id,
+            Wallet.name == wallet_name,
+            Wallet.wallet_type == wallet_type,
         )
         return wallet is not None
 

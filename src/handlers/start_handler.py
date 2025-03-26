@@ -541,6 +541,15 @@ async def wallet_name_handler(
 
     print(f"Wallet type: {wallet_type}")
 
+    if await WalletService.check_wallet_name_used_with_type(
+        user_id, wallet_name, wallet_type
+    ):
+        message = (
+            "A wallet with this name already exists. Please choose a different name."
+        )
+        await update.message.reply_text(message)
+        return State.NAME_WALLET
+
     wallet = await WalletService.create_wallet(user_id, wallet_type, wallet_name)
     if wallet:
 
