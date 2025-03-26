@@ -1,3 +1,4 @@
+from config.config_manager import NODE_ENV
 from telegram import InlineKeyboardButton, InlineKeyboardMarkup, Update
 from telegram.ext import ContextTypes
 from constants import State
@@ -174,74 +175,83 @@ async def settings_menu_callback(update: Update, context: ContextTypes.DEFAULT_T
         return State.END
 
 
+import os
+
+
+@catch_async
 async def handle_setting_mobile(update: Update, context: ContextTypes.DEFAULT_TYPE):
     """Handle the user's mobile number input."""
     user_id = update.effective_user.id
     mobile = update.message.text.strip()
 
-    # Validate mobile number
     if not validate_mobile(mobile):
         await update.message.reply_text(get_text(user_id, "invalid_mobile_number"))
         return State.WAITING_FOR_MOBILE
 
-    # Generate TAC
-    tac = generate_tac()
     context.user_data["mobile"] = mobile
 
-    # Save TAC and mobile in user data store
-    if user_id not in user_data_store:
-        user_data_store[user_id] = {}
-    user_data_store[user_id]["mobile"] = mobile
+    if NODE_ENV == "production":
+        # Generate TAC
+        tac = generate_tac()
 
-    res = await send_otp(mobile)
+        # Save TAC and mobile in user data store
+        if user_id not in user_data_store:
+            user_data_store[user_id] = {}
+        user_data_store[user_id]["mobile"] = mobile
 
-    print(f"Getting the otp: ${res}")
+        res = await send_otp(mobile)
+        print(f"Getting the OTP: {res}")
 
-    context.user_data["otp_id"] = res["otp_id"]
+        context.user_data["otp_id"] = res["otp_id"]
+    else:
+        # In development, just set a dummy OTP
+        context.user_data["otp_id"] = "dummy_otp_id"
+        print(f"Skipping OTP sending in {NODE_ENV} mode.")
 
     # Prompt user to enter TAC
     await update.message.reply_text(get_text(user_id, "enter_tac"))
     return State.CREATE_CASE_TAC
 
 
-# @catch_async
+@catch_async
 async def handle_setting_tac(update: Update, context: ContextTypes.DEFAULT_TYPE) -> int:
     """Handle TAC verification."""
     user_id = update.effective_user.id
     user_tac = update.message.text.strip()
-    stored_tac = context.user_data.get("tac")
     mobile = context.user_data.get("mobile")
 
     print(f"Getting the number which is: {mobile}")
 
-    otp_verify = await verify_otp(context.user_data["otp_id"], user_tac)
-    if otp_verify["success"]:
-        # Save the verified mobile number
-        mobiles = await get_user_mobiles(user_id)
-        if mobile not in mobiles:
-            mobiles.append(mobile)
-            await save_user_mobiles(user_id, mobile)
-
-        # Show the list of saved mobile numbers
-        kb = [
-            [InlineKeyboardButton(f"📱 {number}", callback_data=f"mobile_{number}")]
-            for number in mobiles
-        ]
-        kb.append(
-            [
-                InlineKeyboardButton(
-                    get_text(user_id, "btn_add_new"), callback_data="mobile_add"
-                )
-            ]
-        )
-
-        await update.message.reply_text(
-            get_text(user_id, "mobile_verified_and_saved"),
-            reply_markup=InlineKeyboardMarkup(kb),
-            parse_mode="HTML",
-        )
-        return State.MOBILE_MANAGEMENT
-
+    if NODE_ENV == "production":
+        otp_verify = await verify_otp(context.user_data["otp_id"], user_tac)
+        if not otp_verify["success"]:
+            await update.message.reply_text(get_text(user_id, "tac_invalid"))
+            return State.CREATE_CASE_TAC
     else:
-        await update.message.reply_text(get_text(user_id, "tac_invalid"))
-        return State.CREATE_CASE_TAC
+        print(f"Skipping OTP verification in {NODE_ENV} mode.")
+
+    # Save the verified mobile number
+    mobiles = await get_user_mobiles(user_id)
+    if mobile not in mobiles:
+        mobiles.append(mobile)
+        await save_user_mobiles(user_id, mobile)
+
+    # Show the list of saved mobile numbers
+    kb = [
+        [InlineKeyboardButton(f"📱 {number}", callback_data=f"mobile_{number}")]
+        for number in mobiles
+    ]
+    kb.append(
+        [
+            InlineKeyboardButton(
+                get_text(user_id, "btn_add_new"), callback_data="mobile_add"
+            )
+        ]
+    )
+
+    await update.message.reply_text(
+        get_text(user_id, "mobile_verified_and_saved"),
+        reply_markup=InlineKeyboardMarkup(kb),
+        parse_mode="HTML",
+    )
+    return State.MOBILE_MANAGEMENT

@@ -279,16 +279,9 @@ start_handler = ConversationHandler(
     },
     fallbacks=[CommandHandler("cancel", cancel)],
     allow_reentry=True,
+    per_message=False,
 )
 
-# Wallet conversation handler
-from telegram.ext import (
-    ConversationHandler,
-    CommandHandler,
-    CallbackQueryHandler,
-    MessageHandler,
-    filters,
-)
 
 # Define conversation handler
 wallet_handler = ConversationHandler(
@@ -334,6 +327,7 @@ wallet_handler = ConversationHandler(
     },
     fallbacks=[CommandHandler("cancel", cancel)],
     allow_reentry=True,
+    per_message=False,
 )
 
 
@@ -413,10 +407,9 @@ listing_handler = ConversationHandler(
             ),
         ],
     },
-    fallbacks=[
-        CommandHandler("cancel", lambda update, context: State.END),
-    ],
+    fallbacks=[CommandHandler("cancel", cancel)],
     allow_reentry=True,
+    per_message=False,
 )
 
 
@@ -446,7 +439,8 @@ settings_handler = ConversationHandler(
         ],
         State.END: [CommandHandler("settings", settings_command)],
     },
-    fallbacks=[CommandHandler("cancel", lambda update, context: State.END)],
+    fallbacks=[CommandHandler("cancel", cancel)],
     allow_reentry=True,
+    per_message=False,
 )
 # --- Application Setup ---
