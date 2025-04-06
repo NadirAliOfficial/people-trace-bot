@@ -109,6 +109,8 @@ from handlers.start_handler import (
     country_callback,
     disclaimer_callback,
     cancel,
+    start_choose_province,
+    start_province_callback,
     wallet_name_handler,
     wallet_selection_callback,
     wallet_type_callback,
@@ -124,18 +126,30 @@ logger = logging.getLogger(__name__)
 start_handler = ConversationHandler(
     entry_points=[CommandHandler("start", start)],
     states={
+        # Select Language
         State.SELECT_LANG: [
             CallbackQueryHandler(select_lang_callback, pattern="^lang_")
         ],
+        # Select Country
         State.CHOOSE_COUNTRY: [
             CallbackQueryHandler(
                 country_callback, pattern="^(country_select_|country_page_)"
             ),
             MessageHandler(filters.TEXT & ~filters.COMMAND, choose_country),
         ],
+        # Show Disclaimer
         State.SHOW_DISCLAIMER: [
             CallbackQueryHandler(disclaimer_callback, pattern="^(agree|disagree)$")
         ],
+          State.START_CHOOSE_PROVINCE: [
+            CallbackQueryHandler(
+                start_province_callback, pattern="^(start_province_select_|start_province_page_)"
+            ),
+            
+            MessageHandler(filters.TEXT & ~filters.COMMAND, start_choose_province),
+        ],
+        
+        #  Select City
         State.CHOOSE_CITY: [
             CallbackQueryHandler(city_callback, pattern="^(city_select_|city_page_)"),
             MessageHandler(filters.TEXT & ~filters.COMMAND, choose_city),

@@ -1,4 +1,5 @@
 import logging
+from handlers.finder_handler import get_province_matches
 from handlers.listing_handler import listing_command
 from handlers.settings_handler import settings_command
 from handlers.wallet_handler import wallet_command
@@ -59,6 +60,7 @@ async def start(update: Update, context: ContextTypes.DEFAULT_TYPE) -> int:
     return State.SELECT_LANG
 
 
+#  ----------------------- Language LOGIC ------------------------
 @catch_async
 async def select_lang_callback(
     update: Update, context: ContextTypes.DEFAULT_TYPE
@@ -80,6 +82,7 @@ async def select_lang_callback(
     return State.CHOOSE_COUNTRY
 
 
+#  ----------------------- Country LOGIC ------------------------
 @catch_async
 async def choose_country(update: Update, context: ContextTypes.DEFAULT_TYPE) -> int:
     user_id = update.effective_user.id
@@ -185,6 +188,10 @@ async def country_callback(update: Update, context: ContextTypes.DEFAULT_TYPE) -
         return State.END
 
 
+
+
+
+#  ----------------------- Disclaimer LOGIC ------------------------
 @catch_async
 async def show_disclaimer(update: Update, context: ContextTypes.DEFAULT_TYPE) -> int:
     user_id = (
@@ -224,15 +231,143 @@ async def disclaimer_callback(
     await query.answer()
     user_id = query.from_user.id
     if query.data == "agree":
-        await query.edit_message_text(
-            get_text(user_id, "enter_city"), parse_mode="HTML"
-        )
-        return State.CHOOSE_CITY
+        # Clearing the province
+        await query.edit_message_text("Choose Province")
+        return State.CHOOSE_PROVINCE
     else:
         await query.edit_message_text(
             get_text(user_id, "disagree_end"), parse_mode="HTML"
         )
         return State.END
+
+
+
+#  ----------------------- Province LOGIC ------------------------
+
+async def start_choose_province(update: Update, context: ContextTypes.DEFAULT_TYPE) -> int:
+    """Handles province selection and shows cases for that province."""
+    print("Hello from the choose province")
+    user_id = update.effective_user.id
+    txt = update.message.text.strip()
+
+    # Get country from user_data
+    country = context.user_data.get("country", None)
+    city = context.user_data.get("city", None)
+
+    if not country:
+        await update.message.reply_text(
+            get_text(user_id, "country_not_found"), parse_mode="HTML"
+        )
+        return State.CHOOSE_COUNTRY
+
+    # Get matching provinces
+    matches = get_province_matches(txt, country)
+    print(f"Matched Provinces are: {matches}")
+
+    print(matches, len(matches))
+    if len(matches) == 1:
+        # If there's only one match, fetch and display cases
+        # Heri i will show the  selected province ....
+        pass
+
+    elif len(matches) == 0:
+        await update.message.reply_text(
+            get_text(user_id, "province_not_exist"),
+            parse_mode="Markdown",
+        )
+        return State.START_CHOOSE_PROVINCE
+
+    else:
+        # If multiple matches, show province selection UI
+        user_data_store[user_id]["province_matches"] = matches
+        user_data_store[user_id]["province_page"] = 1
+        paginated, total = paginate_list(matches, 1)
+        kb = []
+        for p in paginated:
+            kb.append([InlineKeyboardButton(p, callback_data=f"start_province_select_{p}")])
+
+        # Pagination buttons
+        if total > 1:
+            kb.append(
+                [
+                    InlineKeyboardButton("⬅️", callback_data="start_province_page_0"),
+                    InlineKeyboardButton("➡️", callback_data="start_province_page_2"),
+                ]
+            )
+        markup = InlineKeyboardMarkup(kb)
+        await update.message.reply_text(
+            get_text(user_id, "province_multi").format(page=1, total=total),
+            reply_markup=markup,
+            parse_mode="HTML",
+        )
+        return State.START_CHOOSE_PROVINCE
+
+
+# Function to handle the province selection callback
+async def start_province_callback(update: Update, context: ContextTypes.DEFAULT_TYPE) -> int:
+    query = update.callback_query
+    await query.answer()
+    data = query.data
+    user_id = update.effective_user.id
+
+    if data.startswith("start_province_select_"):
+        province = data.replace("start_province_select_", "")
+        context.user_data["province"] = province  # Save province in context
+        await query.edit_message_text(
+            f"{get_text(user_id, 'province_selected')} {province}.",
+            parse_mode="HTML",
+        )
+        # Content would come here 
+        await query.edit_message_text(
+            get_text(user_id, "enter_city"), parse_mode="HTML"
+        )
+        return State.CHOOSE_CITY
+
+    elif data.startswith("start_province_page_"):
+        # Handle pagination for provinces
+        page_str = data.replace("start_province_page_", "")
+        try:
+            page_num = int(page_str)
+            if page_num < 1:
+                page_num = 1
+        except ValueError:
+            page_num = 1
+
+        matches = user_data_store[user_id].get("start_province_matches", [])
+        paginated, total = paginate_list(matches, page_num)
+        kb = []
+        for p in paginated:
+            kb.append([InlineKeyboardButton(p, callback_data=f"start_province_select_{p}")])
+
+        nav_row = []
+        if page_num > 1:
+            nav_row.append(
+                InlineKeyboardButton("⬅️", callback_data=f"start_province_page_{page_num-1}")
+            )
+        if page_num < total:
+            nav_row.append(
+                InlineKeyboardButton("➡️", callback_data=f"start_province_page_{page_num+1}")
+            )
+        if nav_row:
+            kb.append(nav_row)
+
+        markup = InlineKeyboardMarkup(kb)
+        await query.edit_message_text(
+            get_text(user_id, "province_multi").format(page=page_num, total=total),
+            reply_markup=markup,
+            parse_mode="HTML",
+        )
+
+        user_data_store[user_id]["start_province_page"] = page_num
+        return State.START_CHOOSE_PROVINCE
+
+    else:
+        await query.edit_message_text(
+            get_text(user_id, "invalid_choice"), parse_mode="HTML"
+        )
+        return State.END
+
+
 
 
 @catch_async
@@ -622,23 +757,26 @@ async def error_handler(update: object, context: ContextTypes.DEFAULT_TYPE) -> N
             )
 
 
-
 async def interrupt_current_flow(update: Update, context: ContextTypes.DEFAULT_TYPE) -> int:
     context.user_data.clear()
 
-    # Reply to user depending on update type
+    # Handle message-based commands
     if update.message:
-        # Re-dispatch the command manually
-        if update.message.text == "/wallet":
-            return await wallet_command(update, context)
-        elif update.message.text == "/settings":
-            return await settings_command(update, context)
-        elif update.message.text == "/listing":
-            return await listing_command(update, context)
-        elif update.message.text == "/start":
+        cmd = update.message.text
+        if cmd == "/wallet":
+            await wallet_command(update, context)
+            return State.WALLET_MENU  # 🧠 Set correct state
+        elif cmd == "/settings":
+            await settings_command(update, context)
+            return State.SETTINGS_MENU
+        elif cmd == "/listing":
+            await listing_command(update, context)
+            return State.CASE_DETAILS
+        elif cmd == "/start":
             return await start(update, context)
+    
     elif update.callback_query:
         await update.callback_query.answer()
         await update.callback_query.edit_message_text("🔄 Operation cancelled. Starting fresh.")
-
+    
     return ConversationHandler.END

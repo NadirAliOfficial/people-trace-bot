@@ -22,30 +22,12 @@ from services.wallet_service import WalletService
 from utils.cloudinary import CloudinaryError, upload_image, upload_video
 from utils.error_wrapper import catch_async
 from utils.helper import paginate_list
+from utils.province_util import get_provinces_for_country
 from utils.wallet import load_user_wallet
 from constants import State
 from constant.language_constant import get_text, user_data_store
 from services.finder_service import FinderService
 
-
-def get_provinces_for_country(country):
-    """
-    Fetch provinces/states for the given country using REST Countries API.
-    """
-    print(f"Country: {country}")
-    url = "https://countriesnow.space/api/v0.1/countries/states"
-    data = {"country": country}
-
-    response = requests.post(url, json=data)
-
-    if response.status_code == 200:
-        states = response.json()
-        print(f"states: {states["data"]["states"]}")
-        print([state["name"] for state in states["data"]["states"]])
-        return [state["name"] for state in states["data"]["states"]]
-    else:
-        print("Failed to fetch states:", response.status_code)
-        return []
 
 
 def get_province_matches(query, country):
