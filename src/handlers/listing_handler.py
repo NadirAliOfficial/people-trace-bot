@@ -35,6 +35,8 @@ from utils.helper import get_city_matches, get_country_matches, paginate_list
 async def listing_command(update: Update, context: ContextTypes.DEFAULT_TYPE) -> int:
     """Handler for the /listing command."""
     user_id = update.effective_user.id
+
+
     logger.info(f"User {user_id} issued /listing command")
     all_cases = (
         await Case.find({"status": CaseStatus.ADVERTISE, "deleted": False})

@@ -1,4 +1,7 @@
 import logging
+from handlers.listing_handler import listing_command
+from handlers.settings_handler import settings_command
+from handlers.wallet_handler import wallet_command
 from services.case_service import update_or_create_case
 from services.tron_wallet_service import TronWallet
 from services.wallet_service import WalletService
@@ -25,6 +28,8 @@ from constant.language_constant import LANG_DATA, get_text, user_data_store
 async def start(update: Update, context: ContextTypes.DEFAULT_TYPE) -> int:
     """/start command entry point."""
     user_id = update.message.from_user.id
+
+    
 
     user_lang = await get_user_lang(user_id)
     if user_lang:
@@ -592,11 +597,18 @@ async def wallet_name_handler(
 @catch_async
 async def cancel(update: Update, context: ContextTypes.DEFAULT_TYPE) -> int:
     user_id = update.effective_user.id
-    await update.message.reply_text(
-        get_text(user_id, "cancel_msg"), reply_markup=ReplyKeyboardRemove()
-    )
-    return State.END
 
+    if update.message:
+        await update.message.reply_text(
+            get_text(user_id, "cancel_msg"), reply_markup=ReplyKeyboardRemove()
+        )
+    elif update.callback_query:
+        await update.callback_query.answer()
+        await update.callback_query.edit_message_text(
+            get_text(user_id, "cancel_msg")
+        )
+
+    return State.END
 
 @catch_async
 async def error_handler(update: object, context: ContextTypes.DEFAULT_TYPE) -> None:
@@ -608,3 +620,25 @@ async def error_handler(update: object, context: ContextTypes.DEFAULT_TYPE) -> N
             await update.effective_message.reply_text(
                 get_text(user_id, "invalid_choice")
             )
+
+
+
+async def interrupt_current_flow(update: Update, context: ContextTypes.DEFAULT_TYPE) -> int:
+    context.user_data.clear()
+
+    # Reply to user depending on update type
+    if update.message:
+        # Re-dispatch the command manually
+        if update.message.text == "/wallet":
+            return await wallet_command(update, context)
+        elif update.message.text == "/settings":
+            return await settings_command(update, context)
+        elif update.message.text == "/listing":
+            return await listing_command(update, context)
+        elif update.message.text == "/start":
+            return await start(update, context)
+    elif update.callback_query:
+        await update.callback_query.answer()
+        await update.callback_query.edit_message_text("🔄 Operation cancelled. Starting fresh.")
+
+    return ConversationHandler.END

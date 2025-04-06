@@ -28,6 +28,9 @@ def escape_markdown_v2(text: str) -> str:
 async def wallet_command(update: Update, context: ContextTypes.DEFAULT_TYPE):
     """Entry point for /wallet command."""
     user_id = update.effective_user.id
+
+
+    
     wallets = await WalletService.get_wallet_by_user(user_id, True)
     if wallets is None:
         wallets = []

@@ -102,6 +102,7 @@ from handlers.start_handler import (
     action_callback,
     choose_city,
     city_callback,
+    interrupt_current_flow,
     start,
     select_lang_callback,
     choose_country,
@@ -277,7 +278,12 @@ start_handler = ConversationHandler(
         ],
         State.END: [CommandHandler("start", start)],
     },
-    fallbacks=[CommandHandler("cancel", cancel)],
+    fallbacks=[
+        CommandHandler("cancel", cancel),
+        CommandHandler("wallet", interrupt_current_flow),
+        CommandHandler("settings", interrupt_current_flow),
+        CommandHandler("listing", interrupt_current_flow),
+    ],
     allow_reentry=True,
     per_message=False,
 )
@@ -325,7 +331,15 @@ wallet_handler = ConversationHandler(
         ],
         State.END: [CommandHandler("wallet", wallet_command)],
     },
-    fallbacks=[CommandHandler("cancel", cancel)],
+#    fallbacks=[
+#         CommandHandler("cancel", cancel)
+#     ],
+   fallbacks=[
+        CommandHandler("cancel", cancel),
+        CommandHandler("start", interrupt_current_flow),
+        CommandHandler("settings", interrupt_current_flow),
+        CommandHandler("listing", interrupt_current_flow),
+    ],
     allow_reentry=True,
     per_message=False,
 )
@@ -407,7 +421,12 @@ listing_handler = ConversationHandler(
             ),
         ],
     },
-    fallbacks=[CommandHandler("cancel", cancel)],
+    fallbacks=[
+        CommandHandler("cancel", cancel),
+        CommandHandler("wallet", interrupt_current_flow),
+        CommandHandler("settings", interrupt_current_flow),
+        CommandHandler("start", interrupt_current_flow),
+    ],
     allow_reentry=True,
     per_message=False,
 )
@@ -439,7 +458,12 @@ settings_handler = ConversationHandler(
         ],
         State.END: [CommandHandler("settings", settings_command)],
     },
-    fallbacks=[CommandHandler("cancel", cancel)],
+     fallbacks=[
+        CommandHandler("cancel", cancel),
+        CommandHandler("wallet", interrupt_current_flow),
+        CommandHandler("start", interrupt_current_flow),
+        CommandHandler("listing", interrupt_current_flow),
+    ],
     allow_reentry=True,
     per_message=False,
 )
