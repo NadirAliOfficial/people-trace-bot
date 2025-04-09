@@ -52,6 +52,7 @@ WALLET_LANG_DATA = {
         "sol_wallets_header": "<b>Your SOL Wallets:</b>\n",
         "wallet_balance": "<b>Name:</b> {name}, <b>Balance:</b> {balance} SOL\n",
         "wallet_error": "<b>Name:</b> {name}, <b>Error:</b> {error}\n",
+          "no_sol_wallets": "You don't have any SOL wallets yet.",
         "no_usdt_wallets": "You don't have any USDT wallets yet.",
         "back_button": "⬅️ Back",
         "refresh_btn": "🔄 Refresh",
