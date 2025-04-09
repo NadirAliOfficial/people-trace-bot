@@ -71,9 +71,13 @@ from handlers.wallet_handler import (
     process_create_wallet,
     process_delete_wallet,
     refresh_wallets,
+    request_private_key,
     select_wallet_type,
     show_address,
+    show_private_key,
+    show_sol_wallet_detail,
     show_specific_address,
+    show_usdt_wallet_detail,
     sol_wallets,
     usdt_wallets,
     view_history,
@@ -103,6 +107,7 @@ from handlers.start_handler import (
     choose_city,
     city_callback,
     interrupt_current_flow,
+    message_router,
     start,
     select_lang_callback,
     choose_country,
@@ -154,9 +159,11 @@ start_handler = ConversationHandler(
             CallbackQueryHandler(city_callback, pattern="^(city_select_|city_page_)"),
             MessageHandler(filters.TEXT & ~filters.COMMAND, choose_city),
         ],
+        # Action Perform Like to Advertise or Find People
         State.CHOOSE_ACTION: [
             CallbackQueryHandler(action_callback, pattern="^(advertise|find_people)$")
         ],
+        # Choose Wallet Type
         State.CHOOSE_WALLET_TYPE: [
             CallbackQueryHandler(wallet_type_callback, pattern="^(SOL|USDT)$"),
             CallbackQueryHandler(wallet_selection_callback, pattern="^wallet_"),
@@ -167,6 +174,9 @@ start_handler = ConversationHandler(
         State.NAME_WALLET: [
             MessageHandler(filters.TEXT & ~filters.COMMAND, wallet_name_handler),
         ],
+        # Handle all of the button like create case , find people , settings , help
+        State.HANDLE_REPLY: [CallbackQueryHandler( message_router, pattern="(create_case|find_people|settings|help)$")],
+
         # Create Case Flow:
         State.CREATE_CASE_NAME: [
             MessageHandler(filters.TEXT & ~filters.COMMAND, handle_name)
@@ -292,14 +302,9 @@ start_handler = ConversationHandler(
         ],
         State.END: [CommandHandler("start", start)],
     },
-    fallbacks=[
-        CommandHandler("cancel", cancel),
-        CommandHandler("wallet", interrupt_current_flow),
-        CommandHandler("settings", interrupt_current_flow),
-        CommandHandler("listing", interrupt_current_flow),
-    ],
+    fallbacks=[CommandHandler("cancel", cancel), CommandHandler("settings", settings_command)],
     allow_reentry=True,
-    per_message=False,
+    
 )
 
 
@@ -318,6 +323,21 @@ wallet_handler = ConversationHandler(
             ),  # Entry point for wallet creation
             CallbackQueryHandler(delete_wallet, pattern="^delete_wallet$"),
             CallbackQueryHandler(back_to_wallet_menu, pattern="^back_to_wallet_menu$"),
+        ],
+          State.SOL_WALLET_DETAIL: [
+            CallbackQueryHandler(show_sol_wallet_detail, pattern="^sol_detail_")
+        ],
+        State.SOL_WALLET_ACTIONS: [
+            CallbackQueryHandler(request_private_key, pattern="^req_pk_")
+        ],
+          State.USDT_WALLET_DETAIL: [
+            CallbackQueryHandler(show_usdt_wallet_detail, pattern="^usdt_detail_")
+        ],
+        State.USDT_WALLET_ACTIONS: [
+            CallbackQueryHandler(request_private_key, pattern="^req_pk_")
+        ],
+        State.CONFIRM_PRIVATE_KEY: [
+            CallbackQueryHandler(show_private_key, pattern="^(confirm_pk|cancel_pk)$")
         ],
         State.SHOW_ADDRESS: [
             CallbackQueryHandler(show_specific_address, pattern="^show_address_"),
@@ -350,12 +370,9 @@ wallet_handler = ConversationHandler(
 #     ],
    fallbacks=[
         CommandHandler("cancel", cancel),
-        CommandHandler("start", interrupt_current_flow),
-        CommandHandler("settings", interrupt_current_flow),
-        CommandHandler("listing", interrupt_current_flow),
     ],
     allow_reentry=True,
-    per_message=False,
+    
 )
 
 
@@ -437,12 +454,9 @@ listing_handler = ConversationHandler(
     },
     fallbacks=[
         CommandHandler("cancel", cancel),
-        CommandHandler("wallet", interrupt_current_flow),
-        CommandHandler("settings", interrupt_current_flow),
-        CommandHandler("start", interrupt_current_flow),
     ],
     allow_reentry=True,
-    per_message=False,
+    
 )
 
 
@@ -474,11 +488,8 @@ settings_handler = ConversationHandler(
     },
      fallbacks=[
         CommandHandler("cancel", cancel),
-        CommandHandler("wallet", interrupt_current_flow),
-        CommandHandler("start", interrupt_current_flow),
-        CommandHandler("listing", interrupt_current_flow),
     ],
     allow_reentry=True,
-    per_message=False,
+    
 )
 # --- Application Setup ---

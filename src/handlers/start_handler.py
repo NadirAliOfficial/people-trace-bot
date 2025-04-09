@@ -1,8 +1,6 @@
 import logging
 from handlers.finder_handler import get_province_matches
-from handlers.listing_handler import listing_command
 from handlers.settings_handler import settings_command
-from handlers.wallet_handler import wallet_command
 from services.case_service import update_or_create_case
 from services.tron_wallet_service import TronWallet
 from services.wallet_service import WalletService
@@ -11,6 +9,8 @@ from telegram import (
     InlineKeyboardMarkup,
     InlineKeyboardButton,
     ReplyKeyboardRemove,
+    KeyboardButton,
+    ReplyKeyboardMarkup
 )
 from telegram.ext import (
     ConversationHandler,
@@ -29,9 +29,6 @@ from constant.language_constant import LANG_DATA, get_text, user_data_store
 async def start(update: Update, context: ContextTypes.DEFAULT_TYPE) -> int:
     """/start command entry point."""
     user_id = update.message.from_user.id
-
-    
-
     user_lang = await get_user_lang(user_id)
     if user_lang:
         user_data_store[user_id] = {"lang": user_lang}
@@ -39,6 +36,18 @@ async def start(update: Update, context: ContextTypes.DEFAULT_TYPE) -> int:
         await update.message.reply_text(get_text(user_id, "choose_country"))
         return State.CHOOSE_COUNTRY
 
+    # ✅ Show banner if user doesn't have a language set
+    try:
+        with open("static/banner.jpg", "rb") as banner:
+            await update.message.reply_photo(
+                photo=banner,
+                caption="👋 Welcome to our bot!\nPlease choose your language below 👇",
+            )
+    except FileNotFoundError:
+        # fallback if the image isn't available
+        await update.message.reply_text("👋 Welcome to our bot!\nPlease choose your language below 👇")
+
+    # ⬇️ Language selection buttons
     btns = [
         [
             InlineKeyboardButton(
@@ -52,12 +61,14 @@ async def start(update: Update, context: ContextTypes.DEFAULT_TYPE) -> int:
             ),
         ]
     ]
+
     await update.message.reply_text(
         f"{LANG_DATA['en']['start_msg']}\n\n{LANG_DATA['zh']['start_msg']}",
         reply_markup=InlineKeyboardMarkup(btns),
     )
 
     return State.SELECT_LANG
+
 
 
 #  ----------------------- Language LOGIC ------------------------
@@ -233,7 +244,7 @@ async def disclaimer_callback(
     if query.data == "agree":
         # Clearing the province
         await query.edit_message_text("Choose Province")
-        return State.CHOOSE_PROVINCE
+        return State.START_CHOOSE_PROVINCE
     else:
         await query.edit_message_text(
             get_text(user_id, "disagree_end"), parse_mode="HTML"
@@ -628,10 +639,20 @@ async def wallet_selection_callback(
 
         await query.edit_message_text(msg, parse_mode="HTML")
 
-        # Transition to the Create Case flow
-        await query.message.reply_text(get_text(user_id, "create_case_title"))
-        await query.message.reply_text(get_text(user_id, "enter_name"))
-        return State.CREATE_CASE_NAME
+        # 🎯 Custom Reply Keyboard (FIXED)
+        keyboard = [
+            [InlineKeyboardButton("✅ Create Case", callback_data="create_case")],
+            [InlineKeyboardButton("🕵️ Find People", callback_data="find_people"), InlineKeyboardButton("⚙️ Settings", callback_data="settings")],
+            [InlineKeyboardButton("❓ Help", callback_data="help")]
+        ]
+
+      
+
+        await query.message.reply_text(
+            "Choose an option below to continue:",
+            reply_markup=InlineKeyboardMarkup(keyboard)
+        )
+        return State.HANDLE_REPLY  # Use a custom state if needed
     else:
         await query.edit_message_text(
             get_text(user_id, "wallet_not_found"), parse_mode="HTML"
@@ -643,6 +664,7 @@ async def wallet_selection_callback(
 async def wallet_name_handler(
     update: Update, context: ContextTypes.DEFAULT_TYPE
 ) -> int:
+    query = update.callback_query
     wallet_type = context.user_data.get("wallet_type")  # 'sol' or 'usdt'
     user_id = update.effective_user.id
     if update.callback_query:
@@ -708,31 +730,70 @@ async def wallet_name_handler(
 
         await update.message.reply_text(msg, parse_mode="HTML")
 
-        await update.message.reply_text(get_text(user_id, "create_case_title"))
-        await update.message.reply_text(get_text(user_id, "enter_name"))
-        return State.CREATE_CASE_NAME
+      
+       
+        # 🎯 Custom Reply Keyboard (FIXED)
+        keyboard = [
+            [InlineKeyboardButton("✅ Create Case")],
+            [InlineKeyboardButton("🕵️ Find People"), InlineKeyboardButton("⚙️ Settings")],
+            [InlineKeyboardButton("❓ Help")]
+        ]
+
+     
+
+        await update.message.reply_text(
+            "Choose an option below to continue:",
+            reply_markup=InlineKeyboardMarkup(keyboard)
+        )
+
+        return State.HANDLE_REPLY  # Use a custom state if needed
     else:
         await update.message.reply_text(
             get_text(user_id, "wallet_create_err"), parse_mode="HTML"
         )
         return State.END
 
+@catch_async
+async def message_router(update: Update, context: ContextTypes.DEFAULT_TYPE):
+    query = update.callback_query
+    await query.answer()
+    user_id = query.from_user.id
+    choice = query.data
 
+    # Handle different menu choices
+    if choice == "create_case":
+        await query.edit_message_text(get_text(user_id, "create_case_title"))
+        await query.message.reply_text(get_text(user_id, "enter_name"))
+        return State.CREATE_CASE_NAME
+
+    elif choice == "find_people":
+        await query.edit_message_text("🔍 Searching for people (feature coming soon)...")
+        return State.HANDLE_REPLY
+
+    elif choice == "settings":
+        # ✅ Clear all conversation-related data to prevent interference
+        context.user_data.clear()
+        return await jump_to_command(update, context, "/settings")
+
+
+    elif choice == "help":
+        await query.edit_message_text(
+            "Need help? Visit: https://t.me/your_other_bot_or_help_page",
+            disable_web_page_preview=True
+        )
+        return State.HANDLE_REPLY
+
+    else:
+        await query.edit_message_text("❗ Please choose an option using the buttons.")
+        return State.HANDLE_REPLY
+# handlers/shared.py
 @catch_async
 async def cancel(update: Update, context: ContextTypes.DEFAULT_TYPE) -> int:
     user_id = update.effective_user.id
-
-    if update.message:
-        await update.message.reply_text(
-            get_text(user_id, "cancel_msg"), reply_markup=ReplyKeyboardRemove()
-        )
-    elif update.callback_query:
-        await update.callback_query.answer()
-        await update.callback_query.edit_message_text(
-            get_text(user_id, "cancel_msg")
-        )
-
-    return State.END
+    await update.message.reply_text(
+        get_text(user_id, "cancel_msg"), reply_markup=ReplyKeyboardRemove()
+    )
+    return ConversationHandler.END
 
 @catch_async
 async def error_handler(update: object, context: ContextTypes.DEFAULT_TYPE) -> None:
@@ -745,27 +806,20 @@ async def error_handler(update: object, context: ContextTypes.DEFAULT_TYPE) -> N
                 get_text(user_id, "invalid_choice")
             )
 
+            
 
-async def interrupt_current_flow(update: Update, context: ContextTypes.DEFAULT_TYPE) -> int:
+async def interrupt_current_flow(update: Update, context: ContextTypes.DEFAULT_TYPE):
+    # End any current conversation
     context.user_data.clear()
-
-    # Handle message-based commands
-    if update.message:
-        cmd = update.message.text
-        if cmd == "/wallet":
-            await wallet_command(update, context)
-            return State.WALLET_MENU  # 🧠 Set correct state
-        elif cmd == "/settings":
-            await settings_command(update, context)
-            return State.SETTINGS_MENU
-        elif cmd == "/listing":
-            await listing_command(update, context)
-            return State.CASE_DETAILS
-        elif cmd == "/start":
-            return await start(update, context)
-    
-    elif update.callback_query:
-        await update.callback_query.answer()
-        await update.callback_query.edit_message_text("🔄 Operation cancelled. Starting fresh.")
-    
     return ConversationHandler.END
+
+
+
+async def jump_to_command(update, context, command_text: str):
+    await context.bot.send_message(
+        chat_id=update.effective_chat.id,
+        text=command_text
+    )
+    return ConversationHandler.END
+
+

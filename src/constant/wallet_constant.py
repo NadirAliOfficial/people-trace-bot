@@ -8,11 +8,13 @@ WALLET_LANG_DATA = {
         "wallet_name_empty": "❌ Wallet name cannot be empty. Please try again.",
         "wallet_create_ok": "✅ Wallet Created Successfully!\n\n",
         "wallet_create_details": (
-            "📌 <b>Wallet Details:</b>\n"
-            "Name: {name}\n"
-            "Public Key: `{public_key}`\n"
-            "Secret Key: `{secret_key}`\n"
-            "Balance: {balance} {wallet_type}"
+            "✅ <b>Wallet Created Successfully!</b>\n\n"
+            "📌 <b>Wallet Information:</b>\n"
+            "🧾 <b>Name:</b> <code>{name}</code>\n"
+            "💰 <b>Type:</b> <code>{wallet_type}</code>\n"
+            "🔐 <b>Public Key:</b> <code>{public_key}</code>\n"
+            "🗝️ <b>Secret Key:</b> <code>{secret_key}</code>\n"
+            # "💵 <b>Balance:</b> <code>{balance} {wallet_type}</code>"
         ),
         "wallet_create_err": "❌ Error creating wallet. Please try again later.",
         "cancel_msg": "Operation cancelled. Use /start to begin again.",
@@ -50,6 +52,10 @@ WALLET_LANG_DATA = {
         "sol_wallets_header": "<b>Your SOL Wallets:</b>\n",
         "wallet_balance": "<b>Name:</b> {name}, <b>Balance:</b> {balance} SOL\n",
         "wallet_error": "<b>Name:</b> {name}, <b>Error:</b> {error}\n",
+        "no_usdt_wallets": "You don't have any USDT wallets yet.",
+        "back_button": "⬅️ Back",
+        "refresh_btn": "🔄 Refresh",
+        "wallet_not_found": "Wallet not found."
     },
     "zh": {
         "choose_wallet": "请选择要创建的钱包类型：",

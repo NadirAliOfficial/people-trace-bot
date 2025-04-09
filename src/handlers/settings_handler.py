@@ -16,7 +16,7 @@ from utils.error_wrapper import catch_async
 from utils.helper import generate_tac
 
 
-# Handlers
+# Initialization of settings 
 async def settings_command(update: Update, context: ContextTypes.DEFAULT_TYPE):
     """Entry point for /settings command - shows an inline menu."""
     user_id = update.effective_user.id
@@ -43,14 +43,20 @@ async def settings_command(update: Update, context: ContextTypes.DEFAULT_TYPE):
             )
         ],
     ]
-    await update.message.reply_text(
-        get_text(user_id, "menu_settings_title"),
-        reply_markup=InlineKeyboardMarkup(kb),
-        parse_mode="HTML",
-    )
+    if update.message:
+        await update.message.reply_text(            get_text(user_id, "menu_settings_title"),
+             reply_markup=InlineKeyboardMarkup(kb),
+ parse_mode="HTML")    
+    elif update.callback_query:
+        await update.callback_query.edit_message_text(            get_text(user_id, "menu_settings_title")
+,             reply_markup=InlineKeyboardMarkup(kb), parse_mode="HTML")
+
+  
+  
     return State.SETTINGS_MENU
 
 
+# Listiner of button selection 
 async def settings_menu_callback(update: Update, context: ContextTypes.DEFAULT_TYPE):
     """Handle the settings menu actions."""
     query = update.callback_query
