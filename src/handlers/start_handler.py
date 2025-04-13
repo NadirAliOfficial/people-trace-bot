@@ -243,7 +243,7 @@ async def disclaimer_callback(
     user_id = query.from_user.id
     if query.data == "agree":
         # Clearing the province
-        await query.edit_message_text("Choose Province")
+        await query.edit_message_text(get_text(user_id, "enter_province"))
         return State.START_CHOOSE_PROVINCE
     else:
         await query.edit_message_text(
@@ -256,7 +256,6 @@ async def disclaimer_callback(
 
 async def start_choose_province(update: Update, context: ContextTypes.DEFAULT_TYPE) -> int:
     """Handles province selection and shows cases for that province."""
-    print("Hello from the choose province")
     user_id = update.effective_user.id
     txt = update.message.text.strip()
 
@@ -287,7 +286,7 @@ async def start_choose_province(update: Update, context: ContextTypes.DEFAULT_TY
     elif len(matches) == 0:
         await update.message.reply_text(
             get_text(user_id, "province_not_exist"),
-            parse_mode="Markdown",
+            parse_mode="HTML",  # Ensure consistency in parse_mode
         )
         return State.START_CHOOSE_PROVINCE
 
@@ -531,7 +530,7 @@ async def action_callback(update: Update, context: ContextTypes.DEFAULT_TYPE) ->
         return State.CHOOSE_WALLET_TYPE
     elif choice == "find_people":
         # Clearing the province
-        await query.edit_message_text("Choose Province")
+        await query.edit_message_text(get_text(user_id, "enter_province"))
         return State.CHOOSE_PROVINCE
     else:
         await query.edit_message_text(
@@ -803,9 +802,6 @@ async def message_router(update: Update, context: ContextTypes.DEFAULT_TYPE):
 @catch_async
 async def cancel(update: Update, context: ContextTypes.DEFAULT_TYPE) -> int:
     user_id = update.effective_user.id
-    await update.message.reply_text(
-        get_text(user_id, "cancel_msg"), reply_markup=ReplyKeyboardRemove()
-    )
     return ConversationHandler.END
 
 @catch_async

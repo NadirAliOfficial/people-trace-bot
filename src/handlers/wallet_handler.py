@@ -24,7 +24,7 @@ async def wallet_command(update: Update, context: ContextTypes.DEFAULT_TYPE):
     await cancel(update, context)
 
     
-    wallets = await WalletService.get_wallet_by_user(user_id, True)
+    wallets = await WalletService.get_wallet_by_user(user_id, False)
     if wallets is None:
         wallets = []
 
@@ -78,7 +78,7 @@ async def wallet_command(update: Update, context: ContextTypes.DEFAULT_TYPE):
 async def refresh_wallets(update: Update, context: ContextTypes.DEFAULT_TYPE):
     """Refresh the wallet list."""
     user_id = update.effective_user.id
-    wallets = await WalletService.get_wallet_by_user(user_id, True)
+    wallets = await WalletService.get_wallet_by_user(user_id, False)
     if wallets is None:
         wallets = []
 
@@ -145,7 +145,7 @@ async def sol_wallets(update: Update, context: ContextTypes.DEFAULT_TYPE):
     await query.answer()
     user_id = query.from_user.id
 
-    wallets = await WalletService.get_wallet_by_user(user_id, True)
+    wallets = await WalletService.get_wallet_by_user(user_id, False)
     sol_wallets = [w for w in wallets if w.wallet_type.upper() == "SOL"]
 
     if not sol_wallets:
@@ -227,7 +227,7 @@ async def usdt_wallets(update: Update, context: ContextTypes.DEFAULT_TYPE):
     await query.answer()
     user_id = query.from_user.id
 
-    wallets = await WalletService.get_wallet_by_user(user_id, True)
+    wallets = await WalletService.get_wallet_by_user(user_id, False)
     usdt_wallets = [w for w in wallets if w['wallet_type'].upper() == "USDT"]
 
     if not usdt_wallets:
@@ -267,7 +267,7 @@ async def usdt_wallets(update: Update, context: ContextTypes.DEFAULT_TYPE):
     await query.answer()
     user_id = query.from_user.id
 
-    wallets = await WalletService.get_wallet_by_user(user_id, True)
+    wallets = await WalletService.get_wallet_by_user(user_id, False)
     usdt_wallets = [w for w in wallets if w.wallet_type.upper() == "USDT"]
 
     if not usdt_wallets:
@@ -490,7 +490,7 @@ async def view_history(update: Update, context: ContextTypes.DEFAULT_TYPE):
     # Fetch the appropriate language data
 
     user_id = update.effective_user.id
-    wallets = await WalletService.get_wallet_by_user(user_id, True)
+    wallets = await WalletService.get_wallet_by_user(user_id, False)
 
     if not wallets or wallets == []:
         message = get_text(user_id, "no_wallets")
@@ -612,7 +612,7 @@ async def delete_wallet(update: Update, context: ContextTypes.DEFAULT_TYPE):
     await query.answer()
 
     user_id = update.effective_user.id
-    wallets = await WalletService.get_wallet_by_user(user_id, True)
+    wallets = await WalletService.get_wallet_by_user(user_id, False)
 
     if not wallets:
         message = "You don't have any wallets to delete."

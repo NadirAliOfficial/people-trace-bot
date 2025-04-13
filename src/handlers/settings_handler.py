@@ -44,11 +44,11 @@ async def settings_command(update: Update, context: ContextTypes.DEFAULT_TYPE):
         ],
     ]
     if update.message:
-        await update.message.reply_text(            get_text(user_id, "menu_settings_title"),
+        await update.message.reply_text(get_text(user_id, "menu_settings_title"),
              reply_markup=InlineKeyboardMarkup(kb),
  parse_mode="HTML")    
     elif update.callback_query:
-        await update.callback_query.edit_message_text(            get_text(user_id, "menu_settings_title")
+        await update.callback_query.edit_message_text(get_text(user_id, "menu_settings_title")
 ,             reply_markup=InlineKeyboardMarkup(kb), parse_mode="HTML")
 
   
@@ -113,7 +113,7 @@ async def settings_menu_callback(update: Update, context: ContextTypes.DEFAULT_T
                 reply_markup=InlineKeyboardMarkup(kb),
                 parse_mode="HTML",
             )
-            return State.MOBILE_MANAGEMENT
+            return State.SETTINGS_MOBILE_MANAGEMENT
 
     elif choice == "settings_close":
         # Close the menu
@@ -145,18 +145,8 @@ async def settings_menu_callback(update: Update, context: ContextTypes.DEFAULT_T
         else:
             # Options for selected mobile
             kb = [
-                [
-                    InlineKeyboardButton(
-                        get_text(user_id, "remove_mobile"),
-                        callback_data=f"remove_{mobile}",
-                    )
-                ],
-                [
-                    InlineKeyboardButton(
-                        get_text(user_id, "back_to_mobile_menu"),
-                        callback_data="settings_mobile",
-                    )
-                ],
+                [InlineKeyboardButton(get_text(user_id, "remove_mobile"),callback_data=f"remove_{mobile}")],
+                [InlineKeyboardButton(get_text(user_id, "back_to_mobile_menu"),callback_data="settings_mobile",)],
             ]
             await query.edit_message_text(
                 get_text(user_id, "selected_mobile_options").format(mobile=mobile),
@@ -172,7 +162,7 @@ async def settings_menu_callback(update: Update, context: ContextTypes.DEFAULT_T
             get_text(user_id, "mobile_removed").format(mobile=mobile),
             parse_mode="HTML",
         )
-        return State.MOBILE_MANAGEMENT
+        return State.SETTINGS_MOBILE_MANAGEMENT
 
     else:
         await query.edit_message_text(
@@ -181,7 +171,6 @@ async def settings_menu_callback(update: Update, context: ContextTypes.DEFAULT_T
         return State.END
 
 
-import os
 
 
 @catch_async
@@ -197,10 +186,8 @@ async def handle_setting_mobile(update: Update, context: ContextTypes.DEFAULT_TY
     context.user_data["mobile"] = mobile
 
     if NODE_ENV == "production":
-        # Generate TAC
         tac = generate_tac()
 
-        # Save TAC and mobile in user data store
         if user_id not in user_data_store:
             user_data_store[user_id] = {}
         user_data_store[user_id]["mobile"] = mobile
@@ -210,13 +197,11 @@ async def handle_setting_mobile(update: Update, context: ContextTypes.DEFAULT_TY
 
         context.user_data["otp_id"] = res["otp_id"]
     else:
-        # In development, just set a dummy OTP
         context.user_data["otp_id"] = "dummy_otp_id"
         print(f"Skipping OTP sending in {NODE_ENV} mode.")
 
-    # Prompt user to enter TAC
     await update.message.reply_text(get_text(user_id, "enter_tac"))
-    return State.CREATE_CASE_TAC
+    return State.SETTINGS_CREATE_CASE_TAC
 
 
 @catch_async
@@ -226,13 +211,11 @@ async def handle_setting_tac(update: Update, context: ContextTypes.DEFAULT_TYPE)
     user_tac = update.message.text.strip()
     mobile = context.user_data.get("mobile")
 
-    print(f"Getting the number which is: {mobile}")
-
     if NODE_ENV == "production":
         otp_verify = await verify_otp(context.user_data["otp_id"], user_tac)
         if not otp_verify["success"]:
             await update.message.reply_text(get_text(user_id, "tac_invalid"))
-            return State.CREATE_CASE_TAC
+            return State.SETTINGS_CREATE_CASE_TAC
     else:
         print(f"Skipping OTP verification in {NODE_ENV} mode.")
 
@@ -260,4 +243,4 @@ async def handle_setting_tac(update: Update, context: ContextTypes.DEFAULT_TYPE)
         reply_markup=InlineKeyboardMarkup(kb),
         parse_mode="HTML",
     )
-    return State.MOBILE_MANAGEMENT
+    return State.SETTINGS_MOBILE_MANAGEMENT

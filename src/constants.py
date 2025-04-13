@@ -101,6 +101,10 @@ class State(Enum):
     SOL_WALLET_DETAIL = "SOL_WALLET_DETAIL"
     SOL_WALLET_ACTIONS = "SOL_WALLET_ACTIONS"
 
+    # Settings
+    SETTINGS_MOBILE_MANAGEMENT = "SETTINGS_MOBILE_MANAGEMENT"
+    SETTINGS_CREATE_CASE_TAC = "SETTINGS_CREATE_CASE_TAC"
+
 # ======================
 # Language Data & Constants
 # ======================

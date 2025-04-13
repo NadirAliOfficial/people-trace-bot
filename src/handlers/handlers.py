@@ -300,6 +300,30 @@ start_handler = ConversationHandler(
                 handle_advertiser_response, pattern="^(accept_extend|reject_extend)$"
             )
         ],
+
+        # ---------------------- Settings Start ---------------------
+        State.SETTINGS_MENU: [
+            CallbackQueryHandler(
+                settings_menu_callback,
+                pattern="^(settings_language|settings_mobile|settings_close|setlang_)",
+            ),
+        ],
+        State.WAITING_FOR_MOBILE: [
+            MessageHandler(filters.TEXT & ~filters.COMMAND, handle_setting_mobile),
+        ],
+        State.SETTINGS_MOBILE_MANAGEMENT: [
+            CallbackQueryHandler(settings_menu_callback, pattern="^(mobile_|remove_)"),
+        ],
+        State.MOBILE_VERIFICATION: [
+            CallbackQueryHandler(
+                settings_menu_callback, pattern="^(remove_|settings_mobile)"
+            ),
+        ],
+        State.SETTINGS_CREATE_CASE_TAC: [
+            MessageHandler(filters.TEXT & ~filters.COMMAND, handle_setting_tac),
+        ],
+        # ---------------------- Settings End ---------------------
+        
         State.END: [CommandHandler("start", start)],
     },
     fallbacks=[CommandHandler("cancel", cancel), CommandHandler("settings", settings_command)],
@@ -309,6 +333,7 @@ start_handler = ConversationHandler(
 )
 
 
+# ---------------------- Wallet Conversation Handler End  ---------------------
 # Define conversation handler
 wallet_handler = ConversationHandler(
     entry_points=[CommandHandler("wallet", wallet_command)],
@@ -364,19 +389,21 @@ wallet_handler = ConversationHandler(
         State.DELETE_WALLET: [
             CallbackQueryHandler(process_delete_wallet, pattern="^delete_wallet_"),
         ],
+
+        
+        
         State.END: [CommandHandler("wallet", wallet_command)],
     },
-#    fallbacks=[
-#         CommandHandler("cancel", cancel)
-#     ],
    fallbacks=[
         CommandHandler("cancel", cancel),
     ],
     allow_reentry=True,
     
 )
+# ---------------------- Wallet Conversation Handler End  ---------------------
 
 
+# ---------------------- Listing Conversation Handler Start  ---------------------
 listing_handler = ConversationHandler(
     entry_points=[CommandHandler("listing", listing_command)],
     states={
@@ -459,9 +486,11 @@ listing_handler = ConversationHandler(
     allow_reentry=True,
     
 )
+# ---------------------- Settings Conversation Handler End  ---------------------
 
 
-# Settings conversation handler  -- TODO: Completed
+
+# ---------------------- Settings Conversation Handler Start  ---------------------
 settings_handler = ConversationHandler(
     entry_points=[CommandHandler("settings", settings_command)],
     states={
@@ -474,7 +503,7 @@ settings_handler = ConversationHandler(
         State.WAITING_FOR_MOBILE: [
             MessageHandler(filters.TEXT & ~filters.COMMAND, handle_setting_mobile),
         ],
-        State.MOBILE_MANAGEMENT: [
+        State.SETTINGS_MOBILE_MANAGEMENT: [
             CallbackQueryHandler(settings_menu_callback, pattern="^(mobile_|remove_)"),
         ],
         State.MOBILE_VERIFICATION: [
@@ -482,7 +511,7 @@ settings_handler = ConversationHandler(
                 settings_menu_callback, pattern="^(remove_|settings_mobile)"
             ),
         ],
-        State.CREATE_CASE_TAC: [
+        State.SETTINGS_CREATE_CASE_TAC: [
             MessageHandler(filters.TEXT & ~filters.COMMAND, handle_setting_tac),
         ],
         State.END: [CommandHandler("settings", settings_command)],
@@ -493,4 +522,4 @@ settings_handler = ConversationHandler(
     allow_reentry=True,
     
 )
-# --- Application Setup ---
+# ---------------------- Settings Conversation Handler End  ---------------------

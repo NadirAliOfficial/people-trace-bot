@@ -10,16 +10,16 @@ START_LANG_DATA = {
         "country_selected": "Country recorded:",
         "disclaimer_title": "Disclaimer\n\n",
       "disclaimer_text": (
-    "1. All bounties are held in escrow.\n"
-    "2. AI-generated fake content is prohibited.\n"
-    "3. For lawful, ethical use only.\n"
-    "4. Report to authorities first when locating someone.\n"
-    "5. We are not liable for misuse.\n"
-    "6. Community-driven approach; verify carefully.\n"
-    "7. We do not handle reward disputes.\n\n"
-    "By using this bot, you agree to these terms.\n\n"
-    "🔗 For updates and support, join our channel: @YourChannelName"
-),
+            "1. All bounties are held in escrow.\n"
+            "2. AI-generated fake content is prohibited.\n"
+            "3. For lawful, ethical use only.\n"
+            "4. Report to authorities first when locating someone.\n"
+            "5. We are not liable for misuse.\n"
+            "6. Community-driven approach; verify carefully.\n"
+            "7. We do not handle reward disputes.\n\n"
+            "By using this bot, you agree to these terms.\n\n"
+            "🔗 For updates and support, join our channel: @YourChannelName"
+        ),
         "agree_btn": "I Agree ✅",
         "disagree_btn": "I Disagree ❌",
         "disagree_end": "You did not agree. Conversation ended.",
@@ -56,6 +56,10 @@ START_LANG_DATA = {
             "5️⃣ Review the transaction details and confirm the transfer.\n\n"
             "Once the transfer is successful, the {wallet_type} will appear in your wallet balance."
         ),
+        "enter_province": "Please enter your province name (partial name allowed):",
+        "province_not_exist": "No matching provinces found. Please try again.",
+        "province_multi": "Multiple provinces found (Page {page} of {total}):",
+        "province_selected": "Province recorded:",
     },
     "zh": {
         "lang_choice": "中文",
