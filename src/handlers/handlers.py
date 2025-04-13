@@ -304,6 +304,7 @@ start_handler = ConversationHandler(
     },
     fallbacks=[CommandHandler("cancel", cancel), CommandHandler("settings", settings_command)],
     allow_reentry=True,
+    name="wallet",
     
 )
 

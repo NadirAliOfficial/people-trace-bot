@@ -639,12 +639,15 @@ async def wallet_selection_callback(
 
         await query.edit_message_text(msg, parse_mode="HTML")
 
-        # 🎯 Custom Reply Keyboard (FIXED)
+
         keyboard = [
             [InlineKeyboardButton("✅ Create Case", callback_data="create_case")],
-            [InlineKeyboardButton("🕵️ Find People", callback_data="find_people"), InlineKeyboardButton("⚙️ Settings", callback_data="settings")],
-            [InlineKeyboardButton("❓ Help", callback_data="help")]
+            [InlineKeyboardButton("🕵️ Find People", callback_data="find_people"),
+            InlineKeyboardButton("⚙️ Settings", callback_data="settings")],
+            [InlineKeyboardButton("❓ Help", url="https://t.me/YourHelpBot")]
         ]
+
+
 
       
 
@@ -760,7 +763,6 @@ async def message_router(update: Update, context: ContextTypes.DEFAULT_TYPE):
     user_id = query.from_user.id
     choice = query.data
 
-    # Handle different menu choices
     if choice == "create_case":
         await query.edit_message_text(get_text(user_id, "create_case_title"))
         await query.message.reply_text(get_text(user_id, "enter_name"))
@@ -771,10 +773,15 @@ async def message_router(update: Update, context: ContextTypes.DEFAULT_TYPE):
         return State.HANDLE_REPLY
 
     elif choice == "settings":
-        # ✅ Clear all conversation-related data to prevent interference
-        context.user_data.clear()
-        return await jump_to_command(update, context, "/settings")
+        # ✅ Optional: Remove previous inline keyboard
+        await query.edit_message_reply_markup(reply_markup=None)
 
+        # ✅ Clear user and chat data
+        context.user_data.clear()
+        context.chat_data.clear()
+
+        # ✅ Trigger the actual settings command handler
+        return await settings_command(update, context)
 
     elif choice == "help":
         await query.edit_message_text(
@@ -783,9 +790,15 @@ async def message_router(update: Update, context: ContextTypes.DEFAULT_TYPE):
         )
         return State.HANDLE_REPLY
 
+    elif choice == "go_back":
+        return await main_menu(update, context)
+
     else:
         await query.edit_message_text("❗ Please choose an option using the buttons.")
         return State.HANDLE_REPLY
+
+        
+
 # handlers/shared.py
 @catch_async
 async def cancel(update: Update, context: ContextTypes.DEFAULT_TYPE) -> int:
@@ -823,3 +836,24 @@ async def jump_to_command(update, context, command_text: str):
     return ConversationHandler.END
 
 
+
+
+
+@catch_async
+async def main_menu(update: Update, context: ContextTypes.DEFAULT_TYPE) -> int:
+    user_id = update.effective_user.id
+
+    keyboard = [
+        [InlineKeyboardButton("✅ Create Case", callback_data="create_case")],
+        [InlineKeyboardButton("🕵️ Find People", callback_data="find_people"),
+         InlineKeyboardButton("⚙️ Settings", callback_data="settings")],
+        [InlineKeyboardButton("❓ Help", url="https://t.me/YourHelpBot")]
+    ]
+
+    await context.bot.send_message(
+        chat_id=update.effective_chat.id,
+        text="Choose an option below to continue:",
+        reply_markup=InlineKeyboardMarkup(keyboard)
+    )
+
+    return State.HANDLE_REPLY
