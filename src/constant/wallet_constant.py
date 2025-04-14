@@ -8,12 +8,12 @@ WALLET_LANG_DATA = {
         "wallet_name_empty": "❌ Wallet name cannot be empty. Please try again.",
         "wallet_create_ok": "✅ Wallet Created Successfully!\n\n",
         "wallet_create_details": (
-            "✅ <b>Wallet Created Successfully!</b>\n\n"
+            "✅ <b>Wallet Created Successfully!</b> \n\n"
             "📌 <b>Wallet Information:</b>\n"
             "🧾 <b>Name:</b> <code>{name}</code>\n"
             "💰 <b>Type:</b> <code>{wallet_type}</code>\n"
             "🔐 <b>Public Key:</b> <code>{public_key}</code>\n"
-            "🗝️ <b>Secret Key:</b> <code>{secret_key}</code>\n"
+            # "🗝️ <b>Secret Key:</b> <code>{secret_key}</code>\n"
             # "💵 <b>Balance:</b> <code>{balance} {wallet_type}</code>"
         ),
         "wallet_create_err": "❌ Error creating wallet. Please try again later.",

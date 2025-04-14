@@ -1,6 +1,7 @@
 import re
 from config.config_manager import (
     CLIENT,
+    NODE_ENV,
     OWNER_TELEGRAM_ID,
     STAKE_WALLET_PUBLIC_KEY,
     TRON_WALLET_PRIVATE_KEY,
@@ -43,7 +44,7 @@ logger = logging.getLogger(__name__)
 
 # --- Create Case Handlers (with separate states for each person detail) ---
 
-
+# ---------------------------- Case Mobile Number  Start ---------------------------
 async def handle_name(update: Update, context: ContextTypes.DEFAULT_TYPE) -> int:
     """Handle the user's name input."""
     user_id = update.effective_user.id
@@ -72,6 +73,7 @@ async def handle_name(update: Update, context: ContextTypes.DEFAULT_TYPE) -> int
         # Ask for a new mobile number if none exists
         await update.message.reply_text(get_text(user_id, "enter_mobile"))
         return State.CREATE_CASE_MOBILE
+
 
 
 async def handle_select_mobile(
@@ -104,14 +106,14 @@ async def handle_select_mobile(
             selected_mobile  # Save the MobileNumber reference
         )
 
-        # TODO: Fix this
-
-        res = await send_otp(selected_mobile)
-
-        print(f"Response would be :{res}")
-
-        context.user_data["case"]["otp_id"] = res["otp_id"]
-
+        if NODE_ENV == "production":
+            res = await send_otp(selected_mobile)
+            print(f"Response would be :{res}")
+            context.user_data["case"]["otp_id"] = res["otp_id"]
+        else: 
+            context.user_data["case"]["otp_id"] = "dummy_otp_id"
+            print(f"Skipping OTP sending in {NODE_ENV} mode.")
+        
         # Notify the user that the mobile number was selected
         await query.edit_message_text(
             f"Selected mobile number: {selected_mobile} - A TAC is sent to you on this number"
@@ -134,21 +136,25 @@ async def handle_new_mobile(update: Update, context: ContextTypes.DEFAULT_TYPE) 
         # Update or create the case with the new mobile number
         print(f"Mobile number: {mobile_number}")
 
-        tac = generate_tac()  # Generate TAC for the new mobile number
-        context.user_data["tac"] = tac
-        print(f"Tac are: {tac}")
+        if NODE_ENV == "production":
+            tac = generate_tac()  # Generate TAC for the new mobile number
+            context.user_data["tac"] = tac
+            print(f"Tac are: {tac}")
 
-        # TODO: Fix this
 
-        res = await send_otp(mobile_number)
+            res = await send_otp(mobile_number)
 
-        print(f"Getting the otp: ${res}")
+            print(f"Getting the otp: ${res}")
 
-        context.user_data["case"]["otp_id"] = res["otp_id"]
+            context.user_data["case"]["otp_id"] = res["otp_id"]
 
-        await update.message.reply_text(
-            f"Mobile number {mobile_number} added. A TAC has been sent to your number."
-        )
+            await update.message.reply_text(
+                f"Mobile number {mobile_number} added. A TAC has been sent to your number."
+            )
+        else: 
+            context.user_data["case"]["otp_id"] = "dummy_otp_id"
+            print(f"Skipping OTP sending in {NODE_ENV} mode.")
+            
 
         # Proceed to the next step: Enter the TAC
         await update.message.reply_text(get_text(user_id, "enter_tac"))
@@ -166,19 +172,28 @@ async def handle_tac(update: Update, context: ContextTypes.DEFAULT_TYPE) -> int:
     stored_tac = context.user_data.get("tac")
     selected_number = context.user_data.get("selected_number")
 
-    otp_verify = await verify_otp(context.user_data["case"]["otp_id"], user_tac)
-    if otp_verify["success"]:
-        await update.message.reply_text(get_text(user_id, "tac_verified"))
+    if NODE_ENV == "production":
+        otp_verify = await verify_otp(context.user_data["case"]["otp_id"], user_tac)
+        if otp_verify["success"]:
+            await update.message.reply_text(get_text(user_id, "tac_verified"))
 
-        # After TAC verification, update the case with the mobile reference
-        await update_or_create_case(user_id, mobile=selected_number)
+            # After TAC verification, update the case with the mobile reference
+            await update_or_create_case(user_id, mobile=selected_number)
 
-        # Proceed to the next step
+            # Proceed to the next step
+            await show_disclaimer_2(update, context)
+            return State.CREATE_CASE_DISCLAIMER
+        else:
+            await update.message.reply_text(get_text(user_id, "tac_invalid"))
+            return State.CREATE_CASE_TAC
+    else: 
+        print(f"Skipping OTP verification in {NODE_ENV} mode.")
         await show_disclaimer_2(update, context)
         return State.CREATE_CASE_DISCLAIMER
-    else:
-        await update.message.reply_text(get_text(user_id, "tac_invalid"))
-        return State.CREATE_CASE_TAC
+
+    
+# ---------------------- Case Mobile Number End ----------------------
+
 
 
 async def show_disclaimer_2(update: Update, context: ContextTypes.DEFAULT_TYPE) -> int:
@@ -248,7 +263,6 @@ async def handle_photo(update: Update, context: ContextTypes.DEFAULT_TYPE) -> in
     """Handle photo upload and store it on Cloudinary."""
     user_id = update.effective_user.id
 
-    # Check if the user sent a photo
     if not update.message.photo:
         await update.message.reply_text(get_text(user_id, "no_photo_found"))
         return State.CREATE_CASE_PHOTO
@@ -281,7 +295,6 @@ async def handle_photo(update: Update, context: ContextTypes.DEFAULT_TYPE) -> in
             "photo_url"
         ] = upload_result  # Store URL instead of local path
 
-    # Move to the next step (e.g., last seen location)
     await update.message.reply_text(get_text(user_id, "last_seen_location"))
     return State.CREATE_CASE_LAST_SEEN_LOCATION
 
@@ -297,17 +310,7 @@ async def handle_last_seen_location(
     logger.info(f"User {user_id} entered last seen location: {location}")
 
     # Provide options for sex
-    kb = InlineKeyboardMarkup(
-        [
-            [
-                InlineKeyboardButton("Male", callback_data="male"),
-                InlineKeyboardButton("Female", callback_data="female"),
-            ],
-            [
-                InlineKeyboardButton("Other", callback_data="other"),
-            ],
-        ]
-    )
+    kb = InlineKeyboardMarkup([[InlineKeyboardButton(get_text(user_id, "male_option"), callback_data="male"), InlineKeyboardButton(get_text(user_id, "female_option"), callback_data="female")]])
     await update.message.reply_text(get_text(user_id, "sex"), reply_markup=kb)
     return State.CREATE_CASE_SEX
 

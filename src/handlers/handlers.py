@@ -34,8 +34,6 @@ from handlers.finder_handler import (
     case_details,
     handle_proof,
     handle_found_case,
-    province_callback,
-    choose_province,
 )
 from handlers.listing_handler import (
     advertiser_wallet_name_handler,
@@ -235,13 +233,6 @@ start_handler = ConversationHandler(
                 handle_transfer_confirmation,
                 pattern="^(confirm_transfer|cancel_transfer)$",
             )
-        ],
-        # From here the finder is the one who is going to find the person
-        State.CHOOSE_PROVINCE: [
-            CallbackQueryHandler(
-                province_callback, pattern="^(province_select_|province_page_)"
-            ),
-            MessageHandler(filters.TEXT & ~filters.COMMAND, choose_province),
         ],
         State.CASE_LIST: [
             CallbackQueryHandler(show_advertisements, pattern=r"^page_(previous|next)"),

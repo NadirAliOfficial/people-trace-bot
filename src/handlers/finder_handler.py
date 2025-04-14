@@ -43,7 +43,7 @@ async def fetch_cases_by_province(location):
     """
     # Implement this function
     case = await Case.find(
-        {"last_seen_location": location, "status": CaseStatus.ADVERTISE}
+        {"province": location, "status": CaseStatus.ADVERTISE}
     ).to_list()
     print(f"These are the cases for {location}: {case}")
 
@@ -93,7 +93,7 @@ async def choose_province(update: Update, context: ContextTypes.DEFAULT_TYPE) ->
 
         # Fetch cases from DB where last_seen_location matches province
         cases = await Case.find(
-            {"last_seen_location": selected_province, "status": CaseStatus.ADVERTISE}
+            {"province": selected_province, "status": CaseStatus.ADVERTISE}
         ).to_list()
 
         if not cases:
@@ -636,7 +636,7 @@ async def finder_wallet_selection_callback(
         msg = get_text(user_id, "wallet_create_details").format(
             name=wallet_details["name"],
             public_key=wallet_details["public_key"],
-            secret_key=wallet_details["private_key"],
+            # secret_key=wallet_details["private_key"],
             balance=total_sol,  # For USDT, balance might be different
             wallet_type=wallet_type,
         )

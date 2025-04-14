@@ -37,6 +37,9 @@ CASE_CONSTANT = {
         "case_submitted": "Your case has been submitted successfully.",
         "case_completed": "Your case has been completed.",
         "reward_amount_negative": "The reward amount cannot be negative.",
+          "male_option": "♂ Male",
+        "female_option": "♀ Female",
+        "other_option": "Other",
     },
     "zh": {
         "create_case_title": "创建新案件",
@@ -76,6 +79,9 @@ CASE_CONSTANT = {
         "case_submitted": "您的案件已成功提交。",
         "case_completed": "您的案件已完成。",
         "reward_amount_negative": "奖励金额不能为负。",
+        "male_option": "♂ 男",
+        "female_option": "♀ 女",
+        "other_option": "其他",
     },
     "ms": {
         "create_case_title": "Buat Kes Baharu",
@@ -115,5 +121,8 @@ CASE_CONSTANT = {
         "case_submitted": "Kes anda telah berjaya dihantar.",
         "case_completed": "Kes anda telah selesai.",
         "reward_amount_negative": "Jumlah ganjaran tidak boleh negatif.",
+        "male_option": "♂ Lelaki",
+        "female_option": "♀ Perempuan",
+        "other_option": "Lain-lain",
     },
 }

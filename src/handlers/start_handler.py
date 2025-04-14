@@ -1,16 +1,15 @@
 import logging
-from handlers.finder_handler import get_province_matches
+from handlers.finder_handler import choose_province, get_province_matches
 from handlers.settings_handler import settings_command
+from models.case_model import Case, CaseStatus
 from services.case_service import update_or_create_case
+from services.finder_service import FinderService
 from services.tron_wallet_service import TronWallet
 from services.wallet_service import WalletService
 from telegram import (
     Update,
     InlineKeyboardMarkup,
     InlineKeyboardButton,
-    ReplyKeyboardRemove,
-    KeyboardButton,
-    ReplyKeyboardMarkup
 )
 from telegram.ext import (
     ConversationHandler,
@@ -274,6 +273,8 @@ async def start_choose_province(update: Update, context: ContextTypes.DEFAULT_TY
     if len(matches) == 1:
         # Only one match – save and proceed
         context.user_data["province"] = matches[0]
+        await update_or_create_case(user_id, province=matches[0])
+
         await update.message.reply_text(
             f"{get_text(user_id, 'province_selected')} {matches[0]}.",
             parse_mode="HTML",
@@ -510,6 +511,10 @@ async def action_callback(update: Update, context: ContextTypes.DEFAULT_TYPE) ->
     await query.answer()
     user_id = query.from_user.id
     choice = query.data
+    province = context.user_data.get("province", None)
+    country = context.user_data.get("country", None)
+    city = context.user_data.get("city", None)
+    
     if choice == "advertise":
         # From the original code, it goes to CHOOSE_WALLET_TYPE
         kb = InlineKeyboardMarkup(
@@ -530,8 +535,66 @@ async def action_callback(update: Update, context: ContextTypes.DEFAULT_TYPE) ->
         return State.CHOOSE_WALLET_TYPE
     elif choice == "find_people":
         # Clearing the province
-        await query.edit_message_text(get_text(user_id, "enter_province"))
-        return State.CHOOSE_PROVINCE
+        await FinderService.update_or_create_finder(
+            user_id=user_id,
+            province=province,
+            city=city,
+            country=country,
+        )
+        context.user_data["province"] = province  # Save province in context
+
+        # Fetch cases from DB where last_seen_location matches province
+        cases = await Case.find(
+            {"province": province, "status": CaseStatus.ADVERTISE}
+        ).to_list()
+
+        if not cases:
+            await query.edit_message_text(
+                get_text(user_id, "no_case_found_in_province").format(
+                    province=province
+                ),
+                parse_mode="Markdown",
+            )
+            return State.START_CHOOSE_PROVINCE
+
+        # Save case list in context for pagination
+        context.user_data["cases"] = cases
+        context.user_data["page"] = 1
+
+        # Paginate cases
+        paginated_cases, total_pages = paginate_list(cases, 1)
+
+        # Create keyboard buttons for cases
+        keyboard = [
+            [
+                InlineKeyboardButton(
+                    f"Case {case.person_name} ({case.id})",
+                    callback_data=f"case_{str(case.id)}",
+                )
+            ]
+            for case in paginated_cases
+        ]
+
+        # Add pagination buttons
+        navigation_buttons = []
+        if total_pages > 1:
+            navigation_buttons.append(
+                InlineKeyboardButton("⬅️ Previous", callback_data="case_page_previous")
+            )
+            navigation_buttons.append(
+                InlineKeyboardButton("➡️ Next", callback_data="case_page_next")
+            )
+        if navigation_buttons:
+            keyboard.append(navigation_buttons)
+
+        reply_markup = InlineKeyboardMarkup(keyboard)
+
+        await query.edit_message_text(
+            f"📍 **Cases from {province}:**",
+            reply_markup=reply_markup,
+            parse_mode="Markdown",
+        )
+        return State.CASE_DETAILS
     else:
         await query.edit_message_text(
             get_text(user_id, "invalid_choice"), parse_mode="HTML"
@@ -625,7 +688,7 @@ async def wallet_selection_callback(
         msg = get_text(user_id, "wallet_create_details").format(
             name=wallet_details["name"],
             public_key=wallet_details["public_key"],
-            secret_key=wallet_details["private_key"],
+            # secret_key=wallet_details["private_key"],
             balance=total_sol,  # For USDT, balance might be different
             wallet_type=wallet_type,
         )
@@ -719,7 +782,7 @@ async def wallet_name_handler(
         msg = get_text(user_id, "wallet_create_details").format(
             name=wallet.name,
             public_key=wallet.public_key,
-            secret_key=wallet.private_key,
+            # secret_key=wallet.private_key,
             balance=total_sol,  # For USDT, the balance logic will vary
             wallet_type=wallet_type,
         )
@@ -761,6 +824,9 @@ async def message_router(update: Update, context: ContextTypes.DEFAULT_TYPE):
     await query.answer()
     user_id = query.from_user.id
     choice = query.data
+    province = context.user_data.get("province", None)
+    country = context.user_data.get("country", None)
+    city = context.user_data.get("city", None)
 
     if choice == "create_case":
         await query.edit_message_text(get_text(user_id, "create_case_title"))
@@ -768,8 +834,67 @@ async def message_router(update: Update, context: ContextTypes.DEFAULT_TYPE):
         return State.CREATE_CASE_NAME
 
     elif choice == "find_people":
-        await query.edit_message_text("🔍 Searching for people (feature coming soon)...")
-        return State.HANDLE_REPLY
+         # Clearing the province
+        await FinderService.update_or_create_finder(
+            user_id=user_id,
+            province=province,
+            city=city,
+            country=country,
+        )
+        context.user_data["province"] = province  # Save province in context
+
+        # Fetch cases from DB where last_seen_location matches province
+        cases = await Case.find(
+            {"province": province, "status": CaseStatus.ADVERTISE}
+        ).to_list()
+
+        if not cases:
+            await query.edit_message_text(
+                get_text(user_id, "no_case_found_in_province").format(
+                    province=province
+                ),
+                parse_mode="Markdown",
+            )
+            return State.START_CHOOSE_PROVINCE
+
+        # Save case list in context for pagination
+        context.user_data["cases"] = cases
+        context.user_data["page"] = 1
+
+        # Paginate cases
+        paginated_cases, total_pages = paginate_list(cases, 1)
+
+        # Create keyboard buttons for cases
+        keyboard = [
+            [
+                InlineKeyboardButton(
+                    f"Case {case.person_name} ({case.id})",
+                    callback_data=f"case_{str(case.id)}",
+                )
+            ]
+            for case in paginated_cases
+        ]
+
+        # Add pagination buttons
+        navigation_buttons = []
+        if total_pages > 1:
+            navigation_buttons.append(
+                InlineKeyboardButton("⬅️ Previous", callback_data="case_page_previous")
+            )
+            navigation_buttons.append(
+                InlineKeyboardButton("➡️ Next", callback_data="case_page_next")
+            )
+        if navigation_buttons:
+            keyboard.append(navigation_buttons)
+
+        reply_markup = InlineKeyboardMarkup(keyboard)
+
+        await query.edit_message_text(
+            f"📍 **Cases from {province}:**",
+            reply_markup=reply_markup,
+            parse_mode="Markdown",
+        )
+        return State.CASE_DETAILS
 
     elif choice == "settings":
         # ✅ Optional: Remove previous inline keyboard

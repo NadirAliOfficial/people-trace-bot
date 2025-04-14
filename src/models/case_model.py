@@ -18,6 +18,7 @@ class Case(Document):
     user_id: int
     country: Optional[str] = None
     city: Optional[str] = None
+    province: Optional[str] = None
     wallet: Link[Wallet] = None
     status: CaseStatus = Field(default=CaseStatus.DRAFT)
     case_no: Optional[str] = None

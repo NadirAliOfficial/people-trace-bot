@@ -21,7 +21,7 @@ import traceback
 from models.extend_reward_model import ExtendReward
 from models.finder_model import Finder, FinderStatus
 from models.wallet_model import Wallet
-from services.case_service import update_case
+from services.case_service import update_case, update_or_create_case
 from services.finder_service import FinderService
 from services.tron_wallet_service import TronWallet
 from services.user_service import get_user_lang
@@ -64,7 +64,7 @@ async def listing_command(update: Update, context: ContextTypes.DEFAULT_TYPE) ->
     for case in paginated_cases:
         row = [
             InlineKeyboardButton(
-                f"Case {case.case_no} - {case.person_name}",
+                f"{case.person_name} ({case.id})",
                 callback_data=f"case_{str(case.id)}",
             )
         ]
@@ -1327,7 +1327,7 @@ async def advertiser_wallet_selection_callback(
         msg = get_text(user_id, "wallet_create_details").format(
             name=wallet_details["name"],
             public_key=wallet_details["public_key"],
-            secret_key=wallet_details["private_key"],
+            # secret_key=wallet_details["private_key"],
             balance=total_sol,  # For USDT, balance might be different
             wallet_type=wallet_type,
         )
