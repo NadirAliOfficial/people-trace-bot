@@ -767,6 +767,7 @@ async def finder_handle_transaction_confirmation(
     wallet = case.wallet
     print(f"Wallet: {wallet}")
     print(f"Case: {case}")
+
     if case.status == CaseStatus.ADVERTISE:
         if isExtendedFlow:
             extend_reward = ExtendReward(
@@ -776,7 +777,6 @@ async def finder_handle_transaction_confirmation(
                 extend_reward_amount=context.user_data["reward_difference"],
                 reason="Just for the testing Purpose.",
             )
-
             await extend_reward.save()
 
         finder = await FinderService.update_or_create_finder(
@@ -784,45 +784,48 @@ async def finder_handle_transaction_confirmation(
             case=case_id,
             status=FinderStatus.FIND,
         )
-        # TODO: Add a check to see if the user has already been notified
 
         # Message to the OWNER (Advertiser)
         await context.bot.send_message(
             chat_id=case.user_id,
             text=(
-                "📢 *Finder Request Submitted!* 📢\n\n"
-                f"🔎 **User ID:** `{finder.user_id}`\n"
-                f"📂 **Has added a 'Find' request for your advertisement (Case ID:** `#{case.id}`)\n"
-                f"📞 **Finder's Contact Number:** `{"----"}`\n\n"
+                "📢 <b>Finder Request Submitted!</b> 📢\n\n"
+                f"🔎 <b>User ID:</b> <code>{finder.user_id}</code>\n"
+                f"📂 <b>Case:</b> Finder has submitted a request for your advertisement (Case ID: <code>#{case.id}</code>)\n"
+                f"📞 <b>Finder's Contact Number:</b> <code>{'----'}</code>\n\n"
                 "🔔 Please review the details and confirm the reward if everything is accurate.\n"
                 "💰 Once confirmed, proceed with the payment.\n\n"
-                "**📝 Type `/listing` to view all complaints.**"
+                "📝 Type <b>/listing</b> to view all complaints."
             ),
+            parse_mode="HTML"
         )
 
         # Message to the FINDER (Confirmation)
         await query.edit_message_text(
-            "🎯 *Request Submitted Successfully!* 🎯\n"
+            "🎯 <b>Request Submitted Successfully!</b> 🎯\n\n"
             "Your finder request has been sent to the advertiser. 🚀\n"
-            "They will review the details, and you will receive your reward once accepted.\n\n"
-            "**💬 Type `/listing` to view all cases.**"
+            "They will review the details and you will receive your reward once approved.\n\n"
+            "💬 Type <b>/listing</b> to view all cases.",
+            parse_mode="HTML"
         )
 
-        # Message to the THIRD ROLE (e.g., Moderator/Admin)
+        # Message to the MODERATOR/ADMIN
         await context.bot.send_message(
             chat_id=OWNER_TELEGRAM_ID,
             text=(
-                "🛑 *Attention Required!* 🛑\n\n"
-                "🚨 A new 'Finder' request has been submitted.\n"
-                f"📂 **Case ID:** `#{case.id}`\n"
-                f"👤 **Finder User ID:** `{finder.user_id}`\n"
-                f"📞 **Finder's Contact Number:** `{"----"}`\n\n"
+                "🛑 <b>Attention Required!</b> 🛑\n\n"
+                "🚨 A new <b>'Finder'</b> request has been submitted.\n"
+                f"📂 <b>Case ID:</b> <code>#{case.id}</code>\n"
+                f"👤 <b>Finder User ID:</b> <code>{finder.user_id}</code>\n"
+                f"📞 <b>Finder's Contact Number:</b> <code>{'----'}</code>\n\n"
                 "🔍 Please review the case and assist in the verification process if needed.\n"
-                "**📝 Type `/listing` to view all active complaints.**"
+                "📝 Type <b>/listing</b> to view all active complaints."
             ),
+            parse_mode="HTML"
         )
 
         return State.END
+
 
 
 # ------------------------------- FINDER LOGIC END ------------------------------------
