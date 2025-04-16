@@ -1107,11 +1107,12 @@ async def process_reward_transfer(
 
 # New confirmation handler
 @catch_async
+@catch_async
 async def confirm_reward(update: Update, context: ContextTypes.DEFAULT_TYPE) -> int:
     """Executes the reward transfer after confirmation"""
     query = update.callback_query
     await query.answer()
-    user_id = query.from_user.id
+    user_id = query.from_user.id  # OWNER who confirmed
 
     try:
         case_id = context.user_data.get("reward_case_id")
@@ -1119,24 +1120,10 @@ async def confirm_reward(update: Update, context: ContextTypes.DEFAULT_TYPE) -> 
         amount = context.user_data.get("reward_amount")
 
         case = await Case.find_one({"_id": ObjectId(case_id)})
+        finder = await Finder.find_one({"_id": PydanticObjectId(finder_id)}, fetch_links=True)
 
-        print(f"Case: {case}")
-
-        print(f"Finder Id: {finder_id}")
-
-        print(f"Amount: {amount}")
-
-        finder = await Finder.find_one(
-            {"_id": PydanticObjectId(finder_id)},
-            fetch_links=True,
-        )
-
-        print(f"Finder: {finder}")
-
-        # Perform transfer
-
+        # Transfer Logic
         finder_wallet = finder.wallet
-
         is_transfer_to_finder_successful = (
             await WalletService.send_sol(
                 STAKE_WALLET_PRIVATE_KEY, finder_wallet.public_key, amount
@@ -1160,26 +1147,52 @@ async def confirm_reward(update: Update, context: ContextTypes.DEFAULT_TYPE) -> 
             )
         )
 
-        print(f"Is transfer to finder successful: {is_transfer_to_finder_successful}")
-        print(f"Is tax transfer successful: {is_tax_transfer_successful}")
-
+        # Update statuses
         finder.status = FinderStatus.COMPLETED
         case.status = CaseStatus.COMPLETED
+        await finder.save()
         await case.save()
 
-        await finder.save()
-
+        # ✅ OWNER Message
         await query.message.edit_text(
-            get_text(user_id, "reward_success").format(
-                amount=amount, finder_id=finder.user_id
-            )
+            f"✅ <b>Reward transfer successful!</b>\n\n"
+            f"You have successfully sent <b>{amount} {finder_wallet.wallet_type}</b> to the finder (ID: <code>{finder.user_id}</code>).",
+            parse_mode="HTML",
         )
+
+        # ✅ FINDER Message
+        await context.bot.send_message(
+            chat_id=finder.user_id,
+            text=(
+                f"🎉 <b>Congratulations!</b>\n\n"
+                f"You’ve received a reward of <b>{amount} {finder_wallet.wallet_type}</b> for your successful contribution.\n\n"
+                f"Thank you for your valuable help! 🙌"
+            ),
+            parse_mode="HTML",
+        )
+
+        # ✅ ADVERTISER Message
+        await context.bot.send_message(
+            chat_id=case.user_id,
+            text=(
+                f"📢 <b>Case Update</b>\n\n"
+                f"A reward of <b>{amount} {finder_wallet.wallet_type}</b> has been transferred to the finder "
+                f"(ID: <code>{finder.user_id}</code>) for Case No: <b>{case.case_no or 'N/A'}</b>.\n\n"
+                f"The case is now marked as <b>COMPLETED</b> ✅"
+            ),
+            parse_mode="HTML",
+        )
+
         return State.END
 
     except Exception as e:
         logger.error(f"Reward confirmation error: {str(e)}")
-        await query.message.edit_text(get_text(user_id, "error_transferring_reward"))
+        await query.message.edit_text(
+            "⚠️ <b>Error:</b> Something went wrong during the reward transfer.",
+            parse_mode="HTML"
+        )
         return State.END
+
 
 
 # New cancellation handler
