@@ -673,14 +673,11 @@ async def finder_wallet_selection_callback(
         )
         return State.END
 
-
 @catch_async
 async def finder_wallet_name_handler(
     update: Update, context: ContextTypes.DEFAULT_TYPE
 ) -> int:
     user_id = update.effective_user.id
-    query = update.callback_query
-    await query.answer()
 
     if update.callback_query:
         query = update.callback_query
@@ -692,7 +689,14 @@ async def finder_wallet_name_handler(
         )
         return State.NAME_WALLET
 
-    wallet_name = update.message.text.strip()
+    # If not a callback query, assume it's a message with the wallet name
+    if update.message and update.message.text:
+        wallet_name = update.message.text.strip()
+    else:
+        await update.message.reply_text(
+            get_text(user_id, "wallet_name_empty"), parse_mode="HTML"
+        )
+        return State.FINDER_NAME_WALLET
 
     case_id = context.user_data.get("found_case_no")
     case = await get_case_by_id(case_id)
@@ -705,15 +709,10 @@ async def finder_wallet_name_handler(
         )
         return State.FINDER_NAME_WALLET
 
-    print("Hello there how are you doing", wallet_name)
-
     wallet_type = context.user_data.get("wallet_type")
-
-    print(f"Wallet type: {wallet_type}")
-
     wallet = await WalletService.create_wallet(user_id, wallet_type, wallet_name)
-    if wallet:
 
+    if wallet:
         if wallet_type == "SOL":
             total_sol = await WalletService.get_sol_balance(wallet.public_key)
         elif wallet_type == "USDT":
@@ -738,7 +737,7 @@ async def finder_wallet_name_handler(
             f"Wallet address: {wallet.public_key}"
         )
 
-        await query.edit_message_text(
+        await update.message.reply_text(
             f"Confirm transfer of {case.reward} {wallet.wallet_type} from {wallet.name}?\n"
             f"Wallet address: {wallet.public_key}",
             reply_markup=InlineKeyboardMarkup(keyboard),
@@ -750,7 +749,6 @@ async def finder_wallet_name_handler(
             get_text(user_id, "wallet_create_err"), parse_mode="HTML"
         )
         return State.END
-
 
 @catch_async
 async def finder_handle_transaction_confirmation(

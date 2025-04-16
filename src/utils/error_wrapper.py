@@ -20,7 +20,7 @@ def catch_async(func):
         try:
             return await func(update, context, *args, **kwargs)
         except Exception as e:
-            if not NODE_ENV == "production":
+            if NODE_ENV.lower() != "production":
                 # Full traceback in development
                 error_message = "".join(
                     traceback.format_exception(type(e), e, e.__traceback__)

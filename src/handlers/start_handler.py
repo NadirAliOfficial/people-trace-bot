@@ -29,6 +29,7 @@ async def start(update: Update, context: ContextTypes.DEFAULT_TYPE) -> int:
     """/start command entry point."""
     user_id = update.message.from_user.id
     user_lang = await get_user_lang(user_id)
+    raise Exception("Something went wrong")
     if user_lang:
         user_data_store[user_id] = {"lang": user_lang}
         context.user_data["lang"] = user_lang
