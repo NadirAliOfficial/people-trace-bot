@@ -646,17 +646,16 @@ async def finder_wallet_selection_callback(
 
         # Send confirmation as a new message
         confirmation_message = (
-            f"❗ <b>Confirmation Required</b> ❗\n\n"
-            f"Are you sure you want to receive the reward of <b>{case.reward} {wallet_details['wallet_type']}</b> in this wallet?\n"
-            f"🔑 <b>Wallet Address:</b> <code>{wallet_details['public_key']}</code>"
+            f"❗ <b>Reward Confirmation</b> ❗\n\n"
+            f"Do you want to <b>request the reward</b> of <b>{case.reward} {wallet_details['wallet_type']}</b> to the wallet below?\n\n"
+            f"🔐 <b>Wallet Address:</b>\n<code>{wallet_details['public_key']}</code>\n\n"
+            f"By confirming, your request will be sent to the administrator for manual processing."
         )
 
         keyboard = [
             [
-                InlineKeyboardButton(
-                    "✅ Confirm Transfer", callback_data="confirm_transfer"
-                ),
-                InlineKeyboardButton("❌ Cancel", callback_data="cancel_transfer"),
+                InlineKeyboardButton("📨 Send Request", callback_data="send_request_to_admin"),
+                InlineKeyboardButton("❌ Cancel", callback_data="cancel_request"),
             ]
         ]
 
@@ -682,10 +681,13 @@ async def finder_wallet_name_handler(
     user_id = update.effective_user.id
     query = update.callback_query
     await query.answer()
+
     if update.callback_query:
-        # If it's a callback query, prompt the user to enter a wallet name
-        await update.callback_query.answer()
-        await update.callback_query.edit_message_text(
+        query = update.callback_query
+        await query.answer()
+
+        # Prompt the user to enter a wallet name
+        await query.edit_message_text(
             get_text(user_id, "wallet_name_prompt"), parse_mode="HTML"
         )
         return State.NAME_WALLET
@@ -720,19 +722,7 @@ async def finder_wallet_name_handler(
         print(f"Total SOL: {total_sol}")
         print(f"This is the wallet type: {wallet_type}")
 
-        print("Before wallet")
         context.user_data["wallet"] = wallet
-        print("Before Message")
-        msg = get_text(user_id, "wallet_create_details")
-        # .format(
-        #     name=wallet.name,
-        #     public_key=wallet.public_key,
-        #     secret_key=wallet.private_key,
-        #     balance=total_sol,  # For USDT, the balance logic will vary
-        #     wallet_type=wallet_type,
-        # )
-
-        print("Before keywords")
 
         keyboard = [
             [
