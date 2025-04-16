@@ -654,8 +654,8 @@ async def finder_wallet_selection_callback(
 
         keyboard = [
             [
-                InlineKeyboardButton("📨 Send Request", callback_data="send_request_to_admin"),
-                InlineKeyboardButton("❌ Cancel", callback_data="cancel_request"),
+                InlineKeyboardButton("📨 Send Request", callback_data="confirm_transfer"),
+                InlineKeyboardButton("❌ Cancel", callback_data="cancel_transfer"),
             ]
         ]
 
