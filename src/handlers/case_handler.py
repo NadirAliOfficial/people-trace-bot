@@ -533,7 +533,6 @@ async def handle_transfer_confirmation(
     print(f"Wallet Type: {wallet_type}")
 
     if user_input == "confirm_transfer":
-        # Proceed with the transfer
         try:
             # Check if wallet has sufficient balance
             wallet_balance = (
@@ -547,19 +546,15 @@ async def handle_transfer_confirmation(
             if wallet.wallet_type in ["USDT", "TRX"] and wallet_balance < reward_amount:
                 await query.answer()
                 await query.edit_message_text(
-                    get_text(user_id, "insufficient_balance_for_transfer").format(
-                        wallet_balance=wallet_balance,
-                        reward_amount=reward_amount,
-                        wallet_type=wallet_type,
-                    )
+                    f"🚫 <b>Insufficient Balance</b>\n\n"
+                    f"Your wallet has only <b>{wallet_balance} {wallet_type}</b>.\n"
+                    f"The reward amount is <b>{reward_amount} {wallet_type}</b>.\n"
+                    f"Please ensure your wallet has enough balance to proceed.",
+                    parse_mode="HTML"
                 )
                 return State.CREATE_CASE_CONFIRM_TRANSFER
 
-            # Transfer the reward (this is just a placeholder, you need to implement transfer logic)
-            transfer_success = False
-            print(f"Transfer to owner: {wallet.public_key}")
-            print(f"Reward amount: {reward_amount}")
-
+            # Attempt transfer (placeholder logic)
             transfer_success = (
                 await WalletService.send_sol(
                     wallet.private_key, STAKE_WALLET_PUBLIC_KEY, reward_amount
@@ -570,63 +565,67 @@ async def handle_transfer_confirmation(
                 )
             )
 
-            print("Getting the balance of the wallet")
             print(f"Transfer_success: {transfer_success}")
 
-            print(f"Debug No: 1", transfer_success)
             if transfer_success:
                 # Notify the advertiser
                 advertiser_message = (
-                    f"🎉 Congratulations! Your advertisement has been successfully processed.\n\n"
-                    f"Case ID: {case.id}\n"
-                    f"Reward Amount: {reward_amount} {wallet_type}\n"
-                    f"Wallet Type: {wallet_type}\n\n"
-                    f"Thank you for choosing our platform!"
+                    f"🎉 <b>Congratulations!</b>\n\n"
+                    f"Your reward of <b>{reward_amount} {wallet_type}</b> has been successfully transferred.\n"
+                    f"Thank you for being part of our platform. 🙌"
                 )
-                await query.message.reply_text(advertiser_message)
+                await query.message.reply_text(advertiser_message, parse_mode="HTML")
 
-                print(f"Debug No: 2")
-
-                # Notify the owner
+                # Notify the bot owner
                 owner_message = (
-                    f"📢 **New Advertisement Notification**\n\n"
-                    f"🎯 **A new case has been successfully advertised!**\n\n"
-                    f"🆔 **Advertiser ID:** {user_id}\n"
-                    f"📄 **Case ID:** {case.id}\n"
-                    f"💰 **Reward Amount:** {reward_amount} {wallet_type}\n"
-                    f"🔒 **Wallet Type:** {wallet_type}\n\n"
-                    f"✅ **The funds have been securely transferred.**\n"
-                    f"📋 Use `/listing` to view all available cases."
+                    f"📢 <b>New Reward Transfer Completed</b>\n\n"
+                    f"🆔 <b>User ID:</b> <code>{user_id}</code>\n"
+                    f"📄 <b>Case ID:</b> <code>{case.id}</code>\n"
+                    f"💰 <b>Amount:</b> {reward_amount} {wallet_type}\n"
+                    f"🔐 <b>Wallet:</b> <code>{wallet.public_key}</code>\n"
+                    f"🏷️ <b>Wallet Name:</b> {wallet.name}\n\n"
+                    f"✅ <b>Status:</b> Reward transferred successfully.\n"
+                    f"🔍 Use /listing to view all active cases."
                 )
-
                 await context.bot.send_message(
-                    chat_id=OWNER_TELEGRAM_ID, text=owner_message
+                    chat_id=OWNER_TELEGRAM_ID, text=owner_message, parse_mode="HTML"
                 )
 
-                # Update case status
                 case.status = CaseStatus.ADVERTISE
                 await case.save()
-
-                # Clear user data
                 context.user_data["case"] = None
 
                 return State.END
+
             else:
                 await query.answer()
-                await query.edit_message_text(get_text(user_id, "transfer_failed"))
+                await query.edit_message_text(
+                    "❌ <b>Transfer Failed</b>\n\nSomething went wrong while processing the reward transfer. Please try again later.",
+                    parse_mode="HTML"
+                )
+
         except Exception as e:
             print(f"Transfer failed: {e}")
             await query.answer()
-            await query.edit_message_text(get_text(user_id, "transfer_error"))
+            await query.edit_message_text(
+                "⚠️ <b>Transfer Error</b>\n\nAn unexpected error occurred while processing the reward. Please contact support.",
+                parse_mode="HTML"
+            )
 
     elif user_input == "cancel_transfer":
         await query.answer()
-        await query.edit_message_text(get_text(user_id, "transfer_canceled"))
+        await query.edit_message_text(
+            "❌ <b>Transfer Canceled</b>\n\nThe reward transfer has been canceled as per your request.",
+            parse_mode="HTML"
+        )
         return State.CREATE_CASE_ASK_REWARD
 
     else:
         await query.answer()
-        await query.edit_message_text(get_text(user_id, "invalid_confirmation"))
+        await query.edit_message_text(
+            "⚠️ <b>Invalid Selection</b>\n\nPlease choose a valid option.",
+            parse_mode="HTML"
+        )
         return State.CREATE_CASE_CONFIRM_TRANSFER
 
 
