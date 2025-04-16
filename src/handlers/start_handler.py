@@ -706,7 +706,7 @@ async def wallet_selection_callback(
             [InlineKeyboardButton("✅ Create Case", callback_data="create_case")],
             [InlineKeyboardButton("🕵️ Find People", callback_data="find_people"),
             InlineKeyboardButton("⚙️ Settings", callback_data="settings")],
-            [InlineKeyboardButton("❓ Help", url="https://t.me/YourHelpBot")]
+            [InlineKeyboardButton("❓ Help", url="https://t.me/peopletrace")]
         ]
 
 
@@ -799,9 +799,9 @@ async def wallet_name_handler(
        
         # 🎯 Custom Reply Keyboard (FIXED)
         keyboard = [
-            [InlineKeyboardButton("✅ Create Case")],
-            [InlineKeyboardButton("🕵️ Find People"), InlineKeyboardButton("⚙️ Settings")],
-            [InlineKeyboardButton("❓ Help")]
+            [InlineKeyboardButton("✅ Create Case", callback_data="create_case")],
+            [InlineKeyboardButton("🕵️ Find People", callback_data="find_people"), InlineKeyboardButton("⚙️ Settings", callback_data="settings")],
+            [InlineKeyboardButton("❓ Help", url="https://t.me/peopletrace")]
         ]
 
      
@@ -968,7 +968,7 @@ async def main_menu(update: Update, context: ContextTypes.DEFAULT_TYPE) -> int:
         [InlineKeyboardButton("✅ Create Case", callback_data="create_case")],
         [InlineKeyboardButton("🕵️ Find People", callback_data="find_people"),
          InlineKeyboardButton("⚙️ Settings", callback_data="settings")],
-        [InlineKeyboardButton("❓ Help", url="https://t.me/YourHelpBot")]
+        [InlineKeyboardButton("❓ Help", url="https://t.me/peopletrace")]
     ]
 
     await context.bot.send_message(
