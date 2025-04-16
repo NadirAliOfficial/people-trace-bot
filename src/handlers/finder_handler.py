@@ -929,7 +929,6 @@ async def handle_transfer_confirmation(
     )
     await query.edit_message_text("Transfer successful! Reward updated.")
 
-
 async def handle_confirm_found(update: Update, context: ContextTypes.DEFAULT_TYPE):
     query = update.callback_query
     await query.answer()
@@ -951,44 +950,44 @@ async def handle_confirm_found(update: Update, context: ContextTypes.DEFAULT_TYP
 
             # Notify the advertiser (the one who posted the case)
             advertiser_message = (
-                f"🔔 *Case Update*\n\n"
+                f"🔔 <b>Case Update</b>\n\n"
                 f"Someone has confirmed finding the person in your case!\n\n"
-                f"📌 *Case Details:*\n"
-                f"👤 *Case ID:* {case_id}\n"
-                f"💰 *Total Reward:* {reward_amount} SOL\n"
-                f"⚖ *Tax (5%):* {tax:.2f} SOL\n"
-                f"✅ *Final Payout:* {final_reward:.2f} SOL\n\n"
+                f"📌 <b>Case Details:</b>\n"
+                f"👤 <b>Case ID:</b> {case_id}\n"
+                f"💰 <b>Total Reward:</b> {reward_amount} SOL\n"
+                f"⚖ <b>Tax (5%):</b> {tax:.2f} SOL\n"
+                f"✅ <b>Final Payout:</b> {final_reward:.2f} SOL\n\n"
                 f"🚀 The reward is being processed."
             )
             await context.bot.send_message(
-                case.user_id, advertiser_message, parse_mode="Markdown"
+                case.user_id, advertiser_message, parse_mode="HTML"
             )
 
             # Notify the finder (who reported the found person)
             finder_message = (
-                f"🎉 Congratulations! 🎉\n\n"
+                f"🎉 <b>Congratulations!</b> 🎉\n\n"
                 f"The advertiser has been notified about your confirmation.\n"
-                f"💰 Your estimated reward after tax: *{final_reward:.2f} SOL*\n\n"
+                f"💰 Your estimated reward after tax: <b>{final_reward:.2f} SOL</b>\n\n"
                 f"Please wait while the payment is processed. 🚀"
             )
             await context.bot.send_message(
-                user_id, finder_message, parse_mode="Markdown"
+                user_id, finder_message, parse_mode="HTML"
             )
 
             # Notify the owner (admin/platform owner)
             owner_message = (
-                f"🔔 *Admin Alert*\n\n"
-                f"A case has been marked as *found*!\n\n"
-                f"📌 *Case ID:* {case_id}\n"
-                f"👤 *Advertiser:* {case.user_id}\n"
-                f"🔎 *Finder:* {user_id}\n"
-                f"💰 *Total Reward:* {reward_amount} SOL\n"
-                f"⚖ *Tax (5%):* {tax:.2f} SOL\n"
-                f"✅ *Final Payout:* {final_reward:.2f} SOL\n\n"
+                f"🔔 <b>Admin Alert</b>\n\n"
+                f"A case has been marked as <b>found</b>!\n\n"
+                f"📌 <b>Case ID:</b> {case_id}\n"
+                f"👤 <b>Advertiser:</b> {case.user_id}\n"
+                f"🔎 <b>Finder:</b> {user_id}\n"
+                f"💰 <b>Total Reward:</b> {reward_amount} SOL\n"
+                f"⚖ <b>Tax (5%):</b> {tax:.2f} SOL\n"
+                f"✅ <b>Final Payout:</b> {final_reward:.2f} SOL\n\n"
                 f"📢 Please verify and ensure the reward is sent."
             )
             await context.bot.send_message(
-                OWNER_TELEGRAM_ID, owner_message, parse_mode="Markdown"
+                OWNER_TELEGRAM_ID, owner_message, parse_mode="HTML"
             )
 
             await FinderService.update_or_create_finder(
@@ -999,15 +998,17 @@ async def handle_confirm_found(update: Update, context: ContextTypes.DEFAULT_TYP
 
             # Notify user in chat
             await query.message.reply_text(
-                "The case owner and advertiser have been notified. Your reward will be sent soon! 💰"
+                "The case owner and advertiser have been notified. Your reward will be sent soon! 💰",
+                parse_mode="HTML"
             )
         else:
-            await query.message.reply_text("Case not found. Please try again.")
+            await query.message.reply_text("Case not found. Please try again.", parse_mode="HTML")
 
         return State.END
     else:
-        await query.message.reply_text("Okay, let us know if you have any updates.")
+        await query.message.reply_text("Okay, let us know if you have any updates.", parse_mode="HTML")
         return State.END
+
 
 
 async def handle_found_case(update: Update, context: ContextTypes.DEFAULT_TYPE) -> int:
