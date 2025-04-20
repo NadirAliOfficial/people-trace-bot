@@ -476,7 +476,7 @@ async def handle_ask_reward_amount(
     print(f"Wallet balance: {wallet_balance}")
 
     # Check if the reward amount is greater than available balance
-    if reward_amount < 0:
+    if reward_amount <= 0:
         await update.message.reply_text(
             get_text(user_id, "reward_amount_negative").format(reward_amount)
         )
@@ -509,7 +509,6 @@ async def handle_ask_reward_amount(
     return State.CREATE_CASE_CONFIRM_TRANSFER
 
 
-@catch_async
 async def handle_transfer_confirmation(
     update: Update, context: ContextTypes.DEFAULT_TYPE
 ) -> int:
@@ -566,15 +565,16 @@ async def handle_transfer_confirmation(
             )
 
             print(f"Transfer_success: {transfer_success}")
-
             if transfer_success:
-                # Notify the advertiser
+                # Notify the advertiser (user who confirmed)
                 advertiser_message = (
                     f"🎉 <b>Congratulations!</b>\n\n"
-                    f"Your reward of <b>{reward_amount} {wallet_type}</b> has been successfully transferred.\n"
-                    f"Thank you for being part of our platform. 🙌"
+                    f"Your reward of <b>{reward_amount} {wallet_type}</b> has been successfully transferred to our platform.\n\n"
+                    f"We have successfully lodged your case and the transfer of <b>{reward_amount} {wallet_type}</b> "
+                    f"has been completed to the bot owner's wallet. 🙌\n\n"
+                    f"Thank you for being part of our platform! 🚀"
                 )
-                await query.message.reply_text(advertiser_message, parse_mode="HTML")
+                await query.edit_message_text(advertiser_message, parse_mode="HTML")
 
                 # Notify the bot owner
                 owner_message = (
@@ -627,6 +627,7 @@ async def handle_transfer_confirmation(
             parse_mode="HTML"
         )
         return State.CREATE_CASE_CONFIRM_TRANSFER
+
 
 
 # async def handle_case_finished(

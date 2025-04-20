@@ -868,7 +868,7 @@ async def message_router(update: Update, context: ContextTypes.DEFAULT_TYPE):
         keyboard = [
             [
                 InlineKeyboardButton(
-                    f"Case {case.person_name} ({case.id})",
+                    f"{case.name} ({case.person_name})",
                     callback_data=f"case_{str(case.id)}",
                 )
             ]

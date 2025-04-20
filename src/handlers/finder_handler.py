@@ -282,7 +282,8 @@ async def show_advertisements(
         # Create case buttons
         keyboard = []
         for case in cases:
-            case_info = f"Case #{case.case_no}: {case.person_name} ({case.age})"
+            case_info = f"{case.name} ({case.person_name})"
+
             keyboard.append(
                 [InlineKeyboardButton(case_info, callback_data=f"case_{case.id}")]
             )
