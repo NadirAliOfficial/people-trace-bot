@@ -16,7 +16,7 @@ from beanie import init_beanie
 from motor.motor_asyncio import AsyncIOMotorClient
 from telegram.ext import ApplicationBuilder
 
-from config.config_manager import MONGODB_NAME, MONGODB_URI
+from config.config_manager import MONGODB_NAME, MONGODB_URI, NODE_ENV
 from handlers.handlers import (
     start_handler,
     settings_handler,
@@ -51,7 +51,10 @@ async def main_setup():
 async def init_db():
     try:
         print(f"MONGODB_URI = {MONGODB_URI}")
-        client = AsyncIOMotorClient(MONGODB_URI)
+        print(f"{NODE_ENV.lower() == "production"}")
+        client = AsyncIOMotorClient(
+            MONGODB_URI if NODE_ENV.lower() == "production" else "mongodb://localhost:27017/finder_advertiser"
+        )
         await init_beanie(
             database=client[MONGODB_NAME],
             document_models=[User, Case, Wallet, MobileNumber, Finder, ExtendReward],

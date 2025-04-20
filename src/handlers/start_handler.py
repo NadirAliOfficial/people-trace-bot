@@ -65,9 +65,28 @@ async def start(update: Update, context: ContextTypes.DEFAULT_TYPE) -> int:
         f"{LANG_DATA['en']['start_msg']}\n\n{LANG_DATA['zh']['start_msg']}",
         reply_markup=InlineKeyboardMarkup(btns),
     )
-
     return State.SELECT_LANG
 
+#  ----------------------- Language LOGIC ------------------------
+@catch_async
+async def select_lang_callback(
+    update: Update, context: ContextTypes.DEFAULT_TYPE
+) -> int:
+    """Handle language selection."""
+    query = update.callback_query
+    await query.answer()
+    data = query.data
+    user_id = query.from_user.id
+
+    lang = data.replace("lang_", "")
+    await save_user_lang(user_id, lang)
+
+    user_data_store[user_id] = {"lang": lang}
+    context.user_data["lang"] = lang
+
+    await query.edit_message_text(get_text(user_id, "choose_country"))
+
+    return State.CHOOSE_COUNTRY
 
 
 #  ----------------------- Language LOGIC ------------------------
@@ -106,10 +125,16 @@ async def choose_country(update: Update, context: ContextTypes.DEFAULT_TYPE) -> 
     if len(matches) == 1:
         context.user_data["country"] = matches[0]
         await update_or_create_case(user_id, country=matches[0])
-        await update.message.reply_text(
+        message = update.message or query.message
+        await message.reply_text(  
             f"{get_text(user_id, 'country_selected')} {matches[0]}",
-            parse_mode="HTML",
+            parse_mode="HTML"
         )
+
+        # await update.message.reply_text(
+        #     f"{get_text(user_id, 'country_selected')} {matches[0]}",
+        #     parse_mode="HTML",
+        # )
 
         await show_disclaimer(update, context)
         return State.SHOW_DISCLAIMER
@@ -151,11 +176,19 @@ async def country_callback(update: Update, context: ContextTypes.DEFAULT_TYPE) -
         context.user_data["country"] = country
         await update_or_create_case(user_id, country=country)
 
-        await update.message.reply_text(
-            f"{get_text(user_id, 'country_selected')} {country}",
-            parse_mode="HTML",
-        )
+        message = update.message or query.message
+        if update.message:
+            await update.message.edit_message_text(
+                f"{get_text(user_id, 'country_selected')} {country}",
+                parse_mode="HTML",
+            )
+        else: 
+            await query.message.edit_text(
+                f"{get_text(user_id, 'country_selected')} {country}",
+                parse_mode="HTML",
+            )
 
+        
         await show_disclaimer(update, context)
         return State.SHOW_DISCLAIMER
     elif data.startswith("country_page_"):
@@ -227,9 +260,13 @@ async def show_disclaimer(update: Update, context: ContextTypes.DEFAULT_TYPE) ->
         ]
     )
     if update.callback_query:
-        await update.callback_query.answer(text, parse_mode="HTML", reply_markup=kb)
+        # Send a new message instead of editing
+        await update.callback_query.message.reply_text(
+            text, parse_mode="HTML", reply_markup=kb
+        )
     else:
         await update.message.reply_text(text, parse_mode="HTML", reply_markup=kb)
+
     return State.SHOW_DISCLAIMER
 
 
@@ -568,7 +605,7 @@ async def action_callback(update: Update, context: ContextTypes.DEFAULT_TYPE) ->
         keyboard = [
             [
                 InlineKeyboardButton(
-                    f"Case {case.person_name} ({case.id})",
+                    f"{case.name} ({case.person_name})",
                     callback_data=f"case_{str(case.id)}",
                 )
             ]
