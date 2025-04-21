@@ -39,6 +39,7 @@ from handlers.listing_handler import (
     advertiser_wallet_name_handler,
     advertiser_wallet_selection_callback,
     advertiser_wallet_type_callback,
+    approve_extend_callback,
     ask_reward_amount,
     cancel_delete_callback,
     cancel_edit_callback,
@@ -58,6 +59,7 @@ from handlers.listing_handler import (
     process_country,
     process_reward_transfer,
     reward_case_callback,
+    select_wallet_callback,
     update_case_field,
     update_choose_country,
 )
@@ -395,6 +397,7 @@ wallet_handler = ConversationHandler(
 
 
 # ---------------------- Listing Conversation Handler Start  ---------------------
+# ---------------------- Listing Conversation Handler Start  ---------------------
 listing_handler = ConversationHandler(
     entry_points=[CommandHandler("listing", listing_command)],
     states={
@@ -420,7 +423,7 @@ listing_handler = ConversationHandler(
             CallbackQueryHandler(
                 ask_reward_amount, pattern="^send_reward_.*$"
             ),  # Ask for reward amount
-            # New Extend handlers
+            # Extend Reward Handlers
             CallbackQueryHandler(extend_reward_callback, pattern=r"^extend_reward_"),
         ],
         State.ENTER_COUNTRY: [
@@ -432,9 +435,17 @@ listing_handler = ConversationHandler(
         State.EDIT_FIELD: [
             MessageHandler(filters.TEXT & ~filters.COMMAND, update_case_field),
         ],
+        # State.CONFIRM_EXTEND: [
+        #     CallbackQueryHandler(cancel_extend_callback, pattern=r"^cancel_extend$"),
+        # ],
+        # For the Extend Reward
         State.CONFIRM_EXTEND: [
+            CallbackQueryHandler(approve_extend_callback, pattern=r"^approve_extend_"),
             CallbackQueryHandler(confirm_extend_callback, pattern=r"^confirm_extend_"),
-            CallbackQueryHandler(cancel_extend_callback, pattern=r"^cancel_extend"),
+            CallbackQueryHandler(cancel_extend_callback, pattern=r"^cancel_extend$"),
+        ],
+        State.SELECT_WALLET_FOR_EXTEND: [
+            CallbackQueryHandler(select_wallet_callback, pattern=r"^select_wallet_"),
         ],
         State.REWARD_TRANSFER_PROCESS: [
             MessageHandler(filters.TEXT & ~filters.COMMAND, process_reward_transfer),
@@ -475,7 +486,6 @@ listing_handler = ConversationHandler(
         CommandHandler("cancel", cancel),
     ],
     allow_reentry=True,
-    
 )
 # ---------------------- Settings Conversation Handler End  ---------------------
 

@@ -82,6 +82,20 @@ LISTING_CONSTANT = {
         "extend_cancelled": "❌ Reward extension cancelled.",
         "transfer_failed": "❌ Transfer failed. Please check wallet balances and try again.",
         "case_or_extend_not_found": "❌ Case or extension request not found.",
+        "no_wallet_found": "❌ No wallets found for the selected type.",
+        "insufficient_funds_after_selection": "❌ Insufficient funds in the selected wallet.",
+        "extend_already_completed": "⚠️ This extend reward request has already been completed.",
+        "error_processing_extend": "❌ An error occurred while processing the extend reward request.",
+        "error_approving_extend": "❌ An error occurred while approving the extend reward request.",
+        "case_not_found": "❌ Case not found.",
+        "extend_reward_not_found": "❌ No pending extend reward requests found for this case.",
+        "select_wallet_for_extend": (
+            "🔄 *Select Wallet for Reward Extension*\n\n"
+            "💰 Amount: {amount} {wallet_type}\n"
+            "📤 From: `{from_wallet}`\n"
+            "📥 To: `{to_wallet}`\n\n"
+            "Please select a wallet from the options below:"
+        ),
     },
     "zh": {
         "no_advertise_cases": "未找到广告案例。",
@@ -166,6 +180,12 @@ LISTING_CONSTANT = {
         "extend_cancelled": "❌ 奖励扩展已取消。",
         "transfer_failed": "❌ 转账失败，请检查钱包余额后重试。",
         "case_or_extend_not_found": "❌ 未找到案例或扩展请求。",
+         "insufficient_funds_after_selection": "❌ 所选钱包余额不足。",
+    "extend_already_completed": "⚠️ 此扩展奖励请求已完成。",
+    "error_processing_extend": "❌ 处理扩展奖励请求时发生错误。",
+    "error_approving_extend": "❌ 批准扩展奖励请求时发生错误。",
+    "case_not_found": "❌ 找不到案件。",
+    "extend_reward_not_found": "❌ 找不到此案件的待处理扩展奖励请求。",
     },
     "ms": {
         "no_advertise_cases": "Tiada kes IKLAN ditemui.",
@@ -250,5 +270,11 @@ LISTING_CONSTANT = {
         "extend_cancelled": "❌ Penambahan hadiah dibatalkan.",
         "transfer_failed": "❌ Pemindahan gagal. Sila semak baki dompet dan cuba lagi.",
         "case_or_extend_not_found": "❌ Kes atau permintaan tambahan tidak ditemui.",
+        "insufficient_funds_after_selection": "❌ Baki tidak mencukupi dalam dompet yang dipilih.",
+        "extend_already_completed": "⚠️ Permintaan tambahan hadiah ini sudah selesai.",
+        "error_processing_extend": "❌ Ralat berlaku semasa memproses permintaan tambahan hadiah.",
+        "error_approving_extend": "❌ Ralat berlaku semasa meluluskan permintaan tambahan hadiah.",
+        "case_not_found": "❌ Kes tidak ditemui.",
+        "extend_reward_not_found": "❌ Tiada permintaan tambahan hadiah yang belum selesai untuk kes ini.",
     },
 }
