@@ -672,6 +672,149 @@ async def finder_wallet_selection_callback(
         await query.message.reply_text(
             get_text(user_id, "wallet_not_found"), parse_mode="HTML"
         )
+        
+@catch_async
+async def finder_wallet_type_callback(
+    update: Update, context: ContextTypes.DEFAULT_TYPE
+) -> int:
+    query = update.callback_query
+    await query.answer()
+    user_id = query.from_user.id
+
+    # Determine wallet type (SOL or USDT) from callback data
+    wallet_type = query.data
+
+    context.user_data["wallet_type"] = wallet_type
+
+    print(f"Wallet type: {wallet_type}")
+
+    existing_wallets = await WalletService.get_wallet_by_type(user_id, wallet_type)
+
+    if existing_wallets:
+        kb = [
+            [
+                InlineKeyboardButton(
+                    wallet.name, callback_data=f"wallet_{str(wallet.id)}"
+                )
+            ]
+            for wallet in existing_wallets
+        ]
+        kb.append(
+            [
+                InlineKeyboardButton(
+                    get_text(user_id, "create_new_wallet"),
+                    callback_data="create_new_wallet",
+                )
+            ]
+        )
+        await query.edit_message_text(
+            get_text(user_id, "choose_existing_or_new_wallet"),
+            reply_markup=InlineKeyboardMarkup(kb),
+            parse_mode="HTML",
+        )
+        return State.FINDER_CHOOSE_WALLET_TYPE
+    else:
+        msg = get_text(user_id, "wallet_name_prompt")
+        if update.message:
+            await update.message.reply_text(msg, parse_mode="HTML")
+        elif update.callback_query:
+            await update.callback_query.message.reply_text(msg, parse_mode="HTML")
+
+        return State.FINDER_NAME_WALLET
+
+
+@catch_async
+async def finder_wallet_selection_callback(
+    update: Update, context: ContextTypes.DEFAULT_TYPE
+) -> int:
+
+    query = update.callback_query
+    await query.answer()
+    user_id = query.from_user.id
+
+    # Extract wallet name and type from callback data
+    wallet_id = query.data.replace("wallet_", "")
+    wallet_type = context.user_data.get("wallet_type")  # 'sol' or 'usdt'
+
+    case_id = context.user_data.get("found_case_no")
+    case = await Case.find_one({"_id": PydanticObjectId(case_id)}, fetch_links=True)
+
+    # Fetch wallet details by name and type
+    wallet_details = await WalletService.get_wallet_by_id(wallet_id)
+
+    print(f"Wallet details: {wallet_details}")
+
+    if wallet_details:
+        # Fetch balance for the specific wallet type (SOL or USDT)
+        print(f"This is the wallet type: {wallet_type}")
+
+        print("\n\n DEBUGGING -001 \n\n")
+        total_sol = (
+            await WalletService.get_sol_balance(wallet_details["public_key"])
+            if wallet_type == "SOL"
+            else await WalletService.get_usdt_balance(wallet_details["public_key"])
+        )
+
+        print(f"Total {wallet_type}: {total_sol}")
+
+        context.user_data["wallet"] = wallet_details  # Store in memory
+
+        await FinderService.update_or_create_finder(
+            user_id, wallet=str(wallet_details["id"])
+        )
+
+        print("\n\n DEBUGGING -002 \n\n")
+
+        # Show wallet details
+        msg = get_text(user_id, "wallet_create_details").format(
+            name=wallet_details["name"],
+            public_key=wallet_details["public_key"],
+            balance=total_sol,
+            wallet_type=wallet_type,
+        )
+
+        await query.message.reply_text(msg, parse_mode="HTML")
+
+        # Basic reward info
+        reward_text = f"<b>{case.reward} {wallet_details['wallet_type']}</b>"
+
+        # Handle extended reward details
+        extended_note = ""
+        if context.user_data.get("extend_flow", False):
+            extended_note = (
+                f"\n➕ <b>Extended Reward:</b> <b>{context.user_data['reward_difference'] or 0} {wallet_details['wallet_type']}</b>"
+                "\n🔄 <i>Note:</i> The extended reward will be processed separately and transferred after admin approval."
+            )
+
+        # Full confirmation message
+        confirmation_message = (
+            f"❗ <b>Reward Confirmation</b> ❗\n\n"
+            f"Do you want to <b>request the reward</b> of {reward_text} to the wallet below?\n\n"
+            f"🔐 <b>Wallet Address:</b>\n<code>{wallet_details['public_key']}</code>"
+            f"{extended_note}\n\n"
+            f"By confirming, your request will be sent to the administrator for manual processing."
+        )
+
+        # Inline keyboard
+        keyboard = [
+            [
+                InlineKeyboardButton("📨 Send Request", callback_data="confirm_transfer"),
+                InlineKeyboardButton("❌ Cancel", callback_data="cancel_transfer"),
+            ]
+        ]
+
+        await query.message.reply_text(
+            confirmation_message,
+            reply_markup=InlineKeyboardMarkup(keyboard),
+            parse_mode="HTML",
+        )
+
+        return State.FINDER_CONFIRM_TRANSACTION
+
+    else:
+        await query.message.reply_text(
+            get_text(user_id, "wallet_not_found"), parse_mode="HTML"
+        )
         return State.END
 
 @catch_async
@@ -1118,10 +1261,16 @@ async def handle_extend_reward(update: Update, context: ContextTypes.DEFAULT_TYP
     case_id = context.user_data.get("found_case_no")
     user_id = update.effective_user.id
     case = await Case.find_one({"_id": PydanticObjectId(case_id)}, fetch_links=True)
-
+    
     if query.data == "yes_extend":
-        await query.message.reply_text("Please enter the new reward amount:")
-        return State.EXTEND_REWARD_AMOUNT  # Transition to reward amount input
+        wallet_type = case.wallet.wallet_type
+
+        await query.message.edit_text(
+            f"The current reward amount is <b>{case.reward} {wallet_type}</b>.\n"
+            f"Please enter the new reward amount you want to set:",
+            parse_mode="HTML"
+        )
+        return State.EXTEND_REWARD_AMOUNT # Transition to reward amount input
     else:
         #  --------------- If user not extended the  reward ---------------
         # Handle "No" response
