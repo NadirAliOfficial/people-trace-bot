@@ -1492,13 +1492,14 @@ async def extend_reward_callback(
         [
             [
                 InlineKeyboardButton(
-                    get_text(user_id, "confirm"),
+                        get_text(user_id, "confirm_button"),
                     callback_data=f"confirm_extend_{case_id}",
                 )
             ],
             [
                 InlineKeyboardButton(
-                    get_text(user_id, "cancel"), callback_data="cancel_extend"
+                    get_text(user_id, "cancel_button"),
+                    callback_data="cancel_extend"
                 )
             ],
         ]
