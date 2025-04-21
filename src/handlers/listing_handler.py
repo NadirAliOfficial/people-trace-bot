@@ -18,7 +18,7 @@ from telegram.ext import (
 )
 from bson import ObjectId, errors
 import traceback
-from models.extend_reward_model import ExtendReward
+from models.extend_reward_model import ExtendReward, ExtendRewardStatus
 from models.finder_model import Finder, FinderStatus
 from models.wallet_model import Wallet
 from services.case_service import update_case, update_or_create_case
@@ -100,7 +100,7 @@ async def listing_command(update: Update, context: ContextTypes.DEFAULT_TYPE) ->
 
         # In the listing_command function, after checking for edit/delete buttons:
         extend_reward = await ExtendReward.find_one(
-            {"case.$id": PydanticObjectId(case.id)}
+            {"case.$id": PydanticObjectId(case.id), "status":  {"$ne": ExtendRewardStatus.COMPLETED}}
         )
         print(extend_reward)
         if case.status == CaseStatus.ADVERTISE and extend_reward:
@@ -1443,33 +1443,19 @@ async def extend_reward_callback(
 
     # Fetch the case details
     case = await Case.find_one({"_id": PydanticObjectId(case_id)}, fetch_links=True)
-    print(f"I am calling the case: {case}")
+    if not case:
+        await query.message.edit_text(get_text(user_id, "case_not_found"))
+        return State.END
 
-    # if not case:
-    #     await query.message.edit_text(get_text(user_id, "case_not_found"))
-    #     return State.END
-
-    print(f"\n\n {case_id} is the case id \n\n")
-
-    # # Fetch the extend reward details
+    # Fetch the extend reward details
     extend_reward = await ExtendReward.find_one(
         {"case.$id": PydanticObjectId(case_id)},
     )
-
-    print(f"This is the extended reward : {extend_reward}")
-    # print(f"This is the extend reward: {extend_reward}")
-
     if not extend_reward:
         await query.message.edit_text(get_text(user_id, "extend_reward_not_found"))
         return State.END
 
-    # Ensure `case.wallet` exists and is a Wallet instance
-    if not hasattr(case, "wallet") or not case.wallet:
-        await query.message.edit_text(get_text(user_id, "no_wallet_found"))
-        return State.END
-
     wallet_type = case.wallet.wallet_type
-    print(f"Wallet Type: {wallet_type}")
 
     # Get all user wallets of the given type
     wallets = await Wallet.find(
@@ -1489,19 +1475,17 @@ async def extend_reward_callback(
             balance = await TronWallet.get_usdt_balance(wallet.public_key)
 
         wallet_balances.append((wallet, balance))
-        print(f"Wallet {wallet.public_key} has balance: {balance}")
 
     # Select the wallet with the highest balance
     wallet_balances.sort(key=lambda x: x[1], reverse=True)
     best_wallet, best_balance = wallet_balances[0]
 
-    print(extend_reward)
+    # Store the selected wallet in context.user_data
+    context.user_data["selected_wallet"] = best_wallet
 
     if best_balance < extend_reward.extend_reward_amount:
         await query.message.edit_text(get_text(user_id, "insufficient_funds"))
         return State.END
-
-    print(f"Selected Wallet: {best_wallet.public_key} with balance {best_balance}")
 
     # Show confirmation
     keyboard = InlineKeyboardMarkup(
@@ -1524,12 +1508,11 @@ async def extend_reward_callback(
         amount=extend_reward.extend_reward_amount,
         wallet_type=wallet_type,
         from_wallet=best_wallet.public_key,
-        to_wallet=STAKE_WALLET_PUBLIC_KEY,  # Derived from private key
+        to_wallet=STAKE_WALLET_PUBLIC_KEY,
     )
 
     await query.message.edit_text(message, reply_markup=keyboard, parse_mode="Markdown")
     return State.CONFIRM_EXTEND
-
 
 @catch_async
 async def confirm_extend_callback(
@@ -1541,23 +1524,39 @@ async def confirm_extend_callback(
     user_id = query.from_user.id
     case_id = query.data.removeprefix("confirm_extend_")
 
+    # Fetch case and extend reward details
     case = await Case.find_one({"_id": PydanticObjectId(case_id)}, fetch_links=True)
     extend_reward = await ExtendReward.find_one({"case.$id": PydanticObjectId(case_id)})
     if not case or not extend_reward:
         await query.message.edit_text(get_text(user_id, "case_or_extend_not_found"))
         return State.END
 
+    # Retrieve the selected wallet from context.user_data
+    selected_wallet = context.user_data.get("selected_wallet")
+    if not selected_wallet:
+        await query.message.edit_text(get_text(user_id, "no_wallet_selected"))
+        return State.END
+
     wallet_type = case.wallet.wallet_type
-    user_wallet = await WalletService.get_wallet_by_type(user_id, wallet_type)
+
+    # Recheck the wallet balance
+    if wallet_type == "SOL":
+        current_balance = await WalletService.get_sol_balance(selected_wallet.public_key)
+    else:
+        current_balance = await TronWallet.get_usdt_balance(selected_wallet.public_key)
+
+    if current_balance < extend_reward.extend_reward_amount:
+        await query.message.edit_text(get_text(user_id, "insufficient_funds_after_selection"))
+        return State.END
 
     try:
         if wallet_type == "SOL":
             await WalletService.send_sol(
-                user_wallet.private_key, STAKE_WALLET_PUBLIC_KEY, extend_reward.amount
+                selected_wallet.private_key, STAKE_WALLET_PUBLIC_KEY, extend_reward.extend_reward_amount
             )
         else:
             await WalletService.send_usdt(
-                user_wallet.private_key, STAKE_WALLET_PUBLIC_KEY, extend_reward.amount
+                selected_wallet.private_key, STAKE_WALLET_PUBLIC_KEY, extend_reward.extend_reward_amount
             )
     except Exception as e:
         logger.error(f"Transfer failed: {e}")
@@ -1565,14 +1564,13 @@ async def confirm_extend_callback(
         return State.END
 
     # Update case and extend reward
-    case.reward += extend_reward.amount
+    case.reward += extend_reward.extend_reward_amount
     await case.save()
     extend_reward.status = "completed"  # Update status
     await extend_reward.save()
 
     await query.message.edit_text(get_text(user_id, "extend_success"))
     return State.END
-
 
 @catch_async
 async def cancel_extend_callback(
