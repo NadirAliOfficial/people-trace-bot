@@ -36,15 +36,7 @@ async def start(update: Update, context: ContextTypes.DEFAULT_TYPE) -> int:
         return State.CHOOSE_COUNTRY
 
     # ✅ Show banner if user doesn't have a language set
-    try:
-        with open("static/banner.jpg", "rb") as banner:
-            await update.message.reply_photo(
-                photo=banner,
-                caption="👋 Welcome to our bot!\nPlease choose your language below 👇",
-            )
-    except FileNotFoundError:
-        # fallback if the image isn't available
-        await update.message.reply_text("👋 Welcome to our bot!\nPlease choose your language below 👇")
+    await update.message.reply_text("👋 Welcome to our bot!\nPlease choose your language below 👇")
 
     # ⬇️ Language selection buttons
     btns = [
