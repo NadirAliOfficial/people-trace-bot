@@ -110,23 +110,6 @@ from utils.helper import setup_logging
 
 setup_logging()
 
-# Updated start_handler to include the welcome message and banner image
-async def start_handler(update: Update, context: CallbackContext):
-    # Send a welcome message
-    await update.message.reply_text(
-        text="Welcome to the Finder & Advertiser Bot!\n"
-             "Discover opportunities and advertise your cases with ease!\n\n"
-             "🔍 *Find Opportunities*\n"
-             "📢 *Advertise Your Cases*\n\n"
-             "Click below to start using the bot.",
-        parse_mode='Markdown'
-    )
-    
-    # Send the banner image
-    banner_image = 'banner_image.png'  # Replace with your image file path
-    with open(banner_image, 'rb') as img:
-        await update.message.reply_photo(photo=img)
-
 # Adding the handler to the application
 async def main_setup():
     application = ApplicationBuilder().token(TOKEN).build()
