@@ -115,7 +115,7 @@ async def main_setup():
     application = ApplicationBuilder().token(TOKEN).build()
 
     # Adding handlers for the bot commands and events
-    application.add_handler(CommandHandler("start", start_handler))  # Add start handler here
+    application.add_handler( start_handler)  # Add start handler here
     application.add_handler(wallet_handler)
     application.add_handler(settings_handler)
     application.add_handler(listing_handler)
