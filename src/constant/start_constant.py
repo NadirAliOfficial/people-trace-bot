@@ -1,4 +1,4 @@
-LANG_DATA = {
+START_LANG_DATA = {
     "en": {  # English
         "lang_choice": "English",
         "lang_button": "English",
@@ -38,13 +38,12 @@ LANG_DATA = {
         "create_new_wallet": "➕ Create New Wallet",
         "btn_mobile_number": "Mobile Number",
         "btn_close_menu": "Close Menu",
-        "enter_mobile": "Enter your mobile number (TAC will be sent here):",
-        "lang_updated": "Language has been updated.",
+        "enter_mobile": "Please enter your mobile number, including the country code (a verification code will be sent to this number):",        "lang_updated": "Language has been updated.",
         "invalid_choice": "Invalid choice. Conversation ended.",
         "invalid_mobile_number": "❌ Invalid mobile number. Please enter a valid 10-digit number.",
         "menu_settings_title": "Settings Menu",
-        "enter_tac": "Enter the TAC sent to your mobile:",
-        "verify_tac": "Verifying TAC...",
+       "enter_tac": "Please enter the verification code (TAC) sent to your mobile number:",
+        "verify_tac": "Verifying your code... Please wait a moment.",
         "tac_verified": "✅ TAC verified successfully.",
         "tac_invalid": "❌ Invalid TAC. Please try again.",
         "choose_existing_mobile": "Please select an existing number or add a new one.",

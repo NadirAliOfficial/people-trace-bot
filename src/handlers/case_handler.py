@@ -46,19 +46,16 @@ logger = logging.getLogger(__name__)
 
 # ---------------------------- Case Mobile Number  Start ---------------------------
 async def handle_name(update: Update, context: ContextTypes.DEFAULT_TYPE) -> int:
-    """Handle the user's name input."""
     user_id = update.effective_user.id
     name = update.message.text.strip()
     await update_or_create_case(user_id, name=name)
     context.user_data["case"] = {"name": name}
 
-    # Check if the user has existing mobile numbers
     existing_mobiles = await get_user_mobiles(user_id)
 
     print(f"Mobile numbers: {existing_mobiles}")
 
     if existing_mobiles:
-        # Show existing mobile numbers with an option to select one
         kb = [
             [InlineKeyboardButton(mobile, callback_data=f"select_mobile_{mobile}")]
             for mobile in existing_mobiles
@@ -70,7 +67,6 @@ async def handle_name(update: Update, context: ContextTypes.DEFAULT_TYPE) -> int
         )
         return State.MOBILE_MANAGEMENT
     else:
-        # Ask for a new mobile number if none exists
         await update.message.reply_text(get_text(user_id, "enter_mobile"))
         return State.CREATE_CASE_MOBILE
 
@@ -85,13 +81,11 @@ async def handle_select_mobile(
     user_id = query.from_user.id
 
     if query.data == "mobile_add":
-        # Handle 'Add New' click: Ask the user to input a new mobile number
         await query.edit_message_text(get_text(user_id, "enter_mobile"))
         return State.CREATE_CASE_MOBILE  # Transition to state for mobile number input
     else:
         selected_mobile = query.data.replace("select_mobile_", "")
 
-        # Fetch the MobileNumber reference from the database
         mobile_number = await MobileNumber.find_one({"number": selected_mobile})
 
         if not mobile_number:
@@ -100,7 +94,6 @@ async def handle_select_mobile(
             )
             return State.CREATE_CASE_MOBILE
 
-        # Store the mobile number reference in user_data for further use
         context.user_data["mobile"] = selected_mobile
         context.user_data["selected_number"] = (
             selected_mobile  # Save the MobileNumber reference
@@ -114,9 +107,8 @@ async def handle_select_mobile(
             context.user_data["case"]["otp_id"] = "dummy_otp_id"
             print(f"Skipping OTP sending in {NODE_ENV} mode.")
         
-        # Notify the user that the mobile number was selected
         await query.edit_message_text(
-            f"Selected mobile number: {selected_mobile} - A TAC is sent to you on this number"
+            get_text(user_id, "mobile_selected_with_tac").format(mobile_number=selected_mobile)
         )
 
         # Proceed to the next step
@@ -149,7 +141,7 @@ async def handle_new_mobile(update: Update, context: ContextTypes.DEFAULT_TYPE) 
             context.user_data["case"]["otp_id"] = res["otp_id"]
 
             await update.message.reply_text(
-                f"Mobile number {mobile_number} added. A TAC has been sent to your number."
+                get_text(user_id, "mobile_selected_with_tac").format(mobile_number=mobile_number)
             )
         else: 
             context.user_data["case"]["otp_id"] = "dummy_otp_id"
@@ -227,7 +219,7 @@ async def disclaimer_2_callback(
 
     if query.data == "agree":
 
-        await query.edit_message_text("Please enter the person's name.")
+        await query.edit_message_text(get_text(user_id, "enter_person_name"))
         return State.CREATE_CASE_PERSON_NAME
     else:
         await query.edit_message_text(get_text(user_id, "disagree_end"))
@@ -473,7 +465,6 @@ async def handle_ask_reward_amount(
         else await TronWallet.get_usdt_balance(wallet.public_key)
     )
 
-    print(f"Wallet balance: {wallet_balance}")
 
     # Check if the reward amount is greater than available balance
     if reward_amount <= 0:
@@ -499,8 +490,8 @@ async def handle_ask_reward_amount(
         reply_markup=InlineKeyboardMarkup(
             [
                 [
-                    InlineKeyboardButton("Confirm", callback_data="confirm_transfer"),
-                    InlineKeyboardButton("Cancel", callback_data="cancel_transfer"),
+                    InlineKeyboardButton(get_text(user_id, "confirm_button"), callback_data="confirm_transfer"),
+                    InlineKeyboardButton(get_text(user_id, "cancel_edit_button"), callback_data="cancel_transfer"),
                 ]
             ]
         ),
@@ -517,19 +508,12 @@ async def handle_transfer_confirmation(
     query = update.callback_query
     user_input = query.data.strip().lower()
 
-    # Fetch the case to retrieve reward amount and wallet info
-    print("Calling in handle transfer confirmation")
     case = await Case.find_one(
         {"user_id": user_id, "status": CaseStatus.DRAFT}, fetch_links=True
     )
-    print(case)
     wallet = case.wallet
     reward_amount = case.reward
     wallet_type = wallet.wallet_type
-    print("------------------------------------")
-    print(f"Wallet: {wallet}")
-    print(f"Case: {case}")
-    print(f"Wallet Type: {wallet_type}")
 
     if user_input == "confirm_transfer":
         try:
@@ -540,20 +524,14 @@ async def handle_transfer_confirmation(
                 else await TronWallet.get_usdt_balance(wallet.public_key)
             )
 
-            print(f"Wallet Balance: {wallet_balance}")
-
             if wallet.wallet_type in ["USDT", "TRX"] and wallet_balance < reward_amount:
                 await query.answer()
                 await query.edit_message_text(
-                    f"🚫 <b>Insufficient Balance</b>\n\n"
-                    f"Your wallet has only <b>{wallet_balance} {wallet_type}</b>.\n"
-                    f"The reward amount is <b>{reward_amount} {wallet_type}</b>.\n"
-                    f"Please ensure your wallet has enough balance to proceed.",
+                    get_text(user_id, "insurfficient_balance").format(wallet_balance=wallet_balance, wallet_type=wallet_type, reward_amount=reward_amount),
                     parse_mode="HTML"
                 )
                 return State.CREATE_CASE_CONFIRM_TRANSFER
 
-            # Attempt transfer (placeholder logic)
             transfer_success = (
                 await WalletService.send_sol(
                     wallet.private_key, STAKE_WALLET_PUBLIC_KEY, reward_amount
@@ -567,26 +545,11 @@ async def handle_transfer_confirmation(
             print(f"Transfer_success: {transfer_success}")
             if transfer_success:
                 # Notify the advertiser (user who confirmed)
-                advertiser_message = (
-                    f"🎉 <b>Congratulations!</b>\n\n"
-                    f"Your reward of <b>{reward_amount} {wallet_type}</b> has been successfully transferred to our platform.\n\n"
-                    f"We have successfully lodged your case and the transfer of <b>{reward_amount} {wallet_type}</b> "
-                    f"has been completed to the bot owner's wallet. 🙌\n\n"
-                    f"Thank you for being part of our platform! 🚀"
-                )
+                advertiser_message = get_text(user_id, "congratulates_advertiser").format(reward_amount=reward_amount, wallet_type=wallet_type)
                 await query.edit_message_text(advertiser_message, parse_mode="HTML")
 
                 # Notify the bot owner
-                owner_message = (
-                    f"📢 <b>New Reward Transfer Completed</b>\n\n"
-                    f"🆔 <b>User ID:</b> <code>{user_id}</code>\n"
-                    f"📄 <b>Case ID:</b> <code>{case.id}</code>\n"
-                    f"💰 <b>Amount:</b> {reward_amount} {wallet_type}\n"
-                    f"🔐 <b>Wallet:</b> <code>{wallet.public_key}</code>\n"
-                    f"🏷️ <b>Wallet Name:</b> {wallet.name}\n\n"
-                    f"✅ <b>Status:</b> Reward transferred successfully.\n"
-                    f"🔍 Use /listing to view all active cases."
-                )
+                owner_message = get_text(user_id, "owner_message").format(user_id=user_id, case=case, reward_amount=reward_amount, wallet_type=wallet_type, wallet=wallet)
                 await context.bot.send_message(
                     chat_id=OWNER_TELEGRAM_ID, text=owner_message, parse_mode="HTML"
                 )
@@ -608,7 +571,7 @@ async def handle_transfer_confirmation(
             print(f"Transfer failed: {e}")
             await query.answer()
             await query.edit_message_text(
-                "⚠️ <b>Transfer Error</b>\n\nAn unexpected error occurred while processing the reward. Please contact support.",
+                get_text(user_id, "transfer_failed"),
                 parse_mode="HTML"
             )
 

@@ -1,5 +1,6 @@
 CASE_CONSTANT = {
     "en": {
+        # Existing Constants
         "create_case_title": "Create New Case",
         "enter_name": "Enter your name:",
         "disclaimer_2": (
@@ -37,11 +38,41 @@ CASE_CONSTANT = {
         "case_submitted": "Your case has been submitted successfully.",
         "case_completed": "Your case has been completed.",
         "reward_amount_negative": "The reward amount cannot be negative.",
-          "male_option": "♂ Male",
+        "male_option": "♂ Male",
         "female_option": "♀ Female",
         "other_option": "Other",
+
+        # Newly Added Constants
+        "choose_existing_mobile": "Please select an existing number or add a new one.",
+        "enter_mobile": "Enter your mobile number (TAC will be sent here):",
+        "enter_valid_mobile": "❌ Invalid mobile number. Please enter a valid 10-digit number.",
+        "tac_verified": "✅ TAC verified successfully.",
+        "tac_invalid": "❌ Invalid TAC. Please try again.",
+        "no_photo_found": "No photo found. Please upload a valid image file.",
+        "case_not_found": "Case not found. Please try again.",
+        "wallet_create_err": "An error occurred while creating the wallet. Please try again.",
+        "wallet_name_prompt": "Please enter a name for your {wallet_type} wallet:",
+        "wallet_name_empty": "Wallet name cannot be empty. Please try again.",
+        "wallet_name_exists": "A wallet with this name already exists. Please choose a different name.",
+        "wallet_create_details": (
+            "✅ Wallet Created!\n"
+            "Name: {name}\n"
+            "Public Key: <code>{public_key}</code>\n"
+            "Balance: {balance} {wallet_type}\n\n"
+        ),
+        "transfer_instructions": (
+            "\n\n<b>How to Transfer {wallet_type} to Your Wallet:</b>\n\n"
+            "1️⃣ Open your {wallet_type} wallet app or any compatible wallet.\n"
+            "2️⃣ Go to the <b>Send</b> or <b>Transfer</b> section of the wallet.\n"
+            "3️⃣ Paste your <b>Public Key</b> into the recipient address field. Your public key is:\n"
+            "<code>{public_key}</code>\n\n"
+            "4️⃣ Enter the amount of {wallet_type} you want to transfer.\n"
+            "5️⃣ Review the transaction details and confirm the transfer.\n\n"
+            "Once the transfer is successful, the {wallet_type} will appear in your wallet balance."
+        ),
     },
     "zh": {
+        # Existing Constants
         "create_case_title": "创建新案件",
         "enter_name": "请输入您的姓名：",
         "disclaimer_2": (
@@ -82,8 +113,38 @@ CASE_CONSTANT = {
         "male_option": "♂ 男",
         "female_option": "♀ 女",
         "other_option": "其他",
+
+        # Newly Added Constants
+        "choose_existing_mobile": "请选择一个已有的号码或添加一个新的号码。",
+        "enter_mobile": "请输入您的手机号码（验证码将发送至此号码）：",
+        "enter_valid_mobile": "❌ 无效的手机号码。请输入有效的10位数字。",
+        "tac_verified": "✅ 验证码验证成功。",
+        "tac_invalid": "❌ 无效的验证码。请重试。",
+        "no_photo_found": "未找到照片。请上传有效的图片文件。",
+        "case_not_found": "未找到案件。请重试。",
+        "wallet_create_err": "创建钱包时发生错误。请重试。",
+        "wallet_name_prompt": "请为您的 {wallet_type} 钱包输入名称：",
+        "wallet_name_empty": "钱包名称不能为空。请重试。",
+        "wallet_name_exists": "该名称的钱包已存在，请选择其他名称。",
+        "wallet_create_details": (
+            "✅ 钱包已创建！\n"
+            "名称: {name}\n"
+            "公钥: <code>{public_key}</code>\n"
+            "余额: {balance} {wallet_type}\n\n"
+        ),
+        "transfer_instructions": (
+            "\n\n<b>如何将 {wallet_type} 转入您的钱包：</b>\n\n"
+            "1️⃣ 打开您的 {wallet_type} 钱包应用或兼容的钱包。\n"
+            "2️⃣ 进入钱包的 <b>发送</b> 或 <b>转账</b> 部分。\n"
+            "3️⃣ 将您的 <b>公钥</b> 粘贴到收款地址栏。您的公钥是：\n"
+            "<code>{public_key}</code>\n\n"
+            "4️⃣ 输入您要转账的 {wallet_type} 数量。\n"
+            "5️⃣ 检查交易详情并确认转账。\n\n"
+            "转账成功后，{wallet_type} 将显示在您的钱包余额中。"
+        ),
     },
     "ms": {
+        # Existing Constants
         "create_case_title": "Buat Kes Baharu",
         "enter_name": "Masukkan nama anda:",
         "disclaimer_2": (
@@ -109,7 +170,7 @@ CASE_CONSTANT = {
         "enter_reward_amount_usdt": "Sila masukkan jumlah ganjaran dalam USDT.",
         "enter_reward_amount_unknown": "Sila masukkan jumlah ganjaran (jenis dompet tidak diketahui).",
         "insufficient_balance": "Baki anda tidak mencukupi. Anda mempunyai {0} tersedia.",
-        "refresh_wallet_balance": "Sila kemas kini baki dompet anda.",
+        "refresh_wallet_balance": "Sila kemas kini bali dompet anda.",
         "reward_amount_confirmed": "Jumlah ganjaran anda sebanyak {0} telah disahkan.",
         "insufficient_balance_for_transfer": "Anda tidak mempunyai baki yang mencukupi untuk dipindahkan. Baki anda adalah {0}.",
         "transfer_successful": "Pemindahan berjaya.",
@@ -124,5 +185,34 @@ CASE_CONSTANT = {
         "male_option": "♂ Lelaki",
         "female_option": "♀ Perempuan",
         "other_option": "Lain-lain",
+
+        # Newly Added Constants
+        "choose_existing_mobile": "Sila pilih nombor sedia ada atau tambah nombor baru.",
+        "enter_mobile": "Masukkan nombor telefon bimbit anda (TAC akan dihantar ke sini):",
+        "enter_valid_mobile": "❌ Nombor telefon tidak sah. Sila masukkan nombor 10 digit yang sah.",
+        "tac_verified": "✅ TAC disahkan dengan jayanya.",
+        "tac_invalid": "❌ TAC tidak sah. Sila cuba lagi.",
+        "no_photo_found": "Tiada gambar ditemui. Sila muat naik fail imej yang sah.",
+        "case_not_found": "Kes tidak dijumpai. Sila cuba lagi.",
+        "wallet_create_err": "Ralat berlaku semasa mencipta dompet. Sila cuba lagi.",
+        "wallet_name_prompt": "Sila masukkan nama untuk dompet {wallet_type} anda:",
+        "wallet_name_empty": "Nama dompet tidak boleh kosong. Sila cuba lagi.",
+        "wallet_name_exists": "Dompet dengan nama ini sudah wujud. Sila pilih nama lain.",
+        "wallet_create_details": (
+            "✅ Dompet Dicipta!\n"
+            "Nama: {name}\n"
+            "Kunci Awam: <code>{public_key}</code>\n"
+            "Baki: {balance} {wallet_type}\n\n"
+        ),
+        "transfer_instructions": (
+            "\n\n<b>Cara Memindahkan {wallet_type} ke Dompet Anda:</b>\n\n"
+            "1️⃣ Buka aplikasi dompet {wallet_type} anda atau mana-mana dompet serasi.\n"
+            "2️⃣ Pergi ke bahagian <b>Hantar</b> atau <b>Pindah</b> dompet.\n"
+            "3️⃣ Tampalkan <b>Kunci Awam</b> anda ke dalam medan alamat penerima. Kunci awam anda adalah:\n"
+            "<code>{public_key}</code>\n\n"
+            "4️⃣ Masukkan jumlah {wallet_type} yang ingin anda pindahkan.\n"
+            "5️⃣ Semak butiran transaksi dan sahkan pemindahan.\n\n"
+            "Setelah pemindahan berjaya, {wallet_type} akan muncul dalam baki dompet anda."
+        ),
     },
 }

@@ -15,7 +15,7 @@ LISTING_CONSTANT = {
         "field_updated_successfully": "✅ **{field_name}** updated to: **{new_value}**",
         "invalid_value": "❌ {error_message} Please enter a valid value.",
         "edit_field_prompt": "📝 **Which field would you like to edit?**",
-        "cancel_edit_button": "Cancel",
+        "cancel_edit_button": "❌ Cancel",
         "edit_button": "📝 Edit",
         "delete_button": "🗑 Delete",
         "previous_button": "⬅️ Previous",
@@ -35,6 +35,29 @@ LISTING_CONSTANT = {
             "Country": "country",
             "City": "city",
         },
+        "insurfficient_balance": (
+            "🚫 <b>Insufficient Balance</b>\n\n"
+            "Your wallet has only <b>{wallet_balance} {wallet_type}</b>.\n"
+            "The reward amount is <b>{reward_amount} {wallet_type}</b>.\n"
+            "Please ensure your wallet has enough balance to proceed."
+        ),
+        "congratulates_advertiser": (
+            "🎉 <b>Congratulations!</b>\n\n"
+            "Your reward of <b>{reward_amount} {wallet_type}</b> has been successfully transferred to our platform.\n\n"
+            "We have successfully lodged your case and the transfer of <b>{reward_amount} {wallet_type}</b> "
+            "has been completed to the bot owner's wallet. 🙌\n\n"
+            "Thank you for being part of our platform! 🚀"
+        ),
+        "owner_message":  (
+            "📢 <b>New Reward Transfer Completed</b>\n\n"
+            "🆔 <b>User ID:</b> <code>{user_id}</code>\n"
+            "📄 <b>Case ID:</b> <code>{case.id}</code>\n"
+            "💰 <b>Amount:</b> {reward_amount} {wallet_type}\n"
+            "🔐 <b>Wallet:</b> <code>{wallet.public_key}</code>\n"
+            "🏷️ <b>Wallet Name:</b> {wallet.name}\n\n"
+            "✅ <b>Status:</b> Reward transferred successfully.\n"
+            "🔍 Use /listing to view all active cases."
+        ),
         "case_details_template": (
             "📌 **Case Details**\n"
             "👤 **Person Name:** {person_name}\n"
@@ -45,6 +68,7 @@ LISTING_CONSTANT = {
             "🧒 **Age:** {age}\n"
             "📏 **Height:** {height} cm\n"
         ),
+        "transfer_failed": "❌ <b>Transfer Failed</b>\n\nSomething went wrong while processing the reward transfer. Please try again later.",
         "invalid_reward_amount": "❌ Invalid reward amount. Maximum reward amount is {max_amount}.",
         "reward_success": "✅ Reward successfully sent to finder {finder_id}.",
         "error_transferring_reward": "❌ An error occurred while transferring reward.",
