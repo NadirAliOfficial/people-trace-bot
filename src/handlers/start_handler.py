@@ -36,22 +36,32 @@ async def start(update: Update, context: ContextTypes.DEFAULT_TYPE) -> int:
         return State.CHOOSE_COUNTRY
 
     # ✅ Show banner if user doesn't have a language set
-    await update.message.reply_text("👋 Welcome to our bot!\nPlease choose your language below 👇")
+    await update.message.reply_text(get_text(user_id, "welcome"))
 
     # ⬇️ Language selection buttons
     btns = [
         [
-            InlineKeyboardButton(
-                LANG_DATA["en"]["lang_button"], callback_data="lang_en"
-            ),
-            InlineKeyboardButton(
-                LANG_DATA["zh"]["lang_button"], callback_data="lang_zh"
-            ),
-            InlineKeyboardButton(
-                LANG_DATA["ms"]["lang_button"], callback_data="lang_ms"
-            ),
+            InlineKeyboardButton(f"{LANG_DATA['en']['lang_button']} English", callback_data="lang_en"),
+            InlineKeyboardButton(f"{LANG_DATA['zh']['lang_button']} 中文", callback_data="lang_zh"),
+        ],
+        [
+            InlineKeyboardButton(f"{LANG_DATA['ms']['lang_button']} Melayu", callback_data="lang_ms"),
+            InlineKeyboardButton(f"{LANG_DATA['th']['lang_button']} Thai", callback_data="lang_th"),
+        ],
+        [
+            InlineKeyboardButton(f"{LANG_DATA['vi']['lang_button']} Vietnam", callback_data="lang_vi"),
+            InlineKeyboardButton(f"{LANG_DATA['ur']['lang_button']} Urdu", callback_data="lang_ur"),
+        ],
+        [
+            InlineKeyboardButton(f"{LANG_DATA['ja']['lang_button']} Japan", callback_data="lang_ja"),
+            InlineKeyboardButton(f"{LANG_DATA['ko']['lang_button']} Korean", callback_data="lang_ko"),
+        ],
+        [
+            InlineKeyboardButton(f"{LANG_DATA['km']['lang_button']} Cambodia", callback_data="lang_km"),
+            InlineKeyboardButton(f"{LANG_DATA['id']['lang_button']} Indonesia", callback_data="lang_id"),
         ]
     ]
+
 
     await update.message.reply_text(
         f"{LANG_DATA['en']['start_msg']}\n\n{LANG_DATA['zh']['start_msg']}",
