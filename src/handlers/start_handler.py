@@ -36,7 +36,7 @@ async def start(update: Update, context: ContextTypes.DEFAULT_TYPE) -> int:
         return State.CHOOSE_COUNTRY
 
     # ✅ Show banner if user doesn't have a language set
-    await update.message.reply_text(get_text(user_id, "welcome"))
+    await update.message.reply_text(LANG_DATA['en']['welcome'])
 
     # ⬇️ Language selection buttons
     btns = [
@@ -118,6 +118,7 @@ async def select_lang_callback(
 async def choose_country(update: Update, context: ContextTypes.DEFAULT_TYPE) -> int:
     user_id = update.effective_user.id
     txt = update.message.text.strip()
+   
     matches = get_country_matches(txt)
     if not matches:
         await update.message.reply_text(
@@ -127,7 +128,7 @@ async def choose_country(update: Update, context: ContextTypes.DEFAULT_TYPE) -> 
     if len(matches) == 1:
         context.user_data["country"] = matches[0]
         await update_or_create_case(user_id, country=matches[0])
-        message = update.message or query.message
+        message = update.message 
         await message.reply_text(  
             f"{get_text(user_id, 'country_selected')} {matches[0]}",
             parse_mode="HTML"
@@ -264,10 +265,10 @@ async def show_disclaimer(update: Update, context: ContextTypes.DEFAULT_TYPE) ->
     if update.callback_query:
         # Send a new message instead of editing
         await update.callback_query.message.reply_text(
-            text, parse_mode="HTML", reply_markup=kb
+            text, parse_mode="Markdown", reply_markup=kb
         )
     else:
-        await update.message.reply_text(text, parse_mode="HTML", reply_markup=kb)
+        await update.message.reply_text(text, parse_mode="Markdown", reply_markup=kb)
 
     return State.SHOW_DISCLAIMER
 

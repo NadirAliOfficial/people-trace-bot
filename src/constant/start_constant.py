@@ -9,15 +9,15 @@ START_LANG_DATA = {
         "country_selected": "Got it! You’re in ",
         "disclaimer_title": "Disclaimer\n\n",
         "welcome": "👋 Welcome to our bot!\nPlease choose your language below 👇",
-        "disclaimer_text": [
-          "• All rewards are held in escrow until the case is resolved",
-          "• Misuse of AI-generated or false content results in a permanent ban",
-          "• Report to local authorities before posting a case",
-          "• We are not responsible for disputes or misuse",
-          "• A 5% platform fee applies to both posting and successful findings",
+        "disclaimer_text": (
+              "• All rewards are held in escrow until the case is resolved \n",
+          "• Misuse of AI-generated or false content results in a permanent ba \n",
+          "• Report to local authorities before posting a cas \n",
+          "• We are not responsible for disputes or misus \n",
+          "• A 5% platform fee applies to both posting and successful finding \n",
           "• All info submitted is publicly visible"
-        ],
-        "fee_details": "Fees:\n• A 5% platform fee applies to both:\n– Case submissions\n– Successful findings",
+        )        ,
+        "fee_details": "Fees:\n• A 5% platform fee applies to both:\n– Case submissions\n– Successful findings \n",
         "agree_btn": "I Agree ✅",
         "disagree_btn": "I Disagree ❌",
         "disagree_end": "You did not agree. Conversation ended.",
@@ -106,14 +106,14 @@ START_LANG_DATA = {
     "country_selected": "已确认！您所在国家为 ",
     "disclaimer_title": "免责声明\n\n",
     "welcome": "👋 欢迎使用本机器人！\n请在下方选择您的语言 👇",
-    "disclaimer_text": [
-        "• 所有悬赏金由平台托管直至案件解决",
-        "• 使用AI生成或虚假内容将导致永久封禁",
-        "• 发布寻人信息前需先向当地警方报备",
-        "• 我们不对任何纠纷或滥用行为负责",
-        "• 发布和成功找回均收取5%平台费用",
+    "disclaimer_text":(
+         "• 所有悬赏金由平台托管直至案件 \n",
+        "• 使用AI生成或虚假内容将导致永久 \n",
+        "• 发布寻人信息前需先向当地警方 \n",
+        "• 我们不对任何纠纷或滥用行为 \n",
+        "• 发布和成功找回均收取5%平台 \n",
         "• 所有提交的信息将公开可见"
-    ],
+    ),
     "fee_details": "费用说明：\n• 5%平台费适用于以下两种情况：\n– 发布案件\n– 成功找回",
     "agree_btn": "我同意 ✅",
     "disagree_btn": "我不同意 ❌",
@@ -204,14 +204,14 @@ START_LANG_DATA = {
         "country_selected": "Maklum! Anda berada di ",
         "disclaimer_title": "Penafian\n\n",
         "welcome": "👋 Selamat datang ke bot kami!\nSila pilih bahasa di bawah 👇",
-        "disclaimer_text": [
-          "• Semua ganjaran disimpan dalam pegangan sehingga kes diselesaikan",
-          "• Penyalahgunaan kandungan palsu atau dijana AI menyebabkan penggantungan kekal",
-          "• Laporkan kepada pihak berkuasa tempatan sebelum memuat naik kes",
-          "• Kami tidak bertanggungjawab atas pertelingkahan atau penyalahgunaan",
-          "• Caj platform 5% dikenakan untuk kedua-dua hantaran kes dan penemuan berjaya",
+        "disclaimer_text": (
+          "• Semua ganjaran disimpan dalam pegangan sehingga kes diselesaik \n",
+          "• Penyalahgunaan kandungan palsu atau dijana AI menyebabkan penggantungan kek \n",
+          "• Laporkan kepada pihak berkuasa tempatan sebelum memuat naik k \n",
+          "• Kami tidak bertanggungjawab atas pertelingkahan atau penyalahguna \n",
+          "• Caj platform 5% dikenakan untuk kedua-dua hantaran kes dan penemuan berja \n",
           "• Semua maklumat yang dihantar adalah kelihatan awam"
-        ],
+        ),
         "fee_details": "Bayaran:\n• Caj platform 5% dikenakan untuk kedua-dua:\n– Penghantaran kes\n– Penemuan berjaya",
         "agree_btn": "Saya Setuju ✅",
         "disagree_btn": "Saya Tidak Setuju ❌",
@@ -302,14 +302,14 @@ START_LANG_DATA = {
     "country_selected": "เข้าใจแล้ว! คุณอยู่ใน ",
     "disclaimer_title": "ข้อจำกัดความรับผิดชอบ",
     "welcome": "👋 ยินดีต้อนรับสู่บอทของเรา!\nกรุณาเลือกภาษาจากตัวเลือกด้านล่าง 👇",
-    "disclaimer_text": [
-        "• รางวัลทั้งหมดจะถูกเก็บไว้จนกว่าเรื่องจะจบ",
-        "• การใช้งานเนื้อหาเท็จหรือสร้างจาก AI จะทำให้ถูกแบนตลอดชีวิต",
-        "• กรุณาแจ้งความกับเจ้าหน้าที่ท้องถิ่นก่อนโพสต์เรื่อง",
-        "• เราไม่รับผิดชอบต่อการโต้แย้งหรือการใช้งานที่ไม่เหมาะสม",
-        "• มีค่าธรรมเนียมแพลตฟอร์ม 5% สำหรับการโพสต์และการค้นหาที่สำเร็จ",
+    "disclaimer_text": (
+        "• รางวัลทั้งหมดจะถูกเก็บไว้จนกว่าเรื่องจะ \n",
+        "• การใช้งานเนื้อหาเท็จหรือสร้างจาก AI จะทำให้ถูกแบนตลอดชีว \n",
+        "• กรุณาแจ้งความกับเจ้าหน้าที่ท้องถิ่นก่อนโพสต์เรื่ \n",
+        "• เราไม่รับผิดชอบต่อการโต้แย้งหรือการใช้งานที่ไม่เหมาะ \n",
+        "• มีค่าธรรมเนียมแพลตฟอร์ม 5% สำหรับการโพสต์และการค้นหาที่สำเร \n",
         "• ข้อมูลที่ส่งมาทั้งหมดจะแสดงให้สาธารณะเห็น"
-    ],
+    ),
     "fee_details": "ค่าธรรมเนียม:\n• ค่าธรรมเนียมแพลตฟอร์ม 5% จะถูกหักจาก:\n– การโพสต์เรื่อง\n– การค้นหาที่สำเร็จ",
     "agree_btn": "ฉันยอมรับ ✅",
     "disagree_btn": "ฉันไม่ยอมรับ ❌",
@@ -400,14 +400,14 @@ START_LANG_DATA = {
     "country_selected": "Đã xác nhận! Bạn đang ở ",
     "disclaimer_title": "Miễn trừ trách nhiệm\n\n",
     "welcome": "👋 Chào mừng bạn đến với bot của chúng tôi!\nVui lòng chọn ngôn ngữ bên dưới 👇",
-    "disclaimer_text": [
-        "• Mọi phần thưởng sẽ được giữ trong tài khoản ký quỹ cho đến khi vụ việc được giải quyết",
-        "• Lạm dụng nội dung giả mạo hoặc do AI tạo ra sẽ bị cấm vĩnh viễn",
-        "• Báo cáo với cơ quan chức năng địa phương trước khi đăng tin",
-        "• Chúng tôi không chịu trách nhiệm về tranh chấp hoặc lạm dụng",
-        "• Phí nền tảng 5% áp dụng cho cả hai trường hợp:\n– Đăng tin\n– Tìm kiếm thành công",
+    "disclaimer_text": (
+        "• Mọi phần thưởng sẽ được giữ trong tài khoản ký quỹ cho đến khi vụ việc được giải quy \n",
+        "• Lạm dụng nội dung giả mạo hoặc do AI tạo ra sẽ bị cấm vĩnh vi \n",
+        "• Báo cáo với cơ quan chức năng địa phương trước khi đăng t \n",
+        "• Chúng tôi không chịu trách nhiệm về tranh chấp hoặc lạm dụ \n",
+        "• Phí nền tảng 5% áp dụng cho cả hai trường hợp:\n– Đăng tin\n– Tìm kiếm thành cô \n",
         "• Mọi thông tin gửi đi đều công khai"
-    ],
+    ),
     "fee_details": "Phí dịch vụ:\n• Phí nền tảng 5% áp dụng cho:\n– Đăng tin\n– Tìm kiếm thành công",
     "agree_btn": "Tôi Đồng Ý ✅",
     "disagree_btn": "Tôi Không Đồng Ý ❌",
@@ -498,14 +498,15 @@ START_LANG_DATA = {
     "country_selected": "سمجھ گئے! آپ {country} میں ہیں",
     "disclaimer_title": "ذمہ داری سے انکار",
     "welcome": "👋 ہمارے بوٹ میں خوش آمدید!\nبراہ کرم نیچے سے اپنی زبان منتخب کریں 👇",
-    "disclaimer_text": [
-        "• تمام انعامات معاملہ حل ہونے تک جمع رہیں گے",
-        "• AI سے بنائے گئے غلط مواد کے استعمال پر دائمی پابندی عائد ہو گی",
-        "• کیس شائع کرنے سے قبل مقامی حک authorities authorities کو مطلع کریں",
-        "• ہم تنازعات یا غلط استعمال کے لیے ذمہ دار نہیں ہیں",
-        "• دونوں صورتوں پر 5% پلیٹ فارم فیس وصول کی جائے گی: کیس شائع کرنا اور کامیابی سے تلاش کرنا",
-        "• جمع کرائی گئی تمام معلومات عوامی طور پر دیکھی جا سکتی ہیں"
-    ],
+ "disclaimer_text": (
+    "•  تمام انعامات معاملہ حل ہونے تک جمع رہیں گے\n"
+    "• AI سے بنائے گئے غلط مواد کے استعمال پر دائمی پابندی عائد ہو گی\n"
+    "• کیس شائع کرنے سے قبل مقامی حکام کو مطلع کریں\n"
+    "• ہم تنازعات یا غلط استعمال کے لیے ذمہ دار نہیں ہیں\n"
+    "• دونوں صورتوں پر 5% پلیٹ فارم فیس وصول کی جائے گی: کیس شائع کرنا اور کامیابی سے تلاش کرنا\n"
+    "• جمع کرائی گئی تمام معلومات عوامی طور پر دیکھی جا سکتی ہیں"
+),
+
     "fee_details": "فیس:\n• 5% پلیٹ فارم فیس دونوں پر لاگو ہوتی ہے:\n– کیس جمع کروانا\n– کامیابی سے تلاش کرنا",
     "agree_btn": "میں اتفاق کرتا ہوں ✅",
     "disagree_btn": "میں اتفاق نہیں کرتا ❌",
@@ -596,14 +597,15 @@ START_LANG_DATA = {
     "country_selected": "確認しました！ あなたは {country} にいます",
     "disclaimer_title": "免責事項",
     "welcome": "👋 当ボットへようこそ！\n以下から言語を選択してください 👇",
-    "disclaimer_text": [
-        "• 全ての報酬金は解決までエスクローされます",
-        "• AI生成または偽のコンテンツ使用は永久利用禁止となります",
-        "• 案件投稿前に地元の当局に通報してください",
-        "• 紛争や不正利用については責任を負いません",
-        "• 投稿および成功時の両方に5%プラットフォーム手数料がかかります",
-        "• 提出された情報はすべて公開されます"
-    ],
+    "disclaimer_text": (
+    "• 全ての報酬金は解決までエスクローされます\n"
+    "• AI生成または偽のコンテンツ使用は永久利用禁止となります\n"
+    "• 案件投稿前に地元の当局に通報してください\n"
+    "• 紛争や不正利用については責任を負いません\n"
+    "• 投稿および成功時の両方に5%プラットフォーム手数料がかかります\n"
+    "• 提出された情報はすべて公開されます"
+)
+,
     "fee_details": "手数料:\n• 5%のプラットフォーム手数料が次の項目に適用されます:\n– 案件投稿\n– 成功時",
     "agree_btn": "同意する ✅",
     "disagree_btn": "同意しない ❌",
@@ -694,14 +696,15 @@ START_LANG_DATA = {
     "country_selected": "확인되었습니다! 당신은 ",
     "disclaimer_title": "면책 조항\n\n",
     "welcome": "👋 우리 봇에 오신 것을 환영합니다!\n아래에서 언어를 선택해 주세요 👇",
-    "disclaimer_text": [
-        "• 모든 보상은 케이스 해결 전까지 에스크로에 보관됩니다.",
-        "• AI 생성 또는 허위 콘텐츠의 악용 시 영구 차단될 수 있습니다.",
-        "• 케이스 등록 전에 현지 당국에 신고하십시오.",
-        "• 분쟁이나 부정확한 사용에 대해 책임을 지지 않습니다.",
-        "• 케이스 등록 및 성공적인 발견 시 각각 5%의 플랫폼 수수료가 부과됩니다.",
-        "• 제출된 모든 정보는 공개됩니다."
-    ],
+   "disclaimer_text": (
+    "• 모든 보상은 케이스 해결 전까지 에스크로에 보관됩니다.\n"
+    "• AI 생성 또는 허위 콘텐츠의 악용 시 영구 차단될 수 있습니다.\n"
+    "• 케이스 등록 전에 현지 당국에 신고하십시오.\n"
+    "• 분쟁이나 부정확한 사용에 대해 책임을 지지 않습니다.\n"
+    "• 케이스 등록 및 성공적인 발견 시 각각 5%의 플랫폼 수수료가 부과됩니다.\n"
+    "• 제출된 모든 정보는 공개됩니다."
+)
+,
     "fee_details": "수수료:\n• 다음 항목에 대해 5% 플랫폼 수수료가 부과됩니다:\n– 케이스 등록\n– 성공적인 발견",
     "agree_btn": "동의함 ✅",
     "disagree_btn": "동의하지 않음 ❌",
@@ -792,14 +795,15 @@ START_LANG_DATA = {
     "country_selected": "យល់ដឹងហើយ! អ្នក​កំពុង​នៅ ",
     "disclaimer_title": "ការ​បដិសេធ​ទទួលខុសត្រូវ\n\n",
     "welcome": "👋 សូមស្វាគមន៍មកកាន់​ប៊ូត​របស់​យើង!\nសូម​ជ្រើសរើស​ភាសា​ខាងក្រោម 👇",
-    "disclaimer_text": [
-        "• រង្វាន់​ទាំងអស់​នឹង​ត្រូវ​រក្សាទុក​ដល់​ពេល​ដែល​បញ្ហា​ត្រូវ​បាន​ដោះស្រាយ",
-        "• ការប្រើប្រាស់ខុស​ប្រយោជន៍​នៃ​ខ្លឹមសារ​ AI ឬ​ខ្លឹមសារ​ក្លែងកំពូល នឹង​បណ្តាល​ឱ្យ​ត្រូវ​ហាមឃាត់​ជារៀងរហូត",
-        "• សូម​ជូន​ដំណឹង​ទៅ​អាជ្ញាធរ​ក្នុង​ស្រុក​មុន​នឹង​បង្ហោះ​ករណី",
-        "• យើង​មិន​ទទួលខុសត្រូវ​ចំពោះ​វិវាទ ឬ​ការប្រើប្រាស់​ខុស​ប្រយោជន៍​ទេ",
-        "• ថ្លៃ​សេវា 5% នឹង​ត្រូវ​បន្ថែម​លើ​ការ​បង្ហោះ​ករណី និង​ការ​ស្វែងរក​ដោយ​ជោគជ័យ",
-        "• ព័ត៌មាន​ទាំងអស់​ដែល​បាន​ដាក់​បញ្ជូន​នឹង​បង្ហាញ​ជា​សាធារណ:"
-    ],
+  "disclaimer_text": (
+    "• រង្វាន់​ទាំងអស់​នឹង​ត្រូវ​រក្សាទុក​ដល់​ពេល​ដែល​បញ្ហា​ត្រូវ​បាន​ដោះស្រាយ\n"
+    "• ការប្រើប្រាស់ខុស​ប្រយោជន៍​នៃ​ខ្លឹមសារ​ AI ឬ​ខ្លឹមសារ​ក្លែងកំពូល នឹង​បណ្តាល​ឱ្យ​ត្រូវ​ហាមឃាត់​ជារៀងរហូត\n"
+    "• សូម​ជូន​ដំណឹង​ទៅ​អាជ្ញាធរ​ក្នុង​ស្រុក​មុន​នឹង​បង្ហោះ​ករណី\n"
+    "• យើង​មិន​ទទួលខុសត្រូវ​ចំពោះ​វិវាទ ឬ​ការប្រើប្រាស់​ខុស​ប្រយោជន៍​ទេ\n"
+    "• ថ្លៃ​សេវា 5% នឹង​ត្រូវ​បន្ថែម​លើ​ការ​បង្ហោះ​ករណី និង​ការ​ស្វែងរក​ដោយ​ជោគជ័យ\n"
+    "• ព័ត៌មាន​ទាំងអស់​ដែល​បាន​ដាក់​បញ្ជូន​នឹង​បង្ហាញ​ជា​សាធារណៈ"
+)
+,
     "fee_details": "ថ្លៃសេវា:\n• ថ្លៃសេវា 5% នឹង​ត្រូវ​បន្ថែម​លើ:\n– ការ​ដាក់​ករណី\n– ការ​ស្វែងរក​ដោយ​ជោគជ័យ",
     "agree_btn": "ខ្ញុំយល់ព្រម ✅",
     "disagree_btn": "ខ្ញុំមិនយល់ព្រម ❌",
@@ -880,60 +884,86 @@ START_LANG_DATA = {
     "main_menu": "សូម​ជ្រើសរើស​ជម្រើស​ខាងក្រោម​ដើម្បី​បន្ត:",
     "wallet_name_exists": "កាបូប​ដែល​មានឈ្មោះ​នេះ​មាន​ស្រាប់។ សូម​ជ្រើសរើស​ឈ្មោះ​ផ្សេងទៀត។"
 },
-        "id": { #Indonesian
-        "lang_choice": "Bahasa Indonesia",
-        "lang_button": "Bahasa Indonesia",
-        "start_msg": "Halo! Selamat datang di People Finder Bot.\nSilakan pilih bahasa Anda:",
-        "choose_country": "Masukkan nama negara Anda (boleh nama sebagian):",
-        "country_not_found": "Tidak ada negara yang cocok ditemukan. Silakan coba lagi:",
-        "country_multi": "Beberapa negara ditemukan (Halaman {page} dari {total}):",
-        "country_selected": "Negara telah dicatat:",
-        "disclaimer_title": "Penafian\n\n",
-        "disclaimer_text": (
-            "1. Semua hadiah disimpan dalam escrow.\n"
-            "2. Konten palsu hasil AI dilarang.\n"
-            "3. Hanya untuk penggunaan sah dan etika.\n"
-            "4. Laporkan ke otoritas terlebih dahulu saat melacak seseorang.\n"
-            "5. Kami tidak bertanggung jawab atas penyalahgunaan.\n"
-            "6. Pendekatan berbasis komunitas; periksa dengan teliti.\n"
-            "7. Kami tidak menangani sengketa hadiah.\n\n"
-            "Dengan menggunakan bot ini, Anda setuju pada ketentuan ini.\n\n"
-            "🔗 Untuk pembaruan dan dukungan, bergabunglah dengan saluran kami: @YourChannelName"
-        ),
-        "agree_btn": "Saya Setuju ✅",
-        "disagree_btn": "Saya Tidak Setuju ❌",
-        "disagree_end": "Anda tidak setuju. Percakapan diakhiri.",
-        "enter_city": "Masukkan nama kota Anda (boleh nama sebagian):",
-        "city_not_found": "Tidak ada kota yang cocok ditemukan. Silakan coba lagi:",
-        "city_multi": "Beberapa kota ditemukan (Halaman {page} dari {total}):",
-        "city_selected": "Kota telah dicatat:",
-        "choose_action": "Apakah Anda ingin Beriklan atau Mencari Orang?",
-        "advertise_btn": "Beriklan 📢",
-        "find_btn": "Cari Orang 👥",
-        "find_dev": "Fitur Cari Orang sedang dikembangkan.",
-        "btn_language": "Ubah Bahasa",
-        "create_new_wallet": "➕ Buat Dompet Baru",
-        "btn_mobile_number": "Nomor Ponsel",
-        "btn_close_menu": "Tutup Menu",
-        "enter_mobile": "Masukkan nomor ponsel Anda (TAC akan dikirim ke sini):",
-        "lang_updated": "Bahasa telah diperbarui.",
-        "invalid_choice": "Pilihan tidak valid. Percakapan diakhiri.",
-        "invalid_mobile_number": "❌ Nomor ponsel tidak valid. Masukkan nomor 10 digit yang benar.",
-        "menu_settings_title": "Menu Pengaturan",
-        "enter_tac": "Masukkan TAC yang dikirim ke ponsel Anda:",
-        "verify_tac": "Memverifikasi TAC...",
-        "tac_verified": "✅ Verifikasi TAC berhasil.",
-        "tac_invalid": "❌ TAC tidak valid. Silakan coba lagi.",
-        "choose_existing_mobile": "Silakan pilih nomor yang sudah ada atau tambahkan yang baru.",
-        "transfer_instructions": (
-            "\n\n<b>Cara Memindahkan {wallet_type} ke Dompet Anda:</b>\n\n"
-            "1️⃣ Buka aplikasi dompet {wallet_type} atau dompet lain yang kompatibel.\n"
-            "2️⃣ Pergi ke bagian <b>Kirim</b> atau <b>Pindahkan</b> di dompet tersebut.\n"
-            "3️⃣ Salin <b>Kunci Publik</b> Anda ke kolom alamat penerima. Kunci publik Anda adalah:\n"
-            "<code>{public_key}</code>\n\n"
-            "4️⃣ Masukkan jumlah {wallet_type} yang ingin Anda pindahkan.\n"
-            "5️⃣ Periksa detail transaksi dan konfirmasi pemindahan.\n\n"
-            "Setelah berhasil dipindahkan, {wallet_type} akan muncul di saldo dompet Anda."
-        ),
-    }
+    "id": {
+  "lang_choice": "Bahasa Inggris",
+  "lang_button": "Bahasa Inggris",
+  "start_msg": "Halo! Selamat datang di People Finder Bot.\nSilakan pilih bahasa Anda:",
+  "choose_country": "Di negara mana Anda berada? (Anda dapat mengetik sebagian nama, misal Swed untuk Sweden)",
+  "country_not_found": "Negara tidak ditemukan. Silakan coba lagi:",
+  "country_multi": "Ditemukan beberapa negara (halaman {page} dari {total}):",
+  "country_selected": "Diketahui! Anda berada di ",
+  "disclaimer_title": "Penafian\n\n",
+  "welcome": "👋 Selamat datang di bot kami!\nSilakan pilih bahasa di bawah ini 👇",
+  "disclaimer_text": (
+    "• Semua hadiah akan disimpan hingga kasus diselesaikan\n"
+    "• Penyalahgunaan konten AI atau konten palsu akan menyebabkan larangan permanen\n"
+    "• Harap beri tahu otoritas lokal sebelum memposting kasus\n"
+    "• Kami tidak bertanggung jawab atas perselisihan atau penyalahgunaan\n"
+    "• Biaya layanan 5% akan ditambahkan pada kasus yang diposting dan pencarian yang berhasil\n"
+    "• Semua informasi yang dikirimkan akan ditampilkan secara publik"
+  ),
+  "fee_details": "Biaya layanan:\n• Biaya 5% akan ditambahkan pada:\n– Pemostingan kasus\n– Pencarian yang berhasil",
+  "agree_btn": "Saya setuju ✅",
+  "disagree_btn": "Saya tidak setuju ❌",
+  "disagree_end": "Anda tidak setuju. Percakapan dihentikan.",
+  "enter_province": "Sekarang, mohon tentukan provinsi/wilayah Anda (nama sebagian juga diperbolehkan):",
+  "province_not_exist": "Provinsi tidak ditemukan. Silakan coba lagi.",
+  "province_multi": "Ditemukan beberapa provinsi (halaman {page} dari {total}):",
+  "province_selected": "Provinsi telah dicatat:",
+  "enter_city": "Masukkan nama kota Anda (nama sebagian juga diperbolehkan):",
+  "city_not_found": "Kota tidak ditemukan. Silakan coba lagi:",
+  "city_multi": "Ditemukan beberapa kota (halaman {page} dari {total}):",
+  "city_selected": "Kota telah dicatat:",
+  "choose_action": "Apakah Anda ingin mengiklankan kasus atau mencari seseorang?",
+  "advertise_btn": "Pasang Kasus 📢",
+  "find_btn": "Cari Orang 👥",
+  "change_location": "Ubah Lokasi 📍",
+  "find_dev": "'Cari Orang' sedang dalam pengembangan.",
+  "btn_language": "Ubah Bahasa",
+  "create_new_wallet": "➕ Buat Dompet Baru",
+  "btn_mobile_number": "Nomor Telepon Seluler",
+  "btn_close_menu": "Tutup Menu",
+  "enter_mobile": "Masukkan nomor ponsel Anda (termasuk kode negara). Kode verifikasi akan dikirim ke nomor ini:",
+  "lang_updated": "Bahasa telah diperbarui.",
+  "invalid_choice": "Pilihan tidak valid. Percakapan dihentikan.",
+  "invalid_mobile_number": "❌ Nomor ponsel tidak valid. Harap masukkan 10 digit yang benar.",
+  "menu_settings_title": "Menu Pengaturan",
+  "enter_tac": "Masukkan kode verifikasi (TAC) yang dikirim ke nomor ponsel Anda:",
+  "verify_tac": "Memverifikasi kode... Harap tunggu sebentar.",
+  "tac_verified": "✅ TAC berhasil diverifikasi.",
+  "tac_invalid": "❌ TAC tidak valid. Silakan coba lagi.",
+  "choose_existing_mobile": "Pilih nomor yang sudah ada atau tambahkan nomor baru.",
+  "transfer_instructions": (
+    "\n\n<b>Cara mentransfer {wallet_type} ke dompet Anda:</b>\n\n"
+    "1️⃣ Buka aplikasi dompet {wallet_type} Anda atau dompet lain yang kompatibel.\n"
+    "2️⃣ Masuk ke bagian <b>Kirim</b> atau <b>Transfer</b> dompet.\n"
+    "3️⃣ Tempelkan <b>Public Key</b> Anda di kolom alamat penerima. Public Key Anda adalah:\n"
+    "<code>{public_key}</code>\n\n"
+    "4️⃣ Masukkan jumlah {wallet_type} yang ingin Anda transfer.\n"
+    "5️⃣ Periksa detail transfer dan konfirmasi.\n\n"
+    "Setelah transfer berhasil, saldo {wallet_type} akan muncul di dompet Anda."
+  ),
+  "no_case_found_in_province": "Tidak ada kasus di provinsi {province} saat ini. Silakan coba provinsi lain atau kembali nanti.",
+  "wallet_name_prompt": "Masukkan nama dompet {wallet_type} Anda:",
+  "wallet_name_empty": "Nama dompet tidak boleh kosong. Silakan coba lagi.",
+  "wallet_create_err": "Terjadi kesalahan saat membuat dompet. Silakan coba lagi.",
+  "wallet_create_details": (
+    "✅ Dompet berhasil dibuat!\n"
+    "Nama: {name}\n"
+    "Public Key: <code>{public_key}</code>\n"
+    "Saldo: {balance} {wallet_type}\n\n"
+  ),
+  "usdt_wallet": "Dompet USDT",
+  "sol_wallet": "Dompet SOL",
+  "choose_wallet": "Pilih jenis dompet:",
+  "choose_existing_or_new_wallet": "Pilih dompet yang sudah ada atau buat dompet baru:",
+  "main_menu": "Silakan pilih salah satu opsi berikut untuk melanjutkan:",
+  "help_command": "Butuh bantuan? Kunjungi saluran dukungan kami: @YourSupportChannel",
+  "settings_command": "⚙️ Menu Pengaturan",
+  "private_key_warning": (
+    "⚠️ <b>Peringatan:</b> Jangan pernah membagikan <b>Private Key</b> Anda dengan siapa pun. "
+    "Jika Anda membagikannya, siapa pun bisa mencuri aset Anda!"
+  )
+}
+
 }
