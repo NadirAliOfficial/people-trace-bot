@@ -89,9 +89,7 @@ async def handle_select_mobile(
         mobile_number = await MobileNumber.find_one({"number": selected_mobile})
 
         if not mobile_number:
-            await query.edit_message_text(
-                "The selected mobile number does not exist in the database. Please try again."
-            )
+            await query.edit_message_text(get_text(user_id, "mobile_number_doesnt_exist"))
             return State.CREATE_CASE_MOBILE
 
         context.user_data["mobile"] = selected_mobile
@@ -380,7 +378,7 @@ async def handle_weight(update: Update, context: ContextTypes.DEFAULT_TYPE) -> i
     weight = update.message.text.strip()
 
     if not weight.isdigit():
-        await update.message.reply_text("Please enter a valid number for weight.")
+        await update.message.reply_text(get_text(user_id, "enter_valid_weight"))
         return State.CREATE_CASE_WEIGHT
 
     await update_or_create_case(user_id, weight=weight)
@@ -563,7 +561,7 @@ async def handle_transfer_confirmation(
             else:
                 await query.answer()
                 await query.edit_message_text(
-                    "❌ <b>Transfer Failed</b>\n\nSomething went wrong while processing the reward transfer. Please try again later.",
+                    get_text(user_id, "transaction_failed"),
                     parse_mode="HTML"
                 )
 
@@ -578,7 +576,7 @@ async def handle_transfer_confirmation(
     elif user_input == "cancel_transfer":
         await query.answer()
         await query.edit_message_text(
-            "❌ <b>Transfer Canceled</b>\n\nThe reward transfer has been canceled as per your request.",
+            get_text(user_id, "transfer_canceled"),
             parse_mode="HTML"
         )
         return State.CREATE_CASE_ASK_REWARD
@@ -586,7 +584,7 @@ async def handle_transfer_confirmation(
     else:
         await query.answer()
         await query.edit_message_text(
-            "⚠️ <b>Invalid Selection</b>\n\nPlease choose a valid option.",
+            get_text(user_id, "invalid_choice"),
             parse_mode="HTML"
         )
         return State.CREATE_CASE_CONFIRM_TRANSFER

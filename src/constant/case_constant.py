@@ -10,6 +10,7 @@ CASE_CONSTANT = {
             "3. All information provided will be publicly visible.\n\n"
             "Do you agree?"
         ),
+        "mobile_number_doesnt_exist": "The mobile number you entered does not exist. Please try again.",
         "enter_person_name": "Enter the name of the person you're looking for:",
         "relationship": "What is your relationship to the person? (e.g., Friend, Family, Partner, etc.):",
         "upload_photo": "Upload a clear photo of the person (max. 5 MB):",
@@ -20,6 +21,8 @@ CASE_CONSTANT = {
         "eye_color": "What is the person's eye color? (e.g., Blue, Green, etc.):",
         "height": "What is the person's height (cm):",
         "weight": "What is the person's weight (kg):",
+        "enter_valid_height": "Please enter a valid height (cm).",
+        "enter_valid_weight": "Please enter a valid weight (kg).",
         "distinctive_features": "What are the person's distinctive physical features? (e.g., Tattoo of eagle):",
         "reason_for_finding": "Why are you looking for this person?",
         "enter_reward_amount_sol": "Please enter the reward amount in SOL.",
@@ -41,10 +44,13 @@ CASE_CONSTANT = {
         "male_option": "♂ Male",
         "female_option": "♀ Female",
         "other_option": "Other",
-
+        "transaction_failed": "❌ <b>Transfer Failed</b>\n\nSomething went wrong while processing the reward transfer. Please try again later.",
+        "transfer_canceled": "❌ <b>Transfer Canceled</b>\n\nThe reward transfer has been canceled as per your request.",
+        "invalid_choice": "⚠️ <b>Invalid Selection</b>\n\nPlease choose a valid option.",
         # Newly Added Constants
+        "mobile_selected_with_tac": "The mobile number you entered has been verified. Please enter the verification code:",
         "choose_existing_mobile": "Please select an existing number or add a new one.",
-        "enter_mobile": "Enter your mobile number (TAC will be sent here):",
+        "enter_mobile": "Please enter your mobile number (with country code):",
         "enter_valid_mobile": "❌ Invalid mobile number. Please enter a valid 10-digit number.",
         "tac_verified": "✅ TAC verified successfully.",
         "tac_invalid": "❌ Invalid TAC. Please try again.",
@@ -215,8 +221,6 @@ CASE_CONSTANT = {
             "Setelah pemindahan berjaya, {wallet_type} akan muncul dalam baki dompet anda."
         ),
     },
-<<<<<<< HEAD
-=======
 
     # Thai (ไทย)
     "th": {
@@ -560,5 +564,4 @@ CASE_CONSTANT = {
     "other_option": "Lainnya",
 }
 
->>>>>>> 7225833d1f221b68aff8d3d73c76acaa719b48dc
 }

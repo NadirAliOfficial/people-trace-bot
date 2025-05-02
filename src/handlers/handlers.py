@@ -63,6 +63,7 @@ from handlers.listing_handler import (
     update_case_field,
     update_choose_country,
 )
+from handlers.stats_handler import stats_command, stats_menu_callback, unsolved_country_callback
 from handlers.wallet_handler import (
     back_to_wallet_menu,
     confirm_delete_wallet,
@@ -523,4 +524,21 @@ settings_handler = ConversationHandler(
     allow_reentry=True,
     
 )
+
 # ---------------------- Settings Conversation Handler End  ---------------------
+
+
+
+
+stats_handler = ConversationHandler(
+    entry_points=[CommandHandler("stats", stats_command)],
+    states={
+        State.SHOW_STATS_MENU: [
+            CallbackQueryHandler(stats_menu_callback),
+        ],
+        State.SHOW_UNSOLVED_COUNTRIES: [
+            CallbackQueryHandler(unsolved_country_callback, pattern="^country_"),
+        ],
+    },
+    fallbacks=[],
+)
