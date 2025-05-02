@@ -106,6 +106,11 @@ class State(Enum):
     SETTINGS_MOBILE_MANAGEMENT = "SETTINGS_MOBILE_MANAGEMENT"
     SETTINGS_CREATE_CASE_TAC = "SETTINGS_CREATE_CASE_TAC"
 
+    # Stats 
+    SHOW_STATS_MENU = "SHOW_STATS_MENU"
+    SHOW_UNSOLVED_COUNTRIES = "SHOW_UNSOLVED_COUNTRIES"
+    
+
 # ======================
 # Language Data & Constants
 # ======================

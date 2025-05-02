@@ -55,7 +55,33 @@ WALLET_LANG_DATA = {
         "no_usdt_wallets": "You don't have any USDT wallets yet.",
         "back_button": "⬅️ Back",
         "refresh_btn": "🔄 Refresh",
-        "wallet_not_found": "Wallet not found."
+        "wallet_not_found": "Wallet not found.",
+    "show_balance": "\n\n🔷 {name}\n\n💰 Balance: {balance}\n🔑 Public Key: {public_key}\n\nSelect an action:",
+    "show_private_key": "🔐 Show Private Key",
+    "back_to_wallet": "⬅️ Back to Wallets",
+    "your_usdt_wallet": "📋 Your USDT Wallets:",
+    "show_it_btn": "✅ Yes, show it",
+    "private_key_warning": (
+      "🚨 PRIVATE KEY WARNING 🚨\n\n"
+      "This key gives FULL ACCESS to your wallet and funds.\n\n"
+      "🔐 Private Key:\n"
+      "{wallet}\n\n"
+      "❗ Never share this key with anyone\n"
+      "❗ Never enter it on unverified websites\n"
+      "❗ Store it securely offline if you must keep it"
+    ),
+    "dont_have_any_wallet": "<b>You don't have any wallets yet.</b>",
+    "select_wallet_header": "<b>Select a wallet to view its address:</b>",
+    "wallet_not_found": "Wallet not found.",
+    "select_wallet_type_header": "Please select the wallet type:",
+    "enter_wallet_name": "Please enter the wallet name:",
+    "wallet_address_already_in_use": "A wallet with this name already exists. Please choose a different name.",
+    "dont_have_wallet_to_delete": "<b>You don't have any wallets to delete.</b>",
+    "yes_delete": "Yes, delete",
+    "wallet_deleted": "Wallet deleted successfully.",
+    "failed_to_delete_wallet": "Failed to delete wallet.",
+    "delete_wallet_header": "Select a wallet to delete:"
+
     },
     "zh": {
         "choose_wallet": "请选择要创建的钱包类型：",
@@ -72,6 +98,7 @@ WALLET_LANG_DATA = {
             "私钥: `{secret_key}`\n"
             "余额: {balance} {wallet_type}"
         ),
+        
         "wallet_create_err": "❌ 创建钱包时出错。请稍后重试。",
         "cancel_msg": "操作已取消。输入 /start 重新开始。",
         "account_wallet_type": "账户钱包类型 (SOL | BTC)",
@@ -108,6 +135,31 @@ WALLET_LANG_DATA = {
         "sol_wallets_header": "<b>您的 SOL 钱包：</b>\n",
         "wallet_balance": "<b>名称：</b> {name}, <b>余额：</b> {balance} SOL\n",
         "wallet_error": "<b>名称：</b> {name}, <b>错误：</b> {error}\n",
+          "show_balance": "\n\n🔷 {name}\n\n💰 余额: {balance}\n🔑 公钥: {public_key}\n\n选择一个操作:",
+    "show_private_key": "🔐 显示私钥",
+    "back_to_wallet": "⬅️ 返回钱包",
+    "your_usdt_wallet": "📋 您的USDT钱包:",
+    "show_it_btn": "✅ 是的，显示它",
+    "private_key_warning": (
+      "🚨 私钥警告 🚨\n\n"
+      "此密钥可完全访问您的钱包和资金。\n\n"
+      "🔐 私钥:\n"
+      "{wallet}\n\n"
+      "❗ 切勿与任何人分享此密钥\n"
+      "❗ 切勿在未经验证的网站上输入\n"
+      "❗ 如需保留，请离线安全存储"
+    ),
+    "dont_have_any_wallet": "<b>您还没有任何钱包。</b>",
+    "select_wallet_header": "<b>请选择要查看的钱包地址:</b>",
+    "wallet_not_found": "未找到钱包。",
+    "select_wallet_type_header": "请选择钱包类型:",
+    "enter_wallet_name": "请输入钱包名称:",
+    "wallet_address_already_in_use": "已有同名钱包存在。请选择其他名称。",
+    "dont_have_wallet_to_delete": "<b>您没有可删除的钱包。</b>",
+    "yes_delete": "是的，删除",
+    "wallet_deleted": "钱包已成功删除。",
+    "failed_to_delete_wallet": "删除钱包失败。",
+    "delete_wallet_header": "请选择要删除的钱包:"
     },
     "ms": {
         "choose_wallet": "Sila pilih jenis dompet:",
@@ -160,5 +212,554 @@ WALLET_LANG_DATA = {
         "sol_wallets_header": "<b>Dompet SOL Anda:</b>\n",
         "wallet_balance": "<b>Nama:</b> {name}, <b>Baki:</b> {balance} SOL\n",
         "wallet_error": "<b>Nama:</b> {name}, <b>Ralat:</b> {error}\n",
+          "show_balance": "\n\n🔷 {name}\n\n💰 Baki: {balance}\n🔑 Kunci Awam: {public_key}\n\nPilih tindakan:",
+    "show_private_key": "🔐 Papar Kunci Peribadi",
+    "back_to_wallet": "⬅️ Kembali ke Dompet",
+    "your_usdt_wallet": "📋 Dompet USDT Anda:",
+    "show_it_btn": "✅ Ya, paparkan",
+    "private_key_warning": (
+      "🚨 AMARAN KUNCI PERIBADI 🚨\n\n"
+      "Kunci ini memberi AKSES PENUH kepada dompet dan dana anda.\n\n"
+      "🔐 Kunci Peribadi:\n"
+      "{wallet}\n\n"
+      "❗ Jangan kongsi kunci ini dengan sesiapa\n"
+      "❗ Jangan masukkan di laman web yang tidak sah\n"
+      "❗ Simpan secara offline jika perlu menyimpannya"
+    ),
+    "dont_have_any_wallet": "<b>Anda belum ada dompet.</b>",
+    "select_wallet_header": "<b>Sila pilih dompet untuk lihat alamatnya:</b>",
+    "wallet_not_found": "Dompet tidak dijumpai.",
+    "select_wallet_type_header": "Sila pilih jenis dompet:",
+    "enter_wallet_name": "Sila masukkan nama dompet:",
+    "wallet_address_already_in_use": "Dompet dengan nama ini sudah wujud. Sila pilih nama lain.",
+    "dont_have_wallet_to_delete": "<b>Anda tiada dompet untuk dipadamkan.</b>",
+    "yes_delete": "Ya, padam",
+    "wallet_deleted": "Dompet berjaya dipadamkan.",
+    "failed_to_delete_wallet": "Gagal memadamkan dompet.",
+    "delete_wallet_header": "Pilih dompet untuk dipadamkan:"
+        
     },
+    "ur": {
+    "choose_wallet": "براہ کرم والیٹ کی قسم منتخب کریں:",
+    "sol_wallet": "سولانا (SOL)",
+    "usdt_wallet": "یو ایس ڈی ٹی (USDT)",
+    "choose_existing_or_new_wallet": "موجودہ والیٹ منتخب کریں یا نیا بنائیں",
+    "wallet_name_prompt": "آپ نے {wallet_type} والیٹ منتخب کیا ہے۔\nبراہ کرم اپنے والیٹ کے لیے ایک نام درج کریں:",
+    "wallet_name_empty": "❌ والیٹ کا نام خالی نہیں ہو سکتا۔ دوبارہ کوشش کریں۔",
+    "wallet_create_ok": "✅ والیٹ کامیابی سے بنایا گیا!\n\n",
+    "wallet_create_details": (
+        "📌 <b>والیٹ کی معلومات:</b>\n"
+        "🧾 <b>نام:</b> <code>{name}</code>\n"
+        "💰 <b>قسم:</b> <code>{wallet_type}</code>\n"
+        "🔐 <b>پبلک کلید:</b> <code>{public_key}</code>\n"
+    ),
+    "wallet_create_err": "❌ والیٹ بنانے میں خرابی۔ براہ کرم بعد میں دوبارہ کوشش کریں۔",
+    "cancel_msg": "عمل منسوخ کر دیا گیا۔ دوبارہ شروع کرنے کے لیے /start استعمال کریں۔",
+    "account_wallet_type": "اکاؤنٹ والیٹ کی قسم (SOL | USDT)",
+    "menu_wallet_title": "💳 والیٹ مینو",
+    "btn_refresh": "🔄 تازہ کریں",
+    "btn_sol": "💰 SOL",
+    "btn_usdt": "💵 USDT",
+    "btn_show_address": "🏠 پتہ دکھائیں",
+    "btn_create_wallet": "➕ نیا والیٹ بنائیں",
+    "btn_delete_wallet": "🗑️ والیٹ حذف کریں",
+    "wallet_no_exists": "❌ کوئی والیٹ نہیں ملا۔ 'نیا والیٹ بنائیں' بٹن استعمال کریں۔",
+    "wallet_exists": "📌 <b>موجودہ والیٹ:</b>\nنام: {name}\nپبلک کلید: {pub}\nبیلنس: {bal} SOL",
+    "wallet_deleted": "✅ والیٹ کامیابی سے حذف کر دیا گیا۔",
+    "wallet_not_deleted": "❌ حذف کرنے کے لیے کوئی والیٹ نہیں ملا۔",
+    "wallet_refreshed": "🔄 بیلنس تازہ کر دیا گیا:\nنام: {name}\nپبلک کلید: {pub}\nبیلنس: {bal} SOL",
+    "guide_create_wallet": (
+        "📝 <b>والیٹ کیسے بنائیں:</b>\n"
+        "1️⃣ والیٹ کی قسم منتخب کریں (SOL یا USDT).\n"
+        "2️⃣ اپنے والیٹ کے لیے ایک منفرد نام درج کریں۔\n"
+        "3️⃣ آپ کا والیٹ پبلک اور سیکرٹ کلید کے ساتھ بنایا جائے گا۔\n"
+        "4️⃣ فنڈز وصول کرنے کے لیے پبلک کلید استعمال کریں۔\n\n"
+        "💡 مشورہ: اپنی سیکرٹ کلید کو محفوظ رکھیں اور کسی کے ساتھ شیئر نہ کریں۔"
+    ),
+    "guide_delete_wallet": (
+        "⚠️ <b>اہم معلومات:</b>\n"
+        "والیٹ کو حذف کرنا ناقابل واپسی ہے۔ والیٹ میں موجود تمام فنڈز ضائع ہو جائیں گے۔\n"
+        "آگے بڑھنے سے پہلے یقینی بنائیں کہ آپ نے تمام فنڈز منتقل کر دیے ہیں۔"
+    ),
+    "no_wallets": "آپ کے پاس ابھی کوئی والیٹ نہیں ہے۔",
+    "select_wallet": "ٹرانزیکشن ہسٹری دیکھنے کے لیے ایک والیٹ منتخب کریں:",
+    "wallet_details": "**والیٹ کا نام:** {name} \n\n **پبلک پتہ:** {public_key}",
+    "wallet_not_found": "والیٹ نہیں ملا۔",
+    "back_button": "⬅️ واپس",
+    "sol_wallets_header": "<b>آپ کے SOL والیٹس:</b>\n",
+    "wallet_balance": "<b>نام:</b> {name}, <b>بیلنس:</b> {balance} SOL\n",
+    "wallet_error": "<b>نام:</b> {name}, <b>خرابی:</b> {error}\n",
+    "no_sol_wallets": "آپ کے پاس ابھی کوئی SOL والیٹ نہیں ہے۔",
+    "no_usdt_wallets": "آپ کے پاس ابھی کوئی USDT والیٹ نہیں ہے۔"
 }
+,
+"ja": {
+    "choose_wallet": "ウォレットの種類を選択してください：",
+    "sol_wallet": "ソラナ (SOL)",
+    "usdt_wallet": "USDテザー (USDT)",
+    "choose_existing_or_new_wallet": "既存のウォレットを選択するか、新しいウォレットを作成してください",
+    "wallet_name_prompt": "{wallet_type}ウォレットを選択しました。\nウォレットの名前を入力してください：",
+    "wallet_name_empty": "❌ ウォレット名は空にできません。もう一度お試しください。",
+    "wallet_create_ok": "✅ ウォレットが正常に作成されました！\n\n",
+    "wallet_create_details": (
+        "📌 <b>ウォレット情報：</b>\n"
+        "🧾 <b>名前：</b> <code>{name}</code>\n"
+        "💰 <b>種類：</b> <code>{wallet_type}</code>\n"
+        "🔐 <b>公開鍵：</b> <code>{public_key}</code>\n"
+    ),
+    "wallet_create_err": "❌ ウォレットの作成中にエラーが発生しました。後でもう一度お試しください。",
+    "cancel_msg": "操作がキャンセルされました。再開するには /start を使用してください。",
+    "account_wallet_type": "アカウントウォレットの種類 (SOL | USDT)",
+    "menu_wallet_title": "💳 ウォレットメニュー",
+    "btn_refresh": "🔄 更新",
+    "btn_sol": "💰 SOL",
+    "btn_usdt": "💵 USDT",
+    "btn_show_address": "🏠 アドレスを表示",
+    "btn_create_wallet": "➕ ウォレットを作成",
+    "btn_delete_wallet": "🗑️ ウォレットを削除",
+    "wallet_no_exists": "❌ ウォレットが見つかりません。「ウォレットを作成」ボタンを使用してください。",
+    "wallet_exists": "📌 <b>既存のウォレット：</b>\n名前: {name}\n公開鍵: {pub}\n残高: {bal} SOL",
+    "wallet_deleted": "✅ ウォレットが正常に削除されました。",
+    "wallet_not_deleted": "❌ 削除するウォレットがありません。",
+    "wallet_refreshed": "🔄 残高が更新されました：\n名前: {name}\n公開鍵: {pub}\n残高: {bal} SOL",
+    "guide_create_wallet": (
+        "📝 <b>ウォレットの作成方法：</b>\n"
+        "1️⃣ ウォレットの種類を選択します（SOL または USDT）。\n"
+        "2️⃣ ウォレットの一意の名前を入力します。\n"
+        "3️⃣ 公開鍵と秘密鍵が生成されます。\n"
+        "4️⃣ 公開鍵を使用して資金を受け取ります。\n\n"
+        "💡 ヒント：秘密鍵は安全に保管し、他人と共有しないでください。"
+    ),
+    "guide_delete_wallet": (
+        "⚠️ <b>重要な情報：</b>\n"
+        "ウォレットの削除は取り消せません。ウォレット内のすべての資金が失われます。\n"
+        "続行する前に、すべての資金を移動したことを確認してください。"
+    ),
+    "no_wallets": "まだウォレットがありません。",
+    "select_wallet": "取引履歴を表示するウォレットを選択してください：",
+    "wallet_details": "**ウォレット名：** {name} \n\n **公開アドレス：** {public_key}",
+    "wallet_not_found": "ウォレットが見つかりません。",
+    "back_button": "⬅️ 戻る",
+    "sol_wallets_header": "<b>あなたのSOLウォレット：</b>\n",
+    "wallet_balance": "<b>名前：</b> {name}, <b>残高：</b> {balance} SOL\n",
+    "wallet_error": "<b>名前：</b> {name}, <b>エラー：</b> {error}\n",
+    "no_sol_wallets": "まだSOLウォレットがありません。",
+    "no_usdt_wallets": "まだUSDTウォレットがありません。",
+      "show_balance": "\n\n🔷 {name}\n\n💰 残高: {balance}\n🔑 公開鍵: {public_key}\n\nアクションを選択してください:",
+    "show_private_key": "🔐 非公開鍵を表示する",
+    "back_to_wallet": "⬅️ ウォレットに戻る",
+    "your_usdt_wallet": "📋 あなたのUSDTウォレット:",
+    "show_it_btn": "✅ はい、表示する",
+    "private_key_warning": (
+      "🚨 非公開鍵に関する警告 🚨\n\n"
+      "この鍵はウォレットと資金への「完全なアクセス権」を与えます。\n\n"
+      "🔐 非公開鍵:\n"
+      "{wallet}\n\n"
+      "❗ この鍵を第三者と共有しないでください\n"
+      "❗ 信頼できないウェブサイトに入力しないでください\n"
+      "❗ 保存する場合はオフラインで厳重に保管してください"
+    ),
+    "dont_have_any_wallet": "<b>まだウォレットがありません。</b>",
+    "select_wallet_header": "<b>アドレスを確認するウォレットを選択してください:</b>",
+    "wallet_not_found": "ウォレットが見つかりません。",
+    "select_wallet_type_header": "ウォレットの種類を選んでください:",
+    "enter_wallet_name": "ウォレット名を入力してください:",
+    "wallet_address_already_in_use": "その名前のウォレットはすでに存在します。他の名前を選択してください。",
+    "dont_have_wallet_to_delete": "<b>削除するウォレットがありません。</b>",
+    "yes_delete": "はい、削除する",
+    "wallet_deleted": "ウォレットを削除しました。",
+    "failed_to_delete_wallet": "ウォレットの削除に失敗しました。",
+    "delete_wallet_header": "削除するウォレットを選択してください:"
+}
+,
+"ko": {
+    "choose_wallet": "지갑 유형을 선택하세요:",
+    "sol_wallet": "솔라나 (SOL)",
+    "usdt_wallet": "테더 (USDT)",
+    "choose_existing_or_new_wallet": "기존 지갑을 선택하거나 새로 생성하세요",
+    "wallet_name_prompt": "{wallet_type} 지갑을 선택하셨습니다.\n지갑의 이름을 입력하세요:",
+    "wallet_name_empty": "❌ 지갑 이름은 비워둘 수 없습니다. 다시 시도해주세요.",
+    "wallet_create_ok": "✅ 지갑이 성공적으로 생성되었습니다!\n\n",
+    "wallet_create_details": (
+        "📌 <b>지갑 정보:</b>\n"
+        "🧾 <b>이름:</b> <code>{name}</code>\n"
+        "💰 <b>유형:</b> <code>{wallet_type}</code>\n"
+        "🔐 <b>공개 키:</b> <code>{public_key}</code>\n"
+    ),
+    "wallet_create_err": "❌ 지갑 생성 중 오류가 발생했습니다. 나중에 다시 시도해주세요.",
+    "cancel_msg": "작업이 취소되었습니다. 다시 시작하려면 /start 를 입력해주세요.",
+    "account_wallet_type": "계정 지갑 유형 (SOL | USDT)",
+    "menu_wallet_title": "💳 지갑 메뉴",
+    "btn_refresh": "🔄 새로고침",
+    "btn_sol": "💰 SOL",
+    "btn_usdt": "💵 USDT",
+    "btn_show_address": "🏠 주소 보기",
+    "btn_create_wallet": "➕ 새 지갑 만들기",
+    "btn_delete_wallet": "🗑️ 지갑 삭제",
+    "wallet_no_exists": "❌ 사용 가능한 지갑이 없습니다. '새 지갑 만들기' 버튼을 사용하세요.",
+    "wallet_exists": "📌 <b>현재 지갑:</b>\n이름: {name}\n공개 키: {pub}\n잔액: {bal} SOL",
+    "wallet_deleted": "✅ 지갑이 성공적으로 삭제되었습니다.",
+    "wallet_not_deleted": "❌ 삭제할 지갑이 없습니다.",
+    "wallet_refreshed": "🔄 잔액이 새로고침되었습니다:\n이름: {name}\n공개 키: {pub}\n잔액: {bal} SOL",
+    "guide_create_wallet": (
+        "📝 <b>지갑 생성 방법:</b>\n"
+        "1️⃣ 지갑 유형(SOL 또는 USDT)을 선택하세요.\n"
+        "2️⃣ 고유한 지갑 이름을 입력하세요.\n"
+        "3️⃣ 공개 키와 비공개 키가 생성됩니다.\n"
+        "4️⃣ 공개 키를 통해 자금을 수신할 수 있습니다.\n\n"
+        "💡 팁: 비공개 키는 안전하게 보관하고 절대 공유하지 마세요."
+    ),
+    "guide_delete_wallet": (
+        "⚠️ <b>중요:</b>\n"
+        "지갑 삭제는 되돌릴 수 없습니다. 잔액이 남아 있는 경우 복구할 수 없습니다.\n"
+        "삭제 전 모든 자산을 전송했는지 확인하세요."
+    ),
+    "no_wallets": "아직 생성된 지갑이 없습니다.",
+    "select_wallet": "트랜잭션 기록을 확인할 지갑을 선택하세요:",
+    "wallet_details": "**지갑 이름:** {name} \n\n **공개 주소:** {public_key}",
+    "wallet_not_found": "지갑을 찾을 수 없습니다.",
+    "back_button": "⬅️ 뒤로가기",
+    "sol_wallets_header": "<b>내 SOL 지갑 목록:</b>\n",
+    "wallet_balance": "<b>이름:</b> {name}, <b>잔액:</b> {balance} SOL\n",
+    "wallet_error": "<b>이름:</b> {name}, <b>오류:</b> {error}\n",
+    "no_sol_wallets": "SOL 지갑이 아직 없습니다.",
+    "no_usdt_wallets": "USDT 지갑이 아직 없습니다.",
+      "show_balance": "\n\n🔷 {name}\n\n💰 잔액: {balance}\n🔑 공개 키: {public_key}\n\n작업을 선택하세요:",
+    "show_private_key": "🔐 개인키 보기",
+    "back_to_wallet": "⬅️ 지갑으로 돌아가기",
+    "your_usdt_wallet": "📋 귀하의 USDT 지갑:",
+    "show_it_btn": "✅ 예, 보여주세요",
+    "private_key_warning": (
+      "🚨 개인키 경고 🚨\n\n"
+      "이 키는 귀하의 지갑과 자산에 '전체 접근 권한'을 제공합니다.\n\n"
+      "🔐 개인키:\n"
+      "{wallet}\n\n"
+      "❗ 절대 누구와도 공유하지 마세요\n"
+      "❗ 신뢰할 수 없는 사이트에 입력하지 마세요\n"
+      "❗ 보관 시에는 오프라인 상태로 안전하게 저장하세요"
+    ),
+    "dont_have_any_wallet": "<b>아직 생성된 지갑이 없습니다.</b>",
+    "select_wallet_header": "<b>주소를 확인할 지갑을 선택해 주세요:</b>",
+    "wallet_not_found": "지갑을 찾을 수 없습니다.",
+    "select_wallet_type_header": "지갑 종류를 선택해 주세요:",
+    "enter_wallet_name": "지갑 이름을 입력해 주세요:",
+    "wallet_address_already_in_use": "이미 존재하는 지갑 이름입니다. 다른 이름을 선택해 주세요.",
+    "dont_have_wallet_to_delete": "<b>삭제할 지갑이 없습니다.</b>",
+    "yes_delete": "예, 삭제하기",
+    "wallet_deleted": "지갑이 성공적으로 삭제되었습니다.",
+    "failed_to_delete_wallet": "지갑 삭제에 실패했습니다.",
+    "delete_wallet_header": "삭제할 지갑을 선택해 주세요:"
+}
+,
+"km": {
+    "choose_wallet": "សូមជ្រើសប្រភេទកាបូប៖",
+    "sol_wallet": "សូឡាណា (SOL)",
+    "usdt_wallet": "យូអេសឌីធី (USDT)",
+    "choose_existing_or_new_wallet": "ជ្រើសរើសកាបូបដែលមានរួច ឬបង្កើតថ្មី",
+    "wallet_name_prompt": "អ្នកបានជ្រើស {wallet_type}។\nសូមបញ្ចូលឈ្មោះសម្រាប់កាបូប៖",
+    "wallet_name_empty": "❌ ឈ្មោះកាបូបមិនអាចទទេបានទេ។ សូមព្យាយាមម្តងទៀត។",
+    "wallet_create_ok": "✅ កាបូបបានបង្កើតដោយជោគជ័យ!\n\n",
+    "wallet_create_details": (
+        "📌 <b>ព័ត៌មានកាបូប:</b>\n"
+        "🧾 <b>ឈ្មោះ:</b> <code>{name}</code>\n"
+        "💰 <b>ប្រភេទ:</b> <code>{wallet_type}</code>\n"
+        "🔐 <b>សោសាធារណៈ:</b> <code>{public_key}</code>\n"
+    ),
+    "wallet_create_err": "❌ មានបញ្ហា ក្នុងការបង្កើតកាបូប។ សូមសាកល្បងម្តងទៀត។",
+    "cancel_msg": "ដំណើរការត្រូវបានបោះបង់។ ចាប់ផ្ដើមឡើងវិញដោយប្រើ /start",
+    "account_wallet_type": "ប្រភេទកាបូបគណនី (SOL | USDT)",
+    "menu_wallet_title": "💳 ម៉ឺនុយកាបូប",
+    "btn_refresh": "🔄 ធ្វើបច្ចុប្បន្នភាព",
+    "btn_sol": "💰 SOL",
+    "btn_usdt": "💵 USDT",
+    "btn_show_address": "🏠 បង្ហាញអាសយដ្ឋាន",
+    "btn_create_wallet": "➕ បង្កើតកាបូបថ្មី",
+    "btn_delete_wallet": "🗑️ លុបកាបូប",
+    "wallet_no_exists": "❌ រកមិនឃើញកាបូប។ សូមចុច ‘បង្កើតកាបូបថ្មី’។",
+    "wallet_exists": "📌 <b>កាបូបបច្ចុប្បន្ន:</b>\nឈ្មោះ: {name}\nសោសាធារណៈ: {pub}\nសមតុល្យ: {bal} SOL",
+    "wallet_deleted": "✅ កាបូបបានលុបដោយជោគជ័យ។",
+    "wallet_not_deleted": "❌ មិនមានកាបូបណាដែលអាចលុបបាន។",
+    "wallet_refreshed": "🔄 សមតុល្យត្រូវបានធ្វើបច្ចុប្បន្នភាព៖\nឈ្មោះ: {name}\nសោសាធារណៈ: {pub}\nសមតុល្យ: {bal} SOL",
+    "guide_create_wallet": (
+        "📝 <b>របៀបបង្កើតកាបូប:</b>\n"
+        "1️⃣ ជ្រើសប្រភេទកាបូប (SOL ឬ USDT)\n"
+        "2️⃣ បញ្ចូលឈ្មោះតែមួយសម្រាប់កាបូប\n"
+        "3️⃣ នឹងបង្កើតសោសាធារណៈ និងសោឯកជន\n"
+        "4️⃣ ប្រើសោសាធារណៈដើម្បីទទួលប្រាក់\n\n"
+        "💡 គន្លឹះ៖ រក្សាសោឯកជនឲ្យមានសុវត្ថិភាព និងកុំចែករំលែក។"
+    ),
+    "guide_delete_wallet": (
+        "⚠️ <b>សេចក្តីជូនដំណឹងសំខាន់៖</b>\n"
+        "ការលុបកាបូបគឺមិនអាចត្រឡប់វិញបានទេ។ សូមធ្វើការផ្ទេរទុនចេញមុនពេលលុប។"
+    ),
+    "no_wallets": "អ្នកមិនទាន់មានកាបូបណាមួយទេ។",
+    "select_wallet": "សូមជ្រើសកាបូបដើម្បីមើលប្រវត្តិប្រតិបត្តិការ៖",
+    "wallet_details": "**ឈ្មោះកាបូប៖** {name} \n\n **អាសយដ្ឋានសាធារណៈ៖** {public_key}",
+    "wallet_not_found": "រកមិនឃើញកាបូប។",
+    "back_button": "⬅️ ថយក្រោយ",
+    "sol_wallets_header": "<b>កាបូប SOL របស់អ្នក:</b>\n",
+    "wallet_balance": "<b>ឈ្មោះ:</b> {name}, <b>សមតុល្យ:</b> {balance} SOL\n",
+    "wallet_error": "<b>ឈ្មោះ:</b> {name}, <b>បញ្ហា:</b> {error}\n",
+    "no_sol_wallets": "អ្នកមិនទាន់មានកាបូប SOL ទេ។",
+    "no_usdt_wallets": "អ្នកមិនទាន់មានកាបូប USDT ទេ។",
+       "show_balance": "\n\n🔷 {name}\n\n💰 សមតុល្យ: {balance}\n🔑 កូនសោគ្មានកំណត់សម្គាល់: {public_key}\n\nជ្រើសរើសសកម្មភាព:",
+    "show_private_key": "🔐 បង្ហាញកូនសោឯកជន",
+    "back_to_wallet": "⬅️ ត្រឡប់ទៅវិលវ័យវីល",
+    "your_usdt_wallet": "📋 វីល USDT របស់អ្នក:",
+    "show_it_btn": "✅ បាទ/ចាស​ បង្ហាញវា",
+    "private_key_warning": (
+      "🚨 កូនសោឯកជន ការព្រមាន 🚨\n\n"
+      "កូនសោនេះផ្តល់សិទ្ធិប្រើប្រាស់ទាំងអស់ទៅកាន់វីលនិងទ្រព្យសម្បត្តិរបស់អ្នក។\n\n"
+      "🔐 កូនសោឯកជន:\n"
+      "{wallet}\n\n"
+      "❗ ហាមចែករំលែកកូនសោនេះជាមួយនរណាម្នាក់\n"
+      "❗ កុំបញ្ចូលវាទៅកាន់គេហទំព័រដែលមិនបានផ្ទៀងផ្ទាត់\n"
+      "❗ រក្សាទុកវាក្រៅបណ្តាញប្រសិនបើត្រូវការរក្សាទុក"
+    ),
+    "dont_have_any_wallet": "<b>អ្នកមិនទាន់មានវីលទេ។</b>",
+    "select_wallet_header": "<b>សូមជ្រើសរើសវីលដើម្បីមើលអាសយដ្ឋានរបស់វា:</b>",
+    "wallet_not_found": "មិនរកឃើញវីលទេ។",
+    "select_wallet_type_header": "សូមជ្រើសរើសប្រភេទវីល:",
+    "enter_wallet_name": "សូមបញ្ចូលឈ្មោះវីល:",
+    "wallet_address_already_in_use": "វីលដែលមានឈ្មោះនេះមានស្រាប់។ សូមជ្រើសរើសឈ្មោះផ្សេងទៀត។",
+    "dont_have_wallet_to_delete": "<b>អ្នកមិនមានវីលណាដែលត្រូវលុបទេ។</b>",
+    "yes_delete": "យល់ព្រម លុបវា",
+    "wallet_deleted": "វីលត្រូវបានលុបដោយជោគជ័យ។",
+    "failed_to_delete_wallet": "បរាជ័យក្នុងការលុបវីល។",
+    "delete_wallet_header": "សូមជ្រើសរើសវីលដែលត្រូវលុប:"
+}
+,
+"th": {
+    "choose_wallet": "กรุณาเลือกประเภทกระเป๋าเงิน:",
+    "sol_wallet": "Solana (SOL)",
+    "usdt_wallet": "USDT",
+    "choose_existing_or_new_wallet": "เลือกกระเป๋าเงินที่มีอยู่ หรือสร้างใหม่",
+    "wallet_name_prompt": "คุณเลือก {wallet_type}\nกรุณาป้อนชื่อสำหรับกระเป๋าเงิน:",
+    "wallet_name_empty": "❌ ชื่อกระเป๋าเงินห้ามว่าง กรุณาลองอีกครั้ง",
+    "wallet_create_ok": "✅ สร้างกระเป๋าเงินสำเร็จ!\n\n",
+    "wallet_create_details": (
+        "📌 <b>ข้อมูลกระเป๋าเงิน:</b>\n"
+        "🧾 <b>ชื่อ:</b> <code>{name}</code>\n"
+        "💰 <b>ประเภท:</b> <code>{wallet_type}</code>\n"
+        "🔐 <b>กุญแจสาธารณะ:</b> <code>{public_key}</code>\n"
+    ),
+    "wallet_create_err": "❌ เกิดปัญหาในการสร้างกระเป๋าเงิน กรุณาลองอีกครั้ง",
+    "cancel_msg": "การดำเนินการถูกยกเลิก โปรดเริ่มใหม่ด้วย /start",
+    "account_wallet_type": "ประเภทกระเป๋าเงินบัญชี (SOL | USDT)",
+    "menu_wallet_title": "💳 เมนูกระเป๋าเงิน",
+    "btn_refresh": "🔄 อัปเดตใหม่",
+    "btn_sol": "💰 SOL",
+    "btn_usdt": "💵 USDT",
+    "btn_show_address": "🏠 แสดงที่อยู่",
+    "btn_create_wallet": "➕ สร้างกระเป๋าเงินใหม่",
+    "btn_delete_wallet": "🗑️ ลบกระเป๋าเงิน",
+    "wallet_no_exists": "❌ ไม่พบกระเป๋าเงิน กรุณาคลิก 'สร้างกระเป๋าเงินใหม่'",
+    "wallet_exists": "📌 <b>กระเป๋าเงินปัจจุบัน:</b>\nชื่อ: {name}\nกุญแจสาธารณะ: {pub}\nยอดคงเหลือ: {bal} SOL",
+    "wallet_deleted": "✅ ลบกระเป๋าเงินสำเร็จ",
+    "wallet_not_deleted": "❌ ไม่มีกระเป๋าเงินใดที่สามารถลบได้",
+    "wallet_refreshed": "🔄 ยอดคงเหลือได้อัปเดตแล้ว:\nชื่อ: {name}\nกุญแจสาธารณะ: {pub}\nยอดคงเหลือ: {bal} SOL",
+    "guide_create_wallet": (
+        "📝 <b>วิธีสร้างกระเป๋าเงิน:</b>\n"
+        "1️⃣ เลือกประเภทกระเป๋าเงิน (SOL หรือ USDT)\n"
+        "2️⃣ ป้อนชื่อกระเป๋าเงินเพียงหนึ่งชื่อ\n"
+        "3️⃣ จะสร้างกุญแจสาธารณะและกุญแจส่วนตัว\n"
+        "4️⃣ ใช้กุญแจสาธารณะเพื่อรับเงิน\n\n"
+        "💡 เคล็ดลับ: เก็บกุญแจส่วนตัวไว้อย่างปลอดภัย และห้ามแบ่งปันให้ใคร"
+    ),
+    "guide_delete_wallet": (
+        "⚠️ <b>คำเตือนสำคัญ:</b>\n"
+        "การลบกระเป๋าเงินไม่สามารถย้อนกลับได้ กรุณาย้ายเงินออกมาก่อนทำการลบ"
+    ),
+    "no_wallets": "คุณยังไม่มีกระเป๋าเงินเลย",
+    "select_wallet": "กรุณาเลือกกระเป๋าเงินเพื่อดูประวัติการทำธุรกรรม:",
+    "wallet_details": "**ชื่อกระเป๋าเงิน:** {name} \n\n **ที่อยู่สาธารณะ:** `{public_key}`",
+    "wallet_not_found": "ไม่พบกระเป๋าเงิน",
+    "back_button": "⬅️ ย้อนกลับ",
+    "sol_wallets_header": "<b>กระเป๋าเงิน SOL ของคุณ:</b>\n",
+    "wallet_balance": "<b>ชื่อ:</b> {name}, <b>ยอดคงเหลือ:</b> {balance} SOL\n",
+    "wallet_error": "<b>ชื่อ:</b> {name}, <b>ข้อผิดพลาด:</b> {error}\n",
+    "no_sol_wallets": "คุณยังไม่มีกระเป๋าเงิน SOL",
+    "no_usdt_wallets": "คุณยังไม่มีกระเป๋าเงิน USDT",
+    "show_balance": "\n\n🔷 {name}\n\n💰 ยอดคงเหลือ: {balance}\n🔑 กุญแจสาธารณะ: {public_key}\n\nเลือกการกระทำ:",
+    "show_private_key": "🔐 แสดงกุญแจส่วนตัว",
+    "back_to_wallet": "⬅️ กลับไปที่กระเป๋าเงิน",
+    "your_usdt_wallet": "📋 กระเป๋าเงิน USDT ของคุณ:",
+    "show_it_btn": "✅ ใช่ แสดงเลย",
+    "private_key_warning": (
+        "🚨 คำเตือนเกี่ยวกับกุญแจส่วนตัว 🚨\n\n"
+        "กุญแจนี้อนุญาตให้เข้าถึงกระเป๋าเงินและเงินของคุณทั้งหมด\n\n"
+        "🔐 กุญแจส่วนตัว:\n"
+        "{wallet}\n\n"
+        "❗ ห้ามแบ่งปันกุญแจนี้ให้ใครก็ตาม\n"
+        "❗ ห้ามกรอกในเว็บไซต์ที่ไม่น่าเชื่อถือ\n"
+        "❗ หากจำเป็นต้องเก็บ ให้เก็บแบบออฟไลน์และปลอดภัย"
+    ),
+    "dont_have_any_wallet": "<b>คุณยังไม่มีกระเป๋าเงิน</b>",
+    "select_wallet_header": "<b>กรุณาเลือกกระเป๋าเงินเพื่อดูที่อยู่:</b>",
+    "wallet_not_found": "ไม่พบกระเป๋าเงิน",
+    "select_wallet_type_header": "กรุณาเลือกประเภทกระเป๋าเงิน:",
+    "enter_wallet_name": "กรุณาป้อนชื่อกระเป๋าเงิน:",
+    "wallet_address_already_in_use": "มีกระเป๋าเงินชื่อนี้อยู่แล้ว กรุณาเลือกชื่ออื่น",
+    "dont_have_wallet_to_delete": "<b>คุณไม่มีกระเป๋าเงินที่จะลบ</b>",
+    "yes_delete": "ตกลง ลบเลย",
+    "wallet_deleted": "ลบกระเป๋าเงินสำเร็จ",
+    "failed_to_delete_wallet": "ลบกระเป๋าเงินล้มเหลว",
+    "delete_wallet_header": "กรุณาเลือกกระเป๋าเงินที่ต้องการลบ:"
+},
+"vi": {
+    "choose_wallet": "Vui lòng chọn loại ví:",
+    "sol_wallet": "Solana (SOL)",
+    "usdt_wallet": "USDT",
+    "choose_existing_or_new_wallet": "Chọn ví đã có hoặc tạo mới",
+    "wallet_name_prompt": "Bạn đã chọn {wallet_type}.\nVui lòng nhập tên cho ví của bạn:",
+    "wallet_name_empty": "❌ Tên ví không được để trống. Vui lòng thử lại.",
+    "wallet_create_ok": "✅ Ví đã được tạo thành công!\n\n",
+    "wallet_create_details": (
+        "📌 <b>Thông tin ví:</b>\n"
+        "🧾 <b>Tên:</b> <code>{name}</code>\n"
+        "💰 <b>Loại:</b> <code>{wallet_type}</code>\n"
+        "🔐 <b>Khóa công khai:</b> <code>{public_key}</code>\n"
+    ),
+    "wallet_create_err": "❌ Có lỗi xảy ra khi tạo ví. Vui lòng thử lại.",
+    "cancel_msg": "Quá trình đã bị hủy. Bắt đầu lại bằng lệnh /start",
+    "account_wallet_type": "Loại ví tài khoản (SOL | USDT)",
+    "menu_wallet_title": "💳 Menu Ví",
+    "btn_refresh": "🔄 Làm mới",
+    "btn_sol": "💰 SOL",
+    "btn_usdt": "💵 USDT",
+    "btn_show_address": "🏠 Hiển thị địa chỉ",
+    "btn_create_wallet": "➕ Tạo ví mới",
+    "btn_delete_wallet": "🗑️ Xóa ví",
+    "wallet_no_exists": "❌ Không tìm thấy ví nào. Vui lòng nhấn ‘Tạo ví mới’.",
+    "wallet_exists": "📌 <b>Ví hiện tại:</b>\nTên: {name}\nKhóa công khai: {pub}\nSố dư: {bal} SOL",
+    "wallet_deleted": "✅ Ví đã được xóa thành công.",
+    "wallet_not_deleted": "❌ Không có ví nào để xóa.",
+    "wallet_refreshed": "🔄 Số dư đã được cập nhật:\nTên: {name}\nKhóa công khai: {pub}\nSố dư: {bal} SOL",
+    "guide_create_wallet": (
+        "📝 <b>Cách tạo ví:</b>\n"
+        "1️⃣ Chọn loại ví (SOL hoặc USDT)\n"
+        "2️⃣ Nhập một cái tên duy nhất cho ví\n"
+        "3️⃣ Hệ thống sẽ tạo khóa công khai và khóa riêng tư\n"
+        "4️⃣ Dùng khóa công khai để nhận tiền\n\n"
+        "💡 Mẹo: Giữ an toàn khóa riêng tư và không chia sẻ với bất kỳ ai."
+    ),
+    "guide_delete_wallet": (
+        "⚠️ <b>Cảnh báo quan trọng:</b>\n"
+        "Việc xóa ví là không thể hoàn tác. Vui lòng rút hết tiền trước khi xóa."
+    ),
+    "no_wallets": "Bạn chưa có ví nào.",
+    "select_wallet": "Vui lòng chọn ví để xem lịch sử giao dịch:",
+    "wallet_details": "**Tên ví:** {name} \n\n **Địa chỉ công khai:** {public_key}",
+    "wallet_not_found": "Không tìm thấy ví.",
+    "back_button": "⬅️ Quay lại",
+    "sol_wallets_header": "<b>Ví SOL của bạn:</b>\n",
+    "wallet_balance": "<b>Tên:</b> {name}, <b>Số dư:</b> {balance} SOL\n",
+    "wallet_error": "<b>Tên:</b> {name}, <b>Lỗi:</b> {error}\n",
+    "no_sol_wallets": "Bạn chưa có ví SOL nào.",
+    "no_usdt_wallets": "Bạn chưa có ví USDT nào.",
+    "show_balance": "\n\n🔷 {name}\n\n💰 Số dư: {balance}\n🔑 Khóa công khai: {public_key}\n\nChọn hành động:",
+    "show_private_key": "🔐 Hiển thị khóa riêng tư",
+    "back_to_wallet": "⬅️ Quay lại ví",
+    "your_usdt_wallet": "📋 Ví USDT của bạn:",
+    "show_it_btn": "✅ Có, hiển thị nó",
+    "private_key_warning": (
+        "🚨 Cảnh Báo Khóa Riêng Tư 🚨\n\n"
+        "Khóa này cung cấp toàn quyền truy cập vào ví và tài sản của bạn.\n\n"
+        "🔐 Khóa riêng tư:\n"
+        "{wallet}\n\n"
+        "❗ Đừng chia sẻ khóa này với bất kỳ ai\n"
+        "❗ Không dán nó vào các trang web chưa xác minh\n"
+        "❗ Lưu trữ ngoại tuyến nếu cần bảo mật cao"
+    ),
+    "dont_have_any_wallet": "<b>Bạn chưa có ví nào.</b>",
+    "select_wallet_header": "<b>Vui lòng chọn ví để xem địa chỉ:</b>",
+    "wallet_not_found": "Không tìm thấy ví.",
+    "select_wallet_type_header": "Vui lòng chọn loại ví:",
+    "enter_wallet_name": "Vui lòng nhập tên ví:",
+    "wallet_address_already_in_use": "Ví với tên này đã tồn tại. Vui lòng chọn tên khác.",
+    "dont_have_wallet_to_delete": "<b>Bạn không có ví nào để xóa.</b>",
+    "yes_delete": "Đồng ý, xóa nó",
+    "wallet_deleted": "Ví đã được xóa thành công.",
+    "failed_to_delete_wallet": "Xóa ví thất bại.",
+    "delete_wallet_header": "Vui lòng chọn ví để xóa:"
+},
+"id": {
+    "choose_wallet": "Silakan pilih jenis dompet:",
+    "sol_wallet": "Solana (SOL)",
+    "usdt_wallet": "USDT",
+    "choose_existing_or_new_wallet": "Pilih dompet yang sudah ada atau buat baru",
+    "wallet_name_prompt": "Anda memilih {wallet_type}\nSilakan masukkan nama untuk dompet:",
+    "wallet_name_empty": "❌ Nama dompet tidak boleh kosong. Silakan coba lagi.",
+    "wallet_create_ok": "✅ Dompet berhasil dibuat!\n\n",
+    "wallet_create_details": (
+        "📌 <b>Detail Dompet:</b>\n"
+        "🧾 <b>Nama:</b> <code>{name}</code>\n"
+        "💰 <b>Jenis:</b> <code>{wallet_type}</code>\n"
+        "🔐 <b>Kunci Publik:</b> <code>{public_key}</code>\n"
+    ),
+    "wallet_create_err": "❌ Terjadi masalah saat membuat dompet. Silakan coba lagi.",
+    "cancel_msg": "Operasi dibatalkan. Mulai ulang dengan /start",
+    "account_wallet_type": "Jenis dompet akun (SOL | USDT)",
+    "menu_wallet_title": "💳 Menu Dompet",
+    "btn_refresh": "🔄 Perbarui",
+    "btn_sol": "💰 SOL",
+    "btn_usdt": "💵 USDT",
+    "btn_show_address": "🏠 Tampilkan alamat",
+    "btn_create_wallet": "➕ Buat Dompet Baru",
+    "btn_delete_wallet": "🗑️ Hapus Dompet",
+    "wallet_no_exists": "❌ Dompet tidak ditemukan. Silakan klik 'Buat Dompet Baru'.",
+    "wallet_exists": "📌 <b>Dompet Saat Ini:</b>\nNama: {name}\nKunci Publik: {pub}\nSaldo: {bal} SOL",
+    "wallet_deleted": "✅ Dompet berhasil dihapus.",
+    "wallet_not_deleted": "❌ Tidak ada dompet yang dapat dihapus.",
+    "wallet_refreshed": "🔄 Saldo telah diperbarui:\nNama: {name}\nKunci Publik: {pub}\nSaldo: {bal} SOL",
+    "guide_create_wallet": (
+        "📝 <b>Cara Membuat Dompet:</b>\n"
+        "1️⃣ Pilih jenis dompet (SOL atau USDT)\n"
+        "2️⃣ Masukkan satu nama untuk dompet\n"
+        "3️⃣ Kunci publik dan kunci pribadi akan dibuat\n"
+        "4️⃣ Gunakan kunci publik untuk menerima dana\n\n"
+        "💡 Tips: Simpan kunci pribadi secara aman, jangan dibagikan."
+    ),
+    "guide_delete_wallet": (
+        "⚠️ <b>Pemberitahuan Penting:</b>\n"
+        "Penghapusan dompet tidak dapat dibatalkan. Harap pindahkan dana keluar sebelum menghapus."
+    ),
+    "no_wallets": "Anda belum memiliki dompet.",
+    "select_wallet": "Silakan pilih dompet untuk melihat riwayat transaksi:",
+    "wallet_details": "**Nama Dompet:** {name} \n\n **Alamat Publik:** `{public_key}`",
+    "wallet_not_found": "Dompet tidak ditemukan.",
+    "back_button": "⬅️ Kembali",
+    "sol_wallets_header": "<b>Dompet SOL Anda:</b>\n",
+    "wallet_balance": "<b>Nama:</b> {name}, <b>Saldo:</b> {balance} SOL\n",
+    "wallet_error": "<b>Nama:</b> {name}, <b>Kesalahan:</b> {error}\n",
+    "no_sol_wallets": "Anda belum memiliki dompet SOL.",
+    "no_usdt_wallets": "Anda belum memiliki dompet USDT.",
+    "show_balance": "\n\n🔷 {name}\n\n💰 Saldo: {balance}\n🔑 Kunci Publik: {public_key}\n\nPilih tindakan:",
+    "show_private_key": "🔐 Tampilkan Kunci Pribadi",
+    "back_to_wallet": "⬅️ Kembali ke Dompet",
+    "your_usdt_wallet": "📋 Dompet USDT Anda:",
+    "show_it_btn": "✅ Ya, tampilkan",
+    "private_key_warning": (
+        "🚨 PERINGATAN KUNCI PRIBADI 🚨\n\n"
+        "Kunci ini memberi akses penuh ke dompet dan dana Anda.\n\n"
+        "🔐 Kunci Pribadi:\n"
+        "{wallet}\n\n"
+        "❗ Jangan bagikan kunci ini kepada siapa pun\n"
+        "❗ Jangan masukkan di situs yang tidak terpercaya\n"
+        "❗ Simpan secara offline jika harus menyimpannya"
+    ),
+    "dont_have_any_wallet": "<b>Anda belum memiliki dompet.</b>",
+    "select_wallet_header": "<b>Silakan pilih dompet untuk melihat alamat:</b>",
+    "wallet_not_found": "Dompet tidak ditemukan.",
+    "select_wallet_type_header": "Silakan pilih jenis dompet:",
+    "enter_wallet_name": "Silakan masukkan nama dompet:",
+    "wallet_address_already_in_use": "Dompet dengan nama ini sudah ada. Silakan pilih nama lain.",
+    "dont_have_wallet_to_delete": "<b>Anda tidak memiliki dompet yang bisa dihapus.</b>",
+    "yes_delete": "Ya, hapus",
+    "wallet_deleted": "Dompet berhasil dihapus.",
+    "failed_to_delete_wallet": "Gagal menghapus dompet.",
+    "delete_wallet_header": "Silakan pilih dompet yang ingin dihapus:"
+}
+
+}
+

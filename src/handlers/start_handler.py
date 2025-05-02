@@ -36,22 +36,32 @@ async def start(update: Update, context: ContextTypes.DEFAULT_TYPE) -> int:
         return State.CHOOSE_COUNTRY
 
     # ✅ Show banner if user doesn't have a language set
-    await update.message.reply_text("👋 Welcome to our bot!\nPlease choose your language below 👇")
+    await update.message.reply_text(LANG_DATA['en']['welcome'])
 
     # ⬇️ Language selection buttons
     btns = [
         [
-            InlineKeyboardButton(
-                LANG_DATA["en"]["lang_button"], callback_data="lang_en"
-            ),
-            InlineKeyboardButton(
-                LANG_DATA["zh"]["lang_button"], callback_data="lang_zh"
-            ),
-            InlineKeyboardButton(
-                LANG_DATA["ms"]["lang_button"], callback_data="lang_ms"
-            ),
+            InlineKeyboardButton(f"{LANG_DATA['en']['lang_button']}", callback_data="lang_en"),
+            InlineKeyboardButton(f"{LANG_DATA['zh']['lang_button']}", callback_data="lang_zh"),
+        ],
+        [
+            InlineKeyboardButton(f"{LANG_DATA['ms']['lang_button']}", callback_data="lang_ms"),
+            InlineKeyboardButton(f"{LANG_DATA['th']['lang_button']}", callback_data="lang_th"),
+        ],
+        [
+            InlineKeyboardButton(f"{LANG_DATA['vi']['lang_button']}", callback_data="lang_vi"),
+            InlineKeyboardButton(f"{LANG_DATA['ur']['lang_button']}", callback_data="lang_ur"),
+        ],
+        [
+            InlineKeyboardButton(f"{LANG_DATA['ja']['lang_button']}", callback_data="lang_ja"),
+            InlineKeyboardButton(f"{LANG_DATA['ko']['lang_button']}", callback_data="lang_ko"),
+        ],
+        [
+            InlineKeyboardButton(f"{LANG_DATA['km']['lang_button']}", callback_data="lang_km"),
+            InlineKeyboardButton(f"{LANG_DATA['id']['lang_button']}", callback_data="lang_id"),
         ]
     ]
+
 
     await update.message.reply_text(
         f"{LANG_DATA['en']['start_msg']}\n\n{LANG_DATA['zh']['start_msg']}",
@@ -108,6 +118,7 @@ async def select_lang_callback(
 async def choose_country(update: Update, context: ContextTypes.DEFAULT_TYPE) -> int:
     user_id = update.effective_user.id
     txt = update.message.text.strip()
+   
     matches = get_country_matches(txt)
     if not matches:
         await update.message.reply_text(
@@ -117,7 +128,7 @@ async def choose_country(update: Update, context: ContextTypes.DEFAULT_TYPE) -> 
     if len(matches) == 1:
         context.user_data["country"] = matches[0]
         await update_or_create_case(user_id, country=matches[0])
-        message = update.message or query.message
+        message = update.message 
         await message.reply_text(  
             f"{get_text(user_id, 'country_selected')} {matches[0]}",
             parse_mode="HTML"
@@ -254,10 +265,10 @@ async def show_disclaimer(update: Update, context: ContextTypes.DEFAULT_TYPE) ->
     if update.callback_query:
         # Send a new message instead of editing
         await update.callback_query.message.reply_text(
-            text, parse_mode="HTML", reply_markup=kb
+            text, parse_mode="Markdown", reply_markup=kb
         )
     else:
-        await update.message.reply_text(text, parse_mode="HTML", reply_markup=kb)
+        await update.message.reply_text(text, parse_mode="Markdown", reply_markup=kb)
 
     return State.SHOW_DISCLAIMER
 
@@ -618,6 +629,7 @@ async def action_callback(update: Update, context: ContextTypes.DEFAULT_TYPE) ->
 
         reply_markup = InlineKeyboardMarkup(keyboard)
 
+        # TODO: would be replace later
         await query.edit_message_text(
             f"📍 **Cases from {province}:**",
             reply_markup=reply_markup,
@@ -645,7 +657,6 @@ async def wallet_type_callback(
 
     context.user_data["wallet_type"] = wallet_type
 
-    print(f"Wallet type: {wallet_type}")
 
     existing_wallets = await WalletService.get_wallet_by_type(user_id, wallet_type)
 
@@ -690,19 +701,13 @@ async def wallet_selection_callback(
     await query.answer()
     user_id = query.from_user.id
 
-    # Extract wallet name and type from callback data
     wallet_id = query.data.replace("wallet_", "")
     wallet_type = context.user_data.get("wallet_type")  # 'sol' or 'usdt'
 
-    # Fetch wallet details by name and type
     wallet_details = await WalletService.get_wallet_by_id(wallet_id)
 
-    print(f"Wallet details: {wallet_details}")
 
     if wallet_details:
-        # Fetch balance for the specific wallet type (SOL or USDT)
-        print(f"This is the wallet type: {wallet_type}")
-
         total_sol = (
             await WalletService.get_sol_balance(wallet_details["public_key"])
             if wallet_type == "SOL"
@@ -717,8 +722,7 @@ async def wallet_selection_callback(
         msg = get_text(user_id, "wallet_create_details").format(
             name=wallet_details["name"],
             public_key=wallet_details["public_key"],
-            # secret_key=wallet_details["private_key"],
-            balance=total_sol,  # For USDT, balance might be different
+            balance=total_sol, 
             wallet_type=wallet_type,
         )
 
@@ -731,19 +735,29 @@ async def wallet_selection_callback(
         await query.edit_message_text(msg, parse_mode="HTML")
 
 
+        # Use constants for button labels and messages
+        create_case_btn = get_text(user_id, "create_case_btn")  
+        find_people_btn = get_text(user_id, "find_btn")       
+        settings_btn = get_text(user_id, "btn_language")      
+        help_btn = get_text(user_id, "help_command")          
+
+        # Define the keyboard using constants
         keyboard = [
-            [InlineKeyboardButton("✅ Create Case", callback_data="create_case")],
-            [InlineKeyboardButton("🕵️ Find People", callback_data="find_people"),
-            InlineKeyboardButton("⚙️ Settings", callback_data="settings")],
-            [InlineKeyboardButton("❓ Help", url="https://t.me/peopletrace")]
+            [InlineKeyboardButton(f"✅ {create_case_btn}", callback_data="create_case")],
+            [
+                InlineKeyboardButton(f"🕵️ {find_people_btn}", callback_data="find_people"),
+                InlineKeyboardButton(f"⚙️ {settings_btn}", callback_data="settings"),
+            ],
+            [InlineKeyboardButton(f"❓ {help_btn}", url="https://t.me/peopletrace")],
         ]
+
 
 
 
       
 
         await query.message.reply_text(
-            "Choose an option below to continue:",
+            get_text(user_id, "main_menu"),
             reply_markup=InlineKeyboardMarkup(keyboard)
         )
         return State.HANDLE_REPLY  # Use a custom state if needed
@@ -780,31 +794,22 @@ async def wallet_name_handler(
         )
         return State.NAME_WALLET
 
-    print("Hello there how are you doing", wallet_name)
-
     wallet_type = context.user_data.get("wallet_type")
-
-    print(f"Wallet type: {wallet_type}")
 
     if await WalletService.check_wallet_name_used_with_type(
         user_id, wallet_name, wallet_type
     ):
-        message = (
-            "A wallet with this name already exists. Please choose a different name."
-        )
-        await update.message.reply_text(message)
+     
+        await update.message.reply_text(get_text(user_id, "wallet_name_exists"))
         return State.NAME_WALLET
 
     wallet = await WalletService.create_wallet(user_id, wallet_type, wallet_name)
     if wallet:
-
         if wallet_type == "SOL":
             total_sol = await WalletService.get_sol_balance(wallet.public_key)
         elif wallet_type == "USDT":
             total_sol = await TronWallet.get_usdt_balance(wallet.public_key)
 
-        print(f"Total SOL: {total_sol}")
-        print(f"This is the wallet type: {wallet_type}")
 
         context.user_data["wallet"] = wallet
         await update_or_create_case(user_id, wallet=str(wallet.id))
@@ -826,17 +831,25 @@ async def wallet_name_handler(
 
       
        
-        # 🎯 Custom Reply Keyboard (FIXED)
-        keyboard = [
-            [InlineKeyboardButton("✅ Create Case", callback_data="create_case")],
-            [InlineKeyboardButton("🕵️ Find People", callback_data="find_people"), InlineKeyboardButton("⚙️ Settings", callback_data="settings")],
-            [InlineKeyboardButton("❓ Help", url="https://t.me/peopletrace")]
-        ]
+        # Use constants for button labels and messages
+        create_case_btn = get_text(user_id, "create_case_btn")  
+        find_people_btn = get_text(user_id, "find_btn")       
+        settings_btn = get_text(user_id, "btn_language")      
+        help_btn = get_text(user_id, "help_command")          
 
+        # Define the keyboard using constants
+        keyboard = [
+            [InlineKeyboardButton(f"✅ {create_case_btn}", callback_data="create_case")],
+            [
+                InlineKeyboardButton(f"🕵️ {find_people_btn}", callback_data="find_people"),
+                InlineKeyboardButton(f"⚙️ {settings_btn}", callback_data="settings"),
+            ],
+            [InlineKeyboardButton(f"❓ {help_btn}", url="https://t.me/peopletrace")],
+        ]
      
 
         await update.message.reply_text(
-            "Choose an option below to continue:",
+            get_text(user_id, "main_menu"),
             reply_markup=InlineKeyboardMarkup(keyboard)
         )
 
@@ -918,6 +931,7 @@ async def message_router(update: Update, context: ContextTypes.DEFAULT_TYPE):
 
         reply_markup = InlineKeyboardMarkup(keyboard)
 
+        # TODO: would be replace later
         await query.edit_message_text(
             f"📍 **Cases from {province}:**",
             reply_markup=reply_markup,
@@ -993,11 +1007,18 @@ async def jump_to_command(update, context, command_text: str):
 async def main_menu(update: Update, context: ContextTypes.DEFAULT_TYPE) -> int:
     user_id = update.effective_user.id
 
+    create_case_btn = get_text(user_id, "create_case_btn")  
+    find_people_btn = get_text(user_id, "find_btn")       
+    settings_btn = get_text(user_id, "btn_language")      
+    help_btn = get_text(user_id, "help_command")          
+
     keyboard = [
-        [InlineKeyboardButton("✅ Create Case", callback_data="create_case")],
-        [InlineKeyboardButton("🕵️ Find People", callback_data="find_people"),
-         InlineKeyboardButton("⚙️ Settings", callback_data="settings")],
-        [InlineKeyboardButton("❓ Help", url="https://t.me/peopletrace")]
+        [InlineKeyboardButton(f"✅ {create_case_btn}", callback_data="create_case")],
+        [
+            InlineKeyboardButton(f"🕵️ {find_people_btn}", callback_data="find_people"),
+            InlineKeyboardButton(f"⚙️ {settings_btn}", callback_data="settings"),
+        ],
+        [InlineKeyboardButton(f"❓ {help_btn}", url="https://t.me/peopletrace")],
     ]
 
     await context.bot.send_message(

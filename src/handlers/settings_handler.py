@@ -68,16 +68,25 @@ async def settings_menu_callback(update: Update, context: ContextTypes.DEFAULT_T
         # Language selection
         kb = [
             [
-                InlineKeyboardButton(
-                    LANG_DATA["en"]["lang_button"], callback_data="setlang_en"
-                ),
-                InlineKeyboardButton(
-                    LANG_DATA["zh"]["lang_button"], callback_data="setlang_zh"
-                ),
-                InlineKeyboardButton(
-                    LANG_DATA["ms"]["lang_button"], callback_data="setlang_ms"
-                ),
+                InlineKeyboardButton(f"{LANG_DATA['en']['lang_button']}", callback_data="setlang_en"),
+                InlineKeyboardButton(f"{LANG_DATA['zh']['lang_button']}", callback_data="setlang_zh"),
             ],
+            [
+                InlineKeyboardButton(f"{LANG_DATA['ms']['lang_button']}", callback_data="setlang_ms"),
+                InlineKeyboardButton(f"{LANG_DATA['th']['lang_button']}", callback_data="setlang_th"),
+            ],
+            [
+                InlineKeyboardButton(f"{LANG_DATA['vi']['lang_button']}", callback_data="setlang_vi"),
+                InlineKeyboardButton(f"{LANG_DATA['ur']['lang_button']}", callback_data="setlang_ur"),
+            ],
+            [
+                InlineKeyboardButton(f"{LANG_DATA['ja']['lang_button']}", callback_data="setlang_ja"),
+                InlineKeyboardButton(f"{LANG_DATA['ko']['lang_button']}", callback_data="setlang_ko"),
+            ],
+            [
+                InlineKeyboardButton(f"{LANG_DATA['km']['lang_button']}", callback_data="setlang_km"),
+                InlineKeyboardButton(f"{LANG_DATA['id']['lang_button']}", callback_data="setlang_id"),
+            ]
         ]
         await query.edit_message_text(
             text=get_text(user_id, "choose_language"),

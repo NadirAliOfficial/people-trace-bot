@@ -198,16 +198,17 @@ async def show_sol_wallet_detail(update: Update, context: ContextTypes.DEFAULT_T
 
     # Format and escape message
     message = escape_markdown_v2(
-        f"🔷 {wallet['name']}\n\n"
-        f"💰 Balance: {balance_text}\n"
-        f"🔑 Public Key: {wallet['public_key']}\n\n"
-        "Select an action:"
+        get_text(user_id, "show_balance").format(
+            name = wallet["name"],
+            balance = balance_text,
+            public_key = wallet["public_key"]
+        )
     )
 
     # Create action buttons
     kb = [
-        [InlineKeyboardButton("🔐 Show Private Key", callback_data=f"req_pk_{wallet['id']}")],
-        [InlineKeyboardButton("⬅️ Back to Wallets", callback_data="sol_wallets")]
+        [InlineKeyboardButton(get_text(user_id, "show_private_key"), callback_data=f"req_pk_{wallet['id']}")],
+        [InlineKeyboardButton(get_text(user_id, "back_to_wallet"), callback_data="sol_wallets")]
     ]
 
     await query.message.edit_text(
@@ -253,7 +254,7 @@ async def usdt_wallets(update: Update, context: ContextTypes.DEFAULT_TYPE):
     ])
 
     await query.edit_message_text(
-        "📋 Your USDT Wallets:",
+        get_text(user_id, "your_usdt_wallet"),
         reply_markup=InlineKeyboardMarkup(kb)
     )
     return State.USDT_WALLET_DETAIL
@@ -293,7 +294,7 @@ async def usdt_wallets(update: Update, context: ContextTypes.DEFAULT_TYPE):
     ])
 
     await query.edit_message_text(
-        "📋 Your USDT Wallets:",
+        get_text(user_id, "your_usdt_wallet"),
         reply_markup=InlineKeyboardMarkup(kb)
     )
     return State.USDT_WALLET_DETAIL
@@ -320,16 +321,17 @@ async def show_usdt_wallet_detail(update: Update, context: ContextTypes.DEFAULT_
 
     # Format and escape message
     message = escape_markdown_v2(
-        f"🔷 {wallet['name']}\n\n"
-        f"💰 Balance: {balance_text}\n"
-        f"🔑 Public Key: {wallet['public_key']}\n\n"
-        "Select an action:"
+        get_text(user_id, "show_balance").format(
+            name = wallet["name"],
+            balance = balance_text,
+            public_key = wallet["public_key"]
+        )
     )
 
     # Create action buttons
     kb = [
-        [InlineKeyboardButton("🔐 Show Private Key", callback_data=f"req_pk_{wallet['id']}")],
-        [InlineKeyboardButton("⬅️ Back to Wallets", callback_data="usdt_wallets")]
+             [InlineKeyboardButton(get_text(user_id, "show_private_key"), callback_data=f"req_pk_{wallet['id']}")],
+        [InlineKeyboardButton(get_text(user_id, "back_to_wallet"), callback_data="usdt_wallets")]
     ]
 
     await query.message.edit_text(
@@ -351,8 +353,8 @@ async def request_private_key(update: Update, context: ContextTypes.DEFAULT_TYPE
     context.user_data["pk_wallet_id"] = wallet_id
 
     kb = [
-        [InlineKeyboardButton("✅ Yes, show it", callback_data="confirm_pk")],
-        [InlineKeyboardButton("❌ Cancel", callback_data="cancel_pk")]
+        [InlineKeyboardButton(get_text(user_id, "show_it_btn"), callback_data="confirm_pk")],
+        [InlineKeyboardButton(get_text(user_id, "cancel_btn"), callback_data="cancel_pk")]
     ]
 
     warning_text = escape_markdown_v2(
@@ -389,17 +391,11 @@ async def show_private_key(update: Update, context: ContextTypes.DEFAULT_TYPE):
 
     # Format and escape the private key message
     warning_message = escape_markdown_v2(
-        "🚨 PRIVATE KEY WARNING 🚨\n\n"
-        "This key gives FULL ACCESS to your wallet and funds.\n\n"
-        "🔐 Private Key:\n"
-        f"{wallet['private_key']}\n\n"
-        "❗ Never share this key with anyone\n"
-        "❗ Never enter it on unverified websites\n"
-        "❗ Store it securely offline if you must keep it"
+        get_text(user_id, "private_key_warning").format(wallet=wallet["private_key"])
     )
 
     # Create back button
-    kb = [[InlineKeyboardButton("⬅️ Back to Wallet", callback_data=f"usdt_detail_{wallet['id']}")]]
+    kb = [[InlineKeyboardButton(get_text(user_id, "back_to_wallet"), callback_data=f"usdt_detail_{wallet['id']}")]]
 
     await query.message.edit_text(
         warning_message,
@@ -417,7 +413,7 @@ async def show_address(update: Update, context: ContextTypes.DEFAULT_TYPE):
     wallets = await WalletService.get_wallet_by_user(user_id)
 
     if not wallets:
-        message = "<b>You don't have any wallets yet. </b>"
+        message = get_text(user_id, "dont_have_any_wallet")
         kb = []
     else:
         kb = [
@@ -428,7 +424,7 @@ async def show_address(update: Update, context: ContextTypes.DEFAULT_TYPE):
             ]
             for wallet in wallets
         ]
-        message = "<b>Select a wallet to view its address: </b>"
+        message = get_text(user_id, "select_wallet_header")
 
     await update.callback_query.message.edit_text(
         message, reply_markup=InlineKeyboardMarkup(kb), parse_mode="HTML"
@@ -519,6 +515,7 @@ async def view_specific_history(update: Update, context: ContextTypes.DEFAULT_TY
     query = update.callback_query
     wallet_id = query.data.split("_")[-1]
     wallet = await WalletService.get_wallet_by_id(wallet_id)
+    user_id = update.effective_user.id
 
     if wallet:
         history = (
@@ -530,7 +527,7 @@ async def view_specific_history(update: Update, context: ContextTypes.DEFAULT_TY
         for tx in history:
             message += f"Signature: {tx['signature']}, Time: {tx['block_time']}\n"
     else:
-        message = "Wallet not found."
+        message = get_text(user_id, "wallet_not_found") 
 
     await update.callback_query.message.edit_text(message)
     return State.WALLET_MENU
@@ -552,7 +549,7 @@ async def create_wallet(update: Update, context: ContextTypes.DEFAULT_TYPE):
     ]
     reply_markup = InlineKeyboardMarkup(keyboard)
 
-    message = "Please select the wallet type:"
+    message = get_text(user_id, "select_wallet_type_header")    
     await query.edit_message_text(text=message, reply_markup=reply_markup)
     return State.SELECT_WALLET_TYPE
 
@@ -561,12 +558,13 @@ async def create_wallet(update: Update, context: ContextTypes.DEFAULT_TYPE):
 async def select_wallet_type(update: Update, context: ContextTypes.DEFAULT_TYPE):
     """Store the selected wallet type and ask for the wallet name."""
     query = update.callback_query
+    user_id = update.effective_user.id
     await query.answer()
 
     # Store the selected wallet type in context
     context.user_data["wallet_type"] = query.data
 
-    message = "Please enter the wallet name:"
+    message = get_text(user_id, "enter_wallet_name")
     await query.edit_message_text(text=message)
     return State.ENTER_WALLET_NAME
 
@@ -580,9 +578,7 @@ async def process_create_wallet(update: Update, context: ContextTypes.DEFAULT_TY
 
     # Check if the wallet name is already used
     if await WalletService.check_wallet_name_used(user_id, wallet_name):
-        message = (
-            "A wallet with this name already exists. Please choose a different name."
-        )
+        message = get_text(user_id, "wallet_address_already_in_use")
         await update.message.reply_text(message)
         return State.ENTER_WALLET_NAME
 
@@ -615,7 +611,7 @@ async def delete_wallet(update: Update, context: ContextTypes.DEFAULT_TYPE):
     wallets = await WalletService.get_wallet_by_user(user_id, False)
 
     if not wallets:
-        message = "You don't have any wallets to delete."
+        message = get_text(user_id, "dont_have_wallet_to_delete")
         await query.message.edit_text(message)
         return State.WALLET_MENU
 
@@ -638,11 +634,12 @@ async def confirm_delete_wallet(update: Update, context: ContextTypes.DEFAULT_TY
     """Ask for confirmation before deleting the wallet."""
     query = update.callback_query
     wallet_id = query.data.split("_")[-1]
+    user_id = update.effective_user.id
 
     kb = [
         [
             InlineKeyboardButton(
-                "Yes, delete", callback_data=f"delete_wallet_{wallet_id}"
+                get_text(user_id,"yes_delete" ), callback_data=f"delete_wallet_{wallet_id}"
             ),
             InlineKeyboardButton("Cancel", callback_data="wallet_menu"),
         ]
@@ -660,9 +657,10 @@ async def process_delete_wallet(update: Update, context: ContextTypes.DEFAULT_TY
     """Process the deletion of a wallet."""
     query = update.callback_query
     wallet_id = query.data.split("_")[-1]
+    user_id = update.effective_user.id
 
     success = await WalletService.soft_delete_wallet(wallet_id)
-    message = "Wallet deleted successfully." if success else "Failed to delete wallet."
+    message = get_text(user_id, "wallet_deleted") if success else get_text(user_id, "failed_to_delete_wallet")
 
     await query.message.edit_text(message)
     return State.WALLET_MENU
