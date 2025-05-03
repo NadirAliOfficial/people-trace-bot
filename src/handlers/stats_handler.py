@@ -24,8 +24,6 @@ def format_number(value):
         return f"{value/1_000:.1f}K"
     return f"{value:,}"
 
-
-# /stats command
 async def stats_command(update: Update, context: ContextTypes.DEFAULT_TYPE):
     user_id = update.effective_user.id
     stats = await StatsService.get_global_stats()
@@ -47,11 +45,15 @@ async def stats_command(update: Update, context: ContextTypes.DEFAULT_TYPE):
         [InlineKeyboardButton("🕵️ View Unsolved Cases", callback_data="view_unsolved")],
         [InlineKeyboardButton("📍 View Local Stats", callback_data="view_local_stats")],
         [InlineKeyboardButton("📂 My Submissions", callback_data="view_my_cases")],
-        [InlineKeyboardButton("⬅️ Back to Menu", callback_data="back_to_main_menu")],
+        # [InlineKeyboardButton("⬅️ Back to Menu", callback_data="back_to_main_menu")],
     ]
     reply_markup = InlineKeyboardMarkup(keyboard)
 
-    await update.message.reply_text(message, reply_markup=reply_markup, parse_mode="HTML")
+    if update.message:
+        await update.message.reply_text(message, reply_markup=reply_markup, parse_mode="HTML")
+    elif update.callback_query:
+        await update.callback_query.edit_message_text(message, reply_markup=reply_markup, parse_mode="HTML")
+
     return State.SHOW_STATS_MENU
 
 
