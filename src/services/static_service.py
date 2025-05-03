@@ -21,7 +21,7 @@ class StatsService:
             "solved": solved,
             "unsolved": unsolved,
             "avg_reward": round(avg_reward[0]["avg"], 2) if avg_reward else 0,
-            "highest": highest[0].reward_amount if highest else 0,
+            "highest": getattr(highest[0], "reward_amount", 0) if highest else 0,
             "fastest": 2,  # TODO: dynamic
             "top_region": "Central Singapore",  # TODO: dynamic
             "top_demo": "Males, aged 25–35",

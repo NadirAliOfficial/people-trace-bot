@@ -38,7 +38,6 @@ async def main_setup():
     application = ApplicationBuilder().token(TOKEN).build()
 
     application.add_handler(start_handler)
-
     application.add_handler(wallet_handler)
     application.add_handler(settings_handler)
     application.add_handler(listing_handler)

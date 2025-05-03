@@ -109,6 +109,7 @@ class State(Enum):
     # Stats 
     SHOW_STATS_MENU = "SHOW_STATS_MENU"
     SHOW_UNSOLVED_COUNTRIES = "SHOW_UNSOLVED_COUNTRIES"
+    SHOW_MY_CASES = "SHOW_MY_CASES"
     
 
 # ======================
