@@ -547,5 +547,6 @@ stats_handler = ConversationHandler(
             CallbackQueryHandler(back_to_stats, pattern="^back_to_stats$"),
         ],
     },
-    fallbacks=[CallbackQueryHandler(invalid_selection)],
+    fallbacks=[CallbackQueryHandler(invalid_selection),         CommandHandler("cancel", cancel),
+],
 )
