@@ -2,6 +2,7 @@ from constant.case_constant import CASE_CONSTANT
 from constant.finder_constant import FINDER_CONSTANT
 from constant.settings_constant import SETTINGS_CONSTANT
 from constant.start_constant import START_LANG_DATA
+from constant.stats_constant import STATS_CONSTANT
 from constant.wallet_constant import WALLET_LANG_DATA
 from constant.wallet_menu_constant import WALLET_MENU_CONSTANT
 from constant.listing_constant import LISTING_CONSTANT
@@ -25,6 +26,7 @@ LANG_DATA = merge_lang_data(
     WALLET_MENU_CONSTANT,
     FINDER_CONSTANT,
     LISTING_CONSTANT,
+    STATS_CONSTANT
 )
 
 USDT_MINT_ADDRESS = "Es9vMFrzaCERmJfrF4H2FYD4KCoNkY11McCe8BenwNYB"

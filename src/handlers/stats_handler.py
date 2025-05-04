@@ -1,4 +1,3 @@
-# handlers/stats_handler.py
 from telegram import (
     InlineKeyboardButton,
     InlineKeyboardMarkup,
@@ -8,14 +7,13 @@ from telegram.ext import (
     CallbackQueryHandler,
     CommandHandler,
     ConversationHandler,
-    MessageHandler,
-    filters,
     ContextTypes,
 )
-
 from constant.language_constant import get_text
 from constants import State
 from services.static_service import StatsService
+from models.case_model import Case, CaseStatus
+
 
 def format_number(value):
     if value is None:
@@ -26,38 +24,39 @@ def format_number(value):
         return f"{value/1_000:.1f}K"
     return f"{value:,}"
 
-
-async def stats_command(update: Update, context): # type: ignore
+async def stats_command(update: Update, context: ContextTypes.DEFAULT_TYPE):
     user_id = update.effective_user.id
     stats = await StatsService.get_global_stats()
 
     message = (
-        f"<b>📊 PeopleTrace Community Stats</b>\n"
-        f"• <b>Total Cases Submitted:</b> {format_number(stats['total_cases'])}\n"
-        f"• <b>Regions Covered:</b> {stats['countries']} countries, {stats['cities']} cities\n"
-        f"• <b>🕵️‍♂️ Unsolved Cases:</b> {format_number(stats['unsolved'])} (Click below 👇)\n"
-        f"• <b>✅ Successfully Found:</b> {format_number(stats['solved'])}\n"
-        f"• <b>🎁 Average Reward Offered:</b> {stats['avg_reward']} USDT\n"
-        f"• <b>⏱ Fastest Case Solved:</b> {stats['fastest']} days\n"
-        f"• <b>🔥 Top Active Region:</b> {stats['top_region']}\n"
-        f"• <b>🧑‍🤝‍🧑 Common Demographic:</b> {stats['top_demo']}\n"
-        f"• <b>💰 Highest Reward:</b> {stats['highest']} USDT"
+        f"{get_text(user_id, 'community_stats_title')}\n"
+        f"{get_text(user_id, 'total_cases_submitted').format(format_number(stats['total_cases']))}\n"
+        f"{get_text(user_id, 'regions_covered').format(stats['countries'], stats['cities'])}\n"
+        f"{get_text(user_id, 'unsolved_cases').format(format_number(stats['unsolved']))}\n"
+        f"{get_text(user_id, 'successfully_found').format(format_number(stats['solved']))}\n"
+        f"{get_text(user_id, 'average_reward_offered').format(stats['avg_reward'])}\n"
+        f"{get_text(user_id, 'fastest_case_solved').format(stats['fastest'])}\n"
+        f"{get_text(user_id, 'top_active_region').format(stats['top_region'])}\n"
+        f"{get_text(user_id, 'common_demographic').format(stats['top_demo'])}\n"
+        f"{get_text(user_id, 'highest_reward').format(stats['highest'])}"
     )
-
     keyboard = [
-        [InlineKeyboardButton("🕵️ View Unsolved Cases", callback_data="view_unsolved")],
-        [InlineKeyboardButton("📍 View Local Stats", callback_data="view_local_stats")],
-        [InlineKeyboardButton("🗂 My Submissions", callback_data="view_my_cases")],
-        [InlineKeyboardButton("⬅️ Back to Menu", callback_data="back_to_main_menu")],
+        [InlineKeyboardButton(get_text(user_id, "view_unsolved_cases_button"), callback_data="view_unsolved")],
+        [InlineKeyboardButton(get_text(user_id, "view_local_stats_button"), callback_data="view_local_stats")],
+        [InlineKeyboardButton(get_text(user_id, "my_submissions_button"), callback_data="view_my_cases")],
     ]
     reply_markup = InlineKeyboardMarkup(keyboard)
 
-    await update.message.reply_text(message, reply_markup=reply_markup, parse_mode="HTML")
+    if update.message:
+        await update.message.reply_text(message, reply_markup=reply_markup, parse_mode="HTML")
+    elif update.callback_query:
+        await update.callback_query.edit_message_text(message, reply_markup=reply_markup, parse_mode="HTML")
+
     return State.SHOW_STATS_MENU
 
-# handlers/stats_handler.py
 
-async def stats_menu_callback(update: Update, context): # type: ignore
+# Main menu callbacks
+async def stats_menu_callback(update: Update, context: ContextTypes.DEFAULT_TYPE):
     query = update.callback_query
     await query.answer()
     user_id = query.from_user.id
@@ -69,45 +68,42 @@ async def stats_menu_callback(update: Update, context): # type: ignore
             for c in countries
         ]
         keyboard.append([InlineKeyboardButton("⬅️ Back", callback_data="back_to_stats")])
-        reply_markup = InlineKeyboardMarkup(keyboard)
 
         await query.edit_message_text(
             get_text(user_id, "unsolved_country_list"),
-            reply_markup=reply_markup,
+            reply_markup=InlineKeyboardMarkup(keyboard),
             parse_mode="HTML"
         )
         return State.SHOW_UNSOLVED_COUNTRIES
 
     elif query.data == "view_local_stats":
-        # Stub — you can show city/province specific stats here
         await query.edit_message_text("📍 Coming soon: Local Stats based on your location.")
         return State.SHOW_STATS_MENU
 
     elif query.data == "view_my_cases":
-        # Redirect to your existing listing functionality
-        await query.edit_message_text("📂 Redirecting to your case submissions...")
-        return await context.bot.send_message(
-            chat_id=user_id, text="/mycases"
-        )
+        return await view_my_cases_callback(update, context)
 
     elif query.data == "back_to_main_menu":
         await query.edit_message_text(get_text(user_id, "main_menu_text"))
         return ConversationHandler.END
 
 
-# handlers/stats_handler.py
+# Back button logic
+async def back_to_stats(update: Update, context: ContextTypes.DEFAULT_TYPE):
+    return await stats_command(update, context)
 
-async def unsolved_country_callback(update: Update, context):
+
+# Show unsolved cases for a selected country
+async def unsolved_country_callback(update: Update, context: ContextTypes.DEFAULT_TYPE):
     query = update.callback_query
     await query.answer()
     country = query.data.replace("country_", "")
     user_id = query.from_user.id
 
-    # Fetch cases from that country
     cases = await StatsService.get_unsolved_cases_by_country(country)
 
     if not cases:
-        await query.edit_message_text(f"No cases found in {country}.")
+        await query.edit_message_text(get_text(user_id, "no_cases_in_country").format(country))
         return State.SHOW_STATS_MENU
 
     message = f"<b>🕵️ Unsolved Cases in {country}:</b>\n"
@@ -119,3 +115,64 @@ async def unsolved_country_callback(update: Update, context):
 
     await query.edit_message_text(message, reply_markup=InlineKeyboardMarkup(keyboard), parse_mode="HTML")
     return State.SHOW_STATS_MENU
+
+
+# List user-submitted cases
+async def view_my_cases_callback(update: Update, context: ContextTypes.DEFAULT_TYPE):
+    query = update.callback_query
+    await query.answer()
+    user_id = query.from_user.id
+
+    cases = await Case.find(Case.user_id == user_id, Case.status != CaseStatus.DRAFT,  Case.deleted != True).to_list() 
+
+    if not cases:
+        await query.edit_message_text(get_text(user_id, "you_havent_submitted_cases"))        
+        return State.SHOW_STATS_MENU
+
+    message = "<b>📂 Your Submitted Cases:</b>\n"
+    keyboard = [
+        [InlineKeyboardButton(f"Case {case.name or 'N/A'} - {case.person_name or 'Unknown'}", callback_data=f"mycase_{case.id}")]
+        for case in cases
+    ]
+    keyboard.append([InlineKeyboardButton("⬅️ Back", callback_data="back_to_stats")])
+
+    await query.edit_message_text(message, reply_markup=InlineKeyboardMarkup(keyboard), parse_mode="HTML")
+    return State.SHOW_MY_CASES
+
+
+# View details of a single case
+async def my_case_detail_callback(update: Update, context: ContextTypes.DEFAULT_TYPE):
+    query = update.callback_query
+    await query.answer()
+    case_id = query.data.replace("mycase_", "")
+    case = await Case.get(case_id)
+    user_id = query.from_user.id
+
+    if not case:
+        await query.edit_message_text("❌ Case not found.")
+        return State.SHOW_MY_CASES
+
+    message = (
+    f"{get_text(user_id, 'case_details_title')}\n"
+    f"{get_text(user_id, 'case_no_label').format(case.case_no or 'N/A')}\n"
+    f"{get_text(user_id, 'name_label').format(case.person_name or 'N/A')}\n"
+    f"{get_text(user_id, 'status_label').format(case.status.value.capitalize())}\n"
+    f"{get_text(user_id, 'last_seen_label').format(case.last_seen_location or 'N/A')}\n"
+    f"{get_text(user_id, 'reward_label').format(case.reward or 0, case.reward_type or 'USDT')}\n"
+    f"{get_text(user_id, 'created_at_label').format(case.created_at.strftime('%Y-%m-%d'))}"
+)
+    keyboard = [[InlineKeyboardButton("⬅️ Back", callback_data="view_my_cases")]]
+    await query.edit_message_text(message, reply_markup=InlineKeyboardMarkup(keyboard), parse_mode="HTML")
+    return State.SHOW_MY_CASES
+
+
+# Optional fallback
+async def invalid_selection(update: Update, context: ContextTypes.DEFAULT_TYPE):
+    query = update.callback_query
+    await query.answer()
+    await query.edit_message_text(
+        "⚠️ <b>Invalid Selection</b>\n\nPlease choose a valid option.",
+        parse_mode="HTML"
+    )
+    return ConversationHandler.END
+

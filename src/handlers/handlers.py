@@ -63,7 +63,7 @@ from handlers.listing_handler import (
     update_case_field,
     update_choose_country,
 )
-from handlers.stats_handler import stats_command, stats_menu_callback, unsolved_country_callback
+from handlers.stats_handler import back_to_stats, invalid_selection, my_case_detail_callback, stats_command, stats_menu_callback, unsolved_country_callback, view_my_cases_callback
 from handlers.wallet_handler import (
     back_to_wallet_menu,
     confirm_delete_wallet,
@@ -529,16 +529,23 @@ settings_handler = ConversationHandler(
 
 
 
-
+# ConversationHandler setup
 stats_handler = ConversationHandler(
     entry_points=[CommandHandler("stats", stats_command)],
     states={
         State.SHOW_STATS_MENU: [
-            CallbackQueryHandler(stats_menu_callback),
+            CallbackQueryHandler(stats_menu_callback, pattern="^(view_unsolved|view_local_stats|view_my_cases|back_to_main_menu)$"),
+            CallbackQueryHandler(back_to_stats, pattern="^back_to_stats$"),
         ],
         State.SHOW_UNSOLVED_COUNTRIES: [
             CallbackQueryHandler(unsolved_country_callback, pattern="^country_"),
+            CallbackQueryHandler(back_to_stats, pattern="^back_to_stats$"),
+        ],
+        State.SHOW_MY_CASES: [
+            CallbackQueryHandler(my_case_detail_callback, pattern="^mycase_"),
+            CallbackQueryHandler(view_my_cases_callback, pattern="^view_my_cases$"),
+            CallbackQueryHandler(back_to_stats, pattern="^back_to_stats$"),
         ],
     },
-    fallbacks=[],
+    fallbacks=[CallbackQueryHandler(invalid_selection)],
 )
