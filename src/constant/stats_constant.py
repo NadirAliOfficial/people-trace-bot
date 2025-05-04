@@ -9,7 +9,7 @@ STATS_CONSTANT = {
         "average_reward_offered": "• <b>🎁 Average Reward Offered:</b> {} USDT",
         "fastest_case_solved": "• <b>⏱ Fastest Case Solved:</b> {} days",
         "top_active_region": "• <b>🔥 Top Active Region:</b> {}",
-        "common_demographic": "• <b>🧑‍🤝‍🧑 Common Demographic:</b> {}",
+        "common_demographic": "• <b>🧑‍🤝‍◕ Common Demographic:</b> {}",
         "highest_reward": "• <b>💰 Highest Reward:</b> {} USDT",
 
         # Buttons
@@ -21,7 +21,7 @@ STATS_CONSTANT = {
         # Menu messages
         "local_stats_coming_soon": "📍 Coming soon: Local Stats based on your location.",
         "unsolved_country_list": "Choose a country from the list below:",
-        "no_unsolved_country": "📍 No unsolved cases in any country.",  # <-- NEW FIELD
+        "no_unsolved_country": "📍 No unsolved cases in any country.",
 
         # Country case list
         "no_cases_in_country": "No cases found in {}.",
@@ -43,24 +43,23 @@ STATS_CONSTANT = {
         # Errors
         "invalid_selection_error": "⚠️ <b>Invalid Selection</b>\n\nPlease choose a valid option.",
 
-        # Remaining strings
+        # New local stats strings
         "ask_for_local_stats_input": "📍 Please share your city and province.",
         "invalid_local_stats_format": "⚠️ <b>Invalid Format</b>\n\nPlease enter as: <i>City, Province</i>",
         "no_local_cases_found": "🕵️ No cases found in {city}, {province}.",
         "local_cases_found_title": "<b>📂 Cases in {city}, {province}:</b>",
-        
     },
-    
+
     "zh": {
         "community_stats_title": "<b>📊 PeopleTrace 社区统计</b>",
         "total_cases_submitted": "• <b>提交的总案件数：</b> {}",
-        "regions_covered": "• <b>覆盖地区：</b> {} 个国家，{} 个城市",
+        "regions_covered": "• <b>覆盖地区：</b> {} 国家，{} 城市",
         "unsolved_cases": "• <b>🕵️‍♂️ 未解决案件：</b> {} （点击下方👇）",
         "successfully_found": "• <b>✅ 成功找到人数：</b> {}",
         "average_reward_offered": "• <b>🎁 平均悬赏金额：</b> {} USDT",
-        "fastest_case_solved": "• <b>⏱ 解决最快案件：</b> {} 天",
+        "fastest_case_solved": "• <b>⏱ 最快解决案件：</b> {} 天",
         "top_active_region": "• <b>🔥 最活跃地区：</b> {}",
-        "common_demographic": "• <b>🧑‍🤝‍🧑 常见人群特征：</b> {}",
+        "common_demographic": "• <b>🧑‍🤝‍◕ 常见人群特征：</b> {}",
         "highest_reward": "• <b>💰 最高悬赏金：</b> {} USDT",
         "view_unsolved_cases_button": "🕵️ 查看未解决案件",
         "view_local_stats_button": "📍 查看本地统计",
@@ -68,9 +67,8 @@ STATS_CONSTANT = {
         "back_button": "⬅️ 返回",
         "local_stats_coming_soon": "📍 即将推出：基于您所在地区的统计数据。",
         "unsolved_country_list": "从下方选择一个国家：",
-        "no_unsolved_country": "📍 没有任何国家有未解决案件。",  # <-- NEW FIELD
-
-        "no_cases_in_country": "在 {} 中没有找到案件。",
+        "no_unsolved_country": "📍 没有任何国家有未解决案件。",
+        "no_cases_in_country": "{} 中没有找到案件。",
         "unsolved_cases_in_country": "<b>🕵️ 在 {} 中的未解决案件：</b>",
         "you_havent_submitted_cases": "📂 您尚未提交任何案件。",
         "your_submitted_cases_title": "<b>📂 您提交的案件：</b>",
@@ -82,6 +80,12 @@ STATS_CONSTANT = {
         "reward_label": "• <b>悬赏：</b> {} {}",
         "created_at_label": "• <b>创建时间：</b> {}",
         "invalid_selection_error": "⚠️ <b>无效选择</b>\n\n请选择有效选项。",
+
+        # New local stats strings
+        "ask_for_local_stats_input": "📍 请分享您的城市和省份。",
+        "invalid_local_stats_format": "⚠️ <b>格式错误</b>\n\n请输入格式为：<i>城市, 省份</i>",
+        "no_local_cases_found": "🕵️ 在 {city}, {province} 中没有找到任何案件。",
+        "local_cases_found_title": "<b>📂 在 {city}, {province} 中的案件：</b>",
     },
 
     "ms": {
@@ -93,7 +97,7 @@ STATS_CONSTANT = {
         "average_reward_offered": "• <b>🎁 Purata Ganjaran Ditawarkan:</b> {} USDT",
         "fastest_case_solved": "• <b>⏱ Kes Paling Cepat Diselesaikan:</b> {} hari",
         "top_active_region": "• <b>🔥 Kawasan Paling Aktif:</b> {}",
-        "common_demographic": "• <b>🧑‍🤝‍🧑 Demografi Biasa:</b> {}",
+        "common_demographic": "• <b>🧑‍🤝‍◕ Demografi Biasa:</b> {}",
         "highest_reward": "• <b>💰 Ganjaran Tertinggi:</b> {} USDT",
         "view_unsolved_cases_button": "🕵️ Lihat Kes Belum Diselesaikan",
         "view_local_stats_button": "📍 Lihat Statistik Tempatan",
@@ -101,8 +105,7 @@ STATS_CONSTANT = {
         "back_button": "⬅️ Kembali",
         "local_stats_coming_soon": "📍 Akan datang: Statistik tempatan berdasarkan lokasi anda.",
         "unsolved_country_list": "Pilih satu negara dari senarai di bawah:",
-        "no_unsolved_country": "📍 Tiada kes yang belum diselesaikan di mana-mana negara.",  # <-- NEW FIELD
-
+        "no_unsolved_country": "📍 Tiada kes yang belum diselesaikan di mana-mana negara.",
         "no_cases_in_country": "Tiada kes dijumpai di {}.",
         "unsolved_cases_in_country": "<b>🕵️ Kes Belum Diselesaikan di {}:</b>",
         "you_havent_submitted_cases": "📂 Anda belum menghantar sebarang kes lagi.",
@@ -115,6 +118,12 @@ STATS_CONSTANT = {
         "reward_label": "• <b>Ganjaran:</b> {} {}",
         "created_at_label": "• <b>Dicipta Pada:</b> {}",
         "invalid_selection_error": "⚠️ <b>Pemilihan Tidak Sah</b>\n\nSila pilih opsyen yang sah.",
+
+        # New local stats strings
+        "ask_for_local_stats_input": "📍 Sila kongsi bandar dan negeri anda.",
+        "invalid_local_stats_format": "⚠️ <b>Format Tidak Sah</b>\n\nSila masukkan seperti: <i>Bandar, Negeri</i>",
+        "no_local_cases_found": "🕵️ Tiada kes ditemui di {city}, {province}.",
+        "local_cases_found_title": "<b>📂 Kes di {city}, {province}:</b>",
     },
 
     "th": {
@@ -126,7 +135,7 @@ STATS_CONSTANT = {
         "average_reward_offered": "• <b>🎁 เฉลี่ยรางวัลนำจับ:</b> {} USDT",
         "fastest_case_solved": "• <b>⏱ คดีเร็วที่สุดที่คลี่คลาย:</b> {} วัน",
         "top_active_region": "• <b>🔥 พื้นที่ที่มีการเคลื่อนไหวสูงสุด:</b> {}",
-        "common_demographic": "• <b>🧑‍🤝‍🧑 กลุ่มประชากรหลัก:</b> {}",
+        "common_demographic": "• <b>🧑‍🤝‍◕ กลุ่มประชากรหลัก:</b> {}",
         "highest_reward": "• <b>💰 รางวัลนำจับสูงสุด:</b> {} USDT",
         "view_unsolved_cases_button": "🕵️ ดูคดียังไม่คลี่คลาย",
         "view_local_stats_button": "📍 ดูสถิติในพื้นที่",
@@ -134,8 +143,7 @@ STATS_CONSTANT = {
         "back_button": "⬅️ ย้อนกลับ",
         "local_stats_coming_soon": "📍 เร็วๆ นี้: สถิติในพื้นที่ตามตำแหน่งของคุณ",
         "unsolved_country_list": "เลือกประเทศจากด้านล่าง:",
-        "no_unsolved_country": "📍 ไม่มีคดียังไม่คลี่คลายในประเทศใดเลย.",  # <-- NEW FIELD
-
+        "no_unsolved_country": "📍 ไม่มีคดียังไม่คลี่คลายในประเทศใดเลย.",
         "no_cases_in_country": "ไม่มีคดีใน {}",
         "unsolved_cases_in_country": "<b>🕵️ คดียังไม่คลี่คลายใน {}:</b>",
         "you_havent_submitted_cases": "📂 คุณยังไม่ได้ส่งคดีใดๆ เข้ามาเลย",
@@ -147,7 +155,13 @@ STATS_CONSTANT = {
         "last_seen_label": "• <b>พบครั้งสุดท้าย:</b> {}",
         "reward_label": "• <b>รางวัล:</b> {} {}",
         "created_at_label": "• <b>สร้างเมื่อ:</b> {}",
-        "invalid_selection_error": "⚠️ <b>เลือกไม่ถูกต้อง</b>\n\nกรุณาเลือกตัวเลือกที่ถูกต้อง",
+        "invalid_selection_error": "⚠️ <b>เลือกไม่ถูกต้อง</b>\n\nกรุณาเลือกตัวเลือกที่ถูกต้อง.",
+
+        # New local stats strings
+        "ask_for_local_stats_input": "📍 กรุณาระบุเมืองและจังหวัดของคุณ",
+        "invalid_local_stats_format": "⚠️ <b>รูปแบบไม่ถูกต้อง</b>\n\nกรุณาพิมพ์เป็น: <i>เมือง, จังหวัด</i>",
+        "no_local_cases_found": "🕵️ ไม่มีคดีใน {city}, {province}",
+        "local_cases_found_title": "<b>📂 คดีใน {city}, {province}:</b>",
     },
 
     "vi": {
@@ -157,9 +171,9 @@ STATS_CONSTANT = {
         "unsolved_cases": "• <b>🕵️‍♂️ Trường hợp chưa giải quyết:</b> {} (Nhấn bên dưới 👇)",
         "successfully_found": "• <b>✅ Đã tìm thấy thành công:</b> {}",
         "average_reward_offered": "• <b>🎁 Phần thưởng trung bình:</b> {} USDT",
-        "fastest_case_solved": "• <b>⏱ Vụ giải quyết nhanh nhất:</b> {} ngày",
+        "fastest_case_solved": "• <b>⏱ Vụ giải quyết nhan",  # (Fix incomplete)
         "top_active_region": "• <b>🔥 Khu vực hoạt động mạnh nhất:</b> {}",
-        "common_demographic": "• <b>🧑‍🤝‍🧑 Nhân khẩu học phổ biến:</b> {}",
+        "common_demographic": "• <b>🧑‍🤝‍◕ Nhân khẩu học phổ biến:</b> {}",
         "highest_reward": "• <b>💰 Phần thưởng cao nhất:</b> {} USDT",
         "view_unsolved_cases_button": "🕵️ Xem các vụ chưa giải quyết",
         "view_local_stats_button": "📍 Xem thống kê địa phương",
@@ -167,12 +181,11 @@ STATS_CONSTANT = {
         "back_button": "⬅️ Quay lại",
         "local_stats_coming_soon": "📍 Sắp ra mắt: Thống kê địa phương dựa trên vị trí của bạn.",
         "unsolved_country_list": "Chọn một quốc gia từ danh sách dưới đây:",
-        "no_unsolved_country": "📍 Không có trường hợp nào chưa giải quyết ở bất kỳ quốc gia nào.",  # <-- NEW FIELD
-
+        "no_unsolved_country": "📍 Không có trường hợp nào chưa giải quyết ở bất kỳ quốc gia nào.",
         "no_cases_in_country": "Không có trường hợp nào trong {}.",
-        "unsolved_cases_in_country": "<b>🕵️ Các vụ chưa giải quyết tại {}:</b>",
+        "unsolved_cases_in_country": "<b>🕵️ Các trường hợp chưa giải quyết tại {}:</b>",
         "you_havent_submitted_cases": "📂 Bạn chưa gửi bất kỳ trường hợp nào.",
-        "your_submitted_cases_title": "<b>📂 Các trường hợp đã gửi:</b>",
+        "your_submitted_cases_title": "<b>📂 Trường hợp đã gửi:</b>",
         "case_details_title": "<b>📄 Chi tiết trường hợp</b>",
         "case_no_label": "• <b>Mã hồ sơ:</b> {}",
         "name_label": "• <b>Tên:</b> {}",
@@ -181,27 +194,32 @@ STATS_CONSTANT = {
         "reward_label": "• <b>Phần thưởng:</b> {} {}",
         "created_at_label": "• <b>Ngày tạo:</b> {}",
         "invalid_selection_error": "⚠️ <b>Lựa chọn không hợp lệ</b>\n\nVui lòng chọn tùy chọn hợp lệ.",
+
+        # New local stats strings
+        "ask_for_local_stats_input": "📍 Hãy nhập thành phố và tỉnh của bạn.",
+        "invalid_local_stats_format": "⚠️ <b>Định dạng sai</b>\n\nVui lòng nhập như sau: <i>Thành phố, Tỉnh</i>",
+        "no_local_cases_found": "🕵️ Không có trường hợp nào ở {city}, {province}.",
+        "local_cases_found_title": "<b>📂 Các trường hợp ở {city}, {province}:</b>",
     },
 
     "ur": {
         "community_stats_title": "<b>📊 پیپل ٹریس کمیونٹی اعداد و شمار</b>",
         "total_cases_submitted": "• <b>کل معاملات جمع کروائے گئے:</b> {}",
-        "regions_covered": "• <b>کور کیے گئے علاقے:</b> {} ممالک، {} شہروں",
+        "regions_covered": "• <b>کور کیے گئے علاقہ جات:</b> {} ممالک، {} شہر",
         "unsolved_cases": "• <b>🕵️‍♂️ غیر حل شدہ معاملات:</b> {} (ذیل میں کلک کریں 👇)",
         "successfully_found": "• <b>✅ کامیابی سے تلاش کیا گیا:</b> {}",
-        "average_reward_offered": "• <b>🎁 اوسط انعام کی پیشکش:</b> {} USDT",
+        "average_reward_offered": "• <b>🎁 اوسط انعام:</b> {} USDT",
         "fastest_case_solved": "• <b>⏱ سب سے زیادہ تیزی سے حل شدہ معاملہ:</b> {} دن",
         "top_active_region": "• <b>🔥 سب سے زیادہ فعال علاقہ:</b> {}",
-        "common_demographic": "• <b>🧑‍🤝‍🧑 عام آبادی:</b> {}",
+        "common_demographic": "• <b>🧑‍🤝‍◕ عام آبادی:</b> {}",
         "highest_reward": "• <b>💰 سب سے زیادہ انعام:</b> {} USDT",
         "view_unsolved_cases_button": "🕵️ غیر حل شدہ معاملات دیکھیں",
         "view_local_stats_button": "📍 مقامی اعداد و شمار دیکھیں",
         "my_submissions_button": "📂 میری جمع کروائیں",
         "back_button": "⬅️ واپس",
-        "local_stats_coming_soon": "📍 قریب میں: اپنی لوکیشن کی بنیاد پر مقامی اعداد و شمار۔",
+        "local_stats_coming_soon": "📍 قریب میں: آپ کی لوکیشن کی بنیاد پر مقامی اعداد و شمار۔",
         "unsolved_country_list": "ذیل میں لسٹ سے ایک ملک منتخب کریں:",
-        "no_unsolved_country": "📍 کسی بھی ملک میں غیر حل شدہ معاملات نہیں ہیں۔",  # <-- NEW FIELD
-
+        "no_unsolved_country": "📍 کسی بھی ملک میں غیر حل شدہ معاملات نہیں ہیں۔",
         "no_cases_in_country": "{} میں کوئی معاملہ نہیں ملا۔",
         "unsolved_cases_in_country": "<b>🕵️ {} میں غیر حل شدہ معاملات:</b>",
         "you_havent_submitted_cases": "📂 آپ نے ابھی تک کوئی معاملہ جمع نہیں کروایا۔",
@@ -214,6 +232,12 @@ STATS_CONSTANT = {
         "reward_label": "• <b>انعام:</b> {} {}",
         "created_at_label": "• <b>بنایا گیا:</b> {}",
         "invalid_selection_error": "⚠️ <b>غلط انتخاب</b>\n\nبراہ کرم درست اختیار منتخب کریں۔",
+
+        # New local stats strings
+        "ask_for_local_stats_input": "📍 اپنا شہر اور صوبہ درج کریں۔",
+        "invalid_local_stats_format": "⚠️ <b>غلط فارمیٹ</b>\n\nبرائے مہربانی اس طرح درج کریں: <i>شہر, صوبہ</i>",
+        "no_local_cases_found": "🕵️ {city}, {province} میں کوئی معاملہ نہیں ملا۔",
+        "local_cases_found_title": "<b>📂 {city}, {province} میں معاملات:</b>",
     },
 
     "ja": {
@@ -233,8 +257,7 @@ STATS_CONSTANT = {
         "back_button": "⬅️ 戻る",
         "local_stats_coming_soon": "📍 間もなくリリース：あなたの位置に基づく地域統計。",
         "unsolved_country_list": "以下から国を選択してください：",
-        "no_unsolved_country": "📍 どの国にも未解決のケースはありません。",  # <-- NEW FIELD
-
+        "no_unsolved_country": "📍 どの国にも未解決のケースはありません。",
         "no_cases_in_country": "{} にはケースが見つかりませんでした。",
         "unsolved_cases_in_country": "<b>🕵️ {} 内の未解決のケース：</b>",
         "you_havent_submitted_cases": "📂 ケースはまだ送信していません。",
@@ -247,6 +270,12 @@ STATS_CONSTANT = {
         "reward_label": "• <b>報奨金：</b> {} {}",
         "created_at_label": "• <b>作成日時：</b> {}",
         "invalid_selection_error": "⚠️ <b>無効な選択です</b>\n\n有効なオプションを選択してください。",
+
+        # New local stats strings
+        "ask_for_local_stats_input": "📍 ご自身の都市と県をご入力ください。",
+        "invalid_local_stats_format": "⚠️ <b>無効なフォーマット</b>\n\n次のように入力してください: <i>都市, 県</i>",
+        "no_local_cases_found": "🕵️ {city}, {province} に該当するケースはありませんでした。",
+        "local_cases_found_title": "<b>📂 {city}, {province} のケース：</b>",
     },
 
     "ko": {
@@ -255,7 +284,7 @@ STATS_CONSTANT = {
         "regions_covered": "• <b>포함 지역:</b> {} 국가, {} 도시",
         "unsolved_cases": "• <b>🕵️‍♂️ 미해결 사건:</b> {} (아래 클릭 👇)",
         "successfully_found": "• <b>✅ 성공적으로 발견됨:</b> {}",
-        "average_reward_offered": "• <b>🎁 평균 제안 보상금:</b> {} USDT",
+        "average_reward_offered": "• <b>🎁 평균 보상금:</b> {} USDT",
         "fastest_case_solved": "• <b>⏱ 가장 빠르게 해결된 사건:</b> {} 일",
         "top_active_region": "• <b>🔥 가장 활발한 지역:</b> {}",
         "common_demographic": "• <b>🧑‍🤝‍◕ 일반 인구통계:</b> {}",
@@ -266,8 +295,7 @@ STATS_CONSTANT = {
         "back_button": "⬅️ 뒤로 가기",
         "local_stats_coming_soon": "📍 곧 출시: 귀하의 위치 기반 지역 통계.",
         "unsolved_country_list": "아래 목록에서 국가를 선택하세요:",
-        "no_unsolved_country": "📍 어느 나라에도 미해결 사건이 없습니다.",  # <-- NEW FIELD
-
+        "no_unsolved_country": "📍 어느 나라에도 미해결 사건이 없습니다.",
         "no_cases_in_country": "{}에 사건이 없습니다.",
         "unsolved_cases_in_country": "<b>🕵️ {}의 미해결 사건:</b>",
         "you_havent_submitted_cases": "📂 아직 사건을 제출하지 않았습니다.",
@@ -278,8 +306,14 @@ STATS_CONSTANT = {
         "status_label": "• <b>상태:</b> {}",
         "last_seen_label": "• <b>마지막으로 본 장소:</b> {}",
         "reward_label": "• <b>보상금:</b> {} {}",
-        "created_at_label": "• <b>생성 날짜:</b> {}",
+        "created_at_label": "• <b>생성 시간:</b> {}",
         "invalid_selection_error": "⚠️ <b>잘못된 선택입니다</b>\n\n유효한 옵션을 선택해 주세요.",
+
+        # New local stats strings
+        "ask_for_local_stats_input": "📍 도시와 시/도를 입력해주세요.",
+        "invalid_local_stats_format": "⚠️ <b>잘못된 형식입니다</b>\n\n다음과 같이 입력해주세요: <i>도시, 시/도</i>",
+        "no_local_cases_found": "🕵️ {city}, {province}에 해당하는 사건이 없습니다.",
+        "local_cases_found_title": "<b>📂 {city}, {province}의 사건:</b>",
     },
 
     "km": {
@@ -290,7 +324,7 @@ STATS_CONSTANT = {
         "successfully_found": "• <b>✅ រកឃើញដោយជោគជ័យ:</b> {}",
         "average_reward_offered": "• <b>🎁 រង្វាន់ជាមធ្យម:</b> {} USDT",
         "fastest_case_solved": "• <b>⏱ ករណីដោះស្រាយលឿនបំផុត:</b> {} ថ្ងៃ",
-        "top_active_region": "• <b>🔥 តំបន់សកម្មភាពខ្ពស់បំផុត:</b> {}",
+        "top_active_region": "• <b>🔥 តំបន់សកម្មភាពខ្លាំងបំផុត:</b> {}",
         "common_demographic": "• <b>🧑‍🤝‍◕ ប្រជាសាស្ត្រទូទៅ:</b> {}",
         "highest_reward": "• <b>💰 រង្វាន់ខ្ពស់បំផុត:</b> {} USDT",
         "view_unsolved_cases_button": "🕵️ មើលករណីមិនទាន់ដោះស្រាយ",
@@ -299,10 +333,9 @@ STATS_CONSTANT = {
         "back_button": "⬅️ ត្រលប់ក្រោយ",
         "local_stats_coming_soon": "📍 បើកដំណើរការឆាប់ៗនេះ: ស្ថិតិក្នុងស្រុកដោយផ្អែកលើទីតាំងរបស់អ្នក។",
         "unsolved_country_list": "ជ្រើសរើសប្រទេសពីបញ្ជីខាងក្រោម៖",
-        "no_unsolved_country": "📍 គ្មានករណីមិនទាន់ដោះស្រាយនៅក្នុងប្រទេសណាមួយទេ។",  # <-- NEW FIELD
-
+        "no_unsolved_country": "📍 គ្មានករណីមិនទាន់ដោះស្រាយនៅក្នុងប្រទេសណាមួយទេ។",
         "no_cases_in_country": "គ្មានករណីនៅក្នុង {}។",
-        "unsolved_cases_in_country": "<b>🕵️ ករណីមិនទាន់ដោះស្រាយនៅ {}:</b>",
+        "unsolved_cases_in_country": "<b>🕵️ ករណីមិនទាន់ដោះស្រាយនៅក្នុង {}:</b>",
         "you_havent_submitted_cases": "📂 អ្នកមិនទាន់បានដាក់ស្នើករណីណាមួយទេ។",
         "your_submitted_cases_title": "<b>📂 ករណីដែលអ្នកបានដាក់ស្នើ:</b>",
         "case_details_title": "<b>📄 ព័ត៌មានលម្អិតអំពីករណី</b>",
@@ -312,39 +345,49 @@ STATS_CONSTANT = {
         "last_seen_label": "• <b>លើកចុងក្រោយដែលបានឃើញ:</b> {}",
         "reward_label": "• <b>រង្វាន់:</b> {} {}",
         "created_at_label": "• <b>បង្កើតនៅ:</b> {}",
-        "invalid_selection_error": "⚠️ <b>ការជ្រើសរើសមិនត្រឹមត្រូវ</b>\n\nសូមជ្រើសរើសជម្រើសដែលត្រឹមត្រូវ។",
+        "invalid_selection_error": "⚠️ <b>ការជ្រើសរើសមិនត្រឹមត្រូវ</b>\n\nសូមជ្រើសរើសជម្រើសបានត្រឹមត្រូវ។",
+        
+        # New local stats strings
+        "ask_for_local_stats_input": "📍 សូមបញ្ចូលទីក្រុង និងខេត្តរបស់អ្នក។",
+        "invalid_local_stats_format": "⚠️ <b>ទម្រង់មិនត្រឹមត្រូវ</b>\n\nសូមបញ្ចូលជាទម្រង់: <i>ទីក្រុង, ខេត្ត</i>",
+        "no_local_cases_found": "侦探 侦破案件 {city}, {province} 里没有案件。",
+        "local_cases_found_title": "<b>📁 在 {city}, {province} 的案件：</b>",
     },
-
     "id": {
-        "community_stats_title": "<b>📊 Statistik Komunitas PeopleTrace</b>",
-        "total_cases_submitted": "• <b>Total Kasus Diajukan:</b> {}",
-        "regions_covered": "• <b>Wilayah Terjangkau:</b> {} negara, {} kota",
-        "unsolved_cases": "• <b>🕵️‍♂️ Kasus Belum Terpecahkan:</b> {} (Klik di bawah 👇)",
-        "successfully_found": "• <b>✅ Berhasil Ditemukan:</b> {}",
-        "average_reward_offered": "• <b>🎁 Rata-rata Hadiah:</b> {} USDT",
-        "fastest_case_solved": "• <b>⏱ Kasus Tercepat Diselesaikan:</b> {} hari",
-        "top_active_region": "• <b>🔥 Wilayah Paling Aktif:</b> {}",
-        "common_demographic": "• <b>🧑‍🤝‍◕ Demografi Umum:</b> {}",
-        "highest_reward": "• <b>💰 Hadiah Tertinggi:</b> {} USDT",
-        "view_unsolved_cases_button": "🕵️ Lihat Kasus Belum Terpecahkan",
-        "view_local_stats_button": "📍 Lihat Statistik Lokal",
-        "my_submissions_button": "📂 Kiriman Saya",
-        "back_button": "⬅️ Kembali",
-        "local_stats_coming_soon": "📍 Segera hadir: Statistik lokal berdasarkan lokasi Anda.",
-        "unsolved_country_list": "Pilih negara dari daftar di bawah ini:",
-        "no_unsolved_country": "📍 Tidak ada kasus yang belum terselesaikan di semua negara.",  # <-- NEW FIELD
-
-        "no_cases_in_country": "Tidak ada kasus di {}.",
-        "unsolved_cases_in_country": "<b>🕵️ Kasus yang Belum Diselesaikan di {}:</b>",
-        "you_havent_submitted_cases": "📂 Anda belum mengirimkan kasus apa pun.",
-        "your_submitted_cases_title": "<b>📂 Kasus yang Telah Dikirim:</b>",
-        "case_details_title": "<b>📄 Detail Kasus</b>",
-        "case_no_label": "• <b>No. Kasus:</b> {}",
-        "name_label": "• <b>Nama:</b> {}",
-        "status_label": "• <b>Status:</b> {}",
-        "last_seen_label": "• <b>Terakhir Dilihat:</b> {}",
-        "reward_label": "• <b>Reward:</b> {} {}",
-        "created_at_label": "• <b>Dibuat pada:</b> {}",
-        "invalid_selection_error": "⚠️ <b>Pemilihan tidak valid</b>\n\nSilakan pilih opsi yang benar.",
-    }
+    "community_stats_title": "<b>📊 Statistik Komunitas PeopleTrace</b>",
+    "total_cases_submitted": "• <b>Jumlah Kasus yang Diajukan:</b> {}",
+    "regions_covered": "• <b>Wilayah Terliputi:</b> {} negara, {} kota",
+    "unsolved_cases": "• <b>🕵️‍♂️ Kasus Belum Terpecahkan:</b> {} (Klik di bawah 👇)",
+    "successfully_found": "• <b>✅ Berhasil Ditemukan:</b> {}",
+    "average_reward_offered": "• <b>🎁 Imbalan Rata-rata:</b> {} USDT",
+    "fastest_case_solved": "• <b>⏱ Kasus Paling Cepat Terpecahkan:</b> {} hari",
+    "top_active_region": "• <b>🔥 Wilayah Aktivitas Tertinggi:</b> {}",
+    "common_demographic": "• <b>🧑‍🤝‍◕ Demografi Umum:</b> {}",
+    "highest_reward": "• <b>💰 Imbalan Tertinggi:</b> {} USDT",
+    "view_unsolved_cases_button": "🕵️ Lihat Kasus Belum Terpecahkan",
+    "view_local_stats_button": "📍 Lihat Statistik Lokal",
+    "my_submissions_button": "📂 Kiriman Saya",
+    "back_button": "⬅️ Kembali",
+    "local_stats_coming_soon": "📍 Segera hadir: Statistik lokal berdasarkan lokasi Anda.",
+    "unsolved_country_list": "Pilih sebuah negara dari daftar di bawah ini:",
+    "no_unsolved_country": "📍 Tidak ada kasus belum terpecahkan di semua negara.",
+    "no_cases_in_country": "Tidak ada kasus di {}.",
+    "unsolved_cases_in_country": "<b>🕵️ Kasus Belum Terpecahkan di {}:</b>",
+    "you_havent_submitted_cases": "📂 Anda belum mengirimkan kasus apapun.",
+    "your_submitted_cases_title": "<b>📂 Kasus yang Telah Anda Kirim:</b>",
+    "case_details_title": "<b>📄 Detail Kasus</b>",
+    "case_no_label": "• <b>Nomor Kasus:</b> {}",
+    "name_label": "• <b>Nama:</b> {}",
+    "status_label": "• <b>Status:</b> {}",
+    "last_seen_label": "• <b>Terakhir Dilihat:</b> {}",
+    "reward_label": "• <b>Imbalan:</b> {} {}",
+    "created_at_label": "• <b>Dibuat pada:</b> {}",
+    "invalid_selection_error": "⚠️ <b>Pemilihan Tidak Valid</b>\n\nSilakan pilih opsi yang valid.",
+    
+    # New local stats strings
+    "ask_for_local_stats_input": "📍 Silakan masukkan kota dan provinsi Anda.",
+    "invalid_local_stats_format": "⚠️ <b>Format Tidak Valid</b>\n\nSilakan masukkan dalam format: <i>Kota, Provinsi</i>",
+    "no_local_cases_found": "🕵️ Tidak ada kasus ditemukan di {city}, {province}.",
+    "local_cases_found_title": "<b>📂 Kasus di {city}, {province}:</b>",
+}
 }
