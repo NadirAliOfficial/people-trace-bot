@@ -10,11 +10,11 @@ START_LANG_DATA = {
         "disclaimer_title": "Disclaimer\n\n",
         "welcome": "👋 Welcome to our bot!\nPlease choose your language below 👇",
         "disclaimer_text": (
-              "• All rewards are held in escrow until the case is resolved \n",
-          "• Misuse of AI-generated or false content results in a permanent ba \n",
-          "• Report to local authorities before posting a cas \n",
-          "• We are not responsible for disputes or misus \n",
-          "• A 5% platform fee applies to both posting and successful finding \n",
+              "• All rewards are held in escrow until the case is resolved \n"
+          "• Misuse of AI-generated or false content results in a permanent ba \n"
+          "• Report to local authorities before posting a case \n"
+          "• We are not responsible for disputes or misus \n"
+          "• A 5% platform fee applies to both posting and successful finding \n"
           "• All info submitted is publicly visible"
         )        ,
         "fee_details": "Fees:\n• A 5% platform fee applies to both:\n– Case submissions\n– Successful findings \n",
@@ -107,11 +107,11 @@ START_LANG_DATA = {
     "disclaimer_title": "免责声明\n\n",
     "welcome": "👋 欢迎使用本机器人！\n请在下方选择您的语言 👇",
     "disclaimer_text":(
-         "• 所有悬赏金由平台托管直至案件 \n",
-        "• 使用AI生成或虚假内容将导致永久 \n",
-        "• 发布寻人信息前需先向当地警方 \n",
-        "• 我们不对任何纠纷或滥用行为 \n",
-        "• 发布和成功找回均收取5%平台 \n",
+         "• 所有悬赏金由平台托管直至案件 \n"
+        "• 使用AI生成或虚假内容将导致永久 \n"
+        "• 发布寻人信息前需先向当地警方 \n"
+        "• 我们不对任何纠纷或滥用行为 \n"
+        "• 发布和成功找回均收取5%平台 \n"
         "• 所有提交的信息将公开可见"
     ),
     "fee_details": "费用说明：\n• 5%平台费适用于以下两种情况：\n– 发布案件\n– 成功找回",
@@ -205,11 +205,11 @@ START_LANG_DATA = {
         "disclaimer_title": "Penafian\n\n",
         "welcome": "👋 Selamat datang ke bot kami!\nSila pilih bahasa di bawah 👇",
         "disclaimer_text": (
-          "• Semua ganjaran disimpan dalam pegangan sehingga kes diselesaik \n",
-          "• Penyalahgunaan kandungan palsu atau dijana AI menyebabkan penggantungan kek \n",
-          "• Laporkan kepada pihak berkuasa tempatan sebelum memuat naik k \n",
-          "• Kami tidak bertanggungjawab atas pertelingkahan atau penyalahguna \n",
-          "• Caj platform 5% dikenakan untuk kedua-dua hantaran kes dan penemuan berja \n",
+          "• Semua ganjaran disimpan dalam pegangan sehingga kes diselesaik \n"
+          "• Penyalahgunaan kandungan palsu atau dijana AI menyebabkan penggantungan kek \n"
+          "• Laporkan kepada pihak berkuasa tempatan sebelum memuat naik k \n"
+          "• Kami tidak bertanggungjawab atas pertelingkahan atau penyalahguna \n"
+          "• Caj platform 5% dikenakan untuk kedua-dua hantaran kes dan penemuan berja \n"
           "• Semua maklumat yang dihantar adalah kelihatan awam"
         ),
         "fee_details": "Bayaran:\n• Caj platform 5% dikenakan untuk kedua-dua:\n– Penghantaran kes\n– Penemuan berjaya",
@@ -303,11 +303,11 @@ START_LANG_DATA = {
     "disclaimer_title": "ข้อจำกัดความรับผิดชอบ",
     "welcome": "👋 ยินดีต้อนรับสู่บอทของเรา!\nกรุณาเลือกภาษาจากตัวเลือกด้านล่าง 👇",
     "disclaimer_text": (
-        "• รางวัลทั้งหมดจะถูกเก็บไว้จนกว่าเรื่องจะ \n",
-        "• การใช้งานเนื้อหาเท็จหรือสร้างจาก AI จะทำให้ถูกแบนตลอดชีว \n",
-        "• กรุณาแจ้งความกับเจ้าหน้าที่ท้องถิ่นก่อนโพสต์เรื่ \n",
-        "• เราไม่รับผิดชอบต่อการโต้แย้งหรือการใช้งานที่ไม่เหมาะ \n",
-        "• มีค่าธรรมเนียมแพลตฟอร์ม 5% สำหรับการโพสต์และการค้นหาที่สำเร \n",
+        "• รางวัลทั้งหมดจะถูกเก็บไว้จนกว่าเรื่องจะ \n"
+        "• การใช้งานเนื้อหาเท็จหรือสร้างจาก AI จะทำให้ถูกแบนตลอดชีว \n"
+        "• กรุณาแจ้งความกับเจ้าหน้าที่ท้องถิ่นก่อนโพสต์เรื่ \n"
+        "• เราไม่รับผิดชอบต่อการโต้แย้งหรือการใช้งานที่ไม่เหมาะ \n"
+        "• มีค่าธรรมเนียมแพลตฟอร์ม 5% สำหรับการโพสต์และการค้นหาที่สำเร \n"
         "• ข้อมูลที่ส่งมาทั้งหมดจะแสดงให้สาธารณะเห็น"
     ),
     "fee_details": "ค่าธรรมเนียม:\n• ค่าธรรมเนียมแพลตฟอร์ม 5% จะถูกหักจาก:\n– การโพสต์เรื่อง\n– การค้นหาที่สำเร็จ",
@@ -401,11 +401,11 @@ START_LANG_DATA = {
     "disclaimer_title": "Miễn trừ trách nhiệm\n\n",
     "welcome": "👋 Chào mừng bạn đến với bot của chúng tôi!\nVui lòng chọn ngôn ngữ bên dưới 👇",
     "disclaimer_text": (
-        "• Mọi phần thưởng sẽ được giữ trong tài khoản ký quỹ cho đến khi vụ việc được giải quy \n",
-        "• Lạm dụng nội dung giả mạo hoặc do AI tạo ra sẽ bị cấm vĩnh vi \n",
-        "• Báo cáo với cơ quan chức năng địa phương trước khi đăng t \n",
-        "• Chúng tôi không chịu trách nhiệm về tranh chấp hoặc lạm dụ \n",
-        "• Phí nền tảng 5% áp dụng cho cả hai trường hợp:\n– Đăng tin\n– Tìm kiếm thành cô \n",
+        "• Mọi phần thưởng sẽ được giữ trong tài khoản ký quỹ cho đến khi vụ việc được giải quy \n"
+        "• Lạm dụng nội dung giả mạo hoặc do AI tạo ra sẽ bị cấm vĩnh vi \n"
+        "• Báo cáo với cơ quan chức năng địa phương trước khi đăng t \n"
+        "• Chúng tôi không chịu trách nhiệm về tranh chấp hoặc lạm dụ \n"
+        "• Phí nền tảng 5% áp dụng cho cả hai trường hợp:\n– Đăng tin\n– Tìm kiếm thành cô \n"
         "• Mọi thông tin gửi đi đều công khai"
     ),
     "fee_details": "Phí dịch vụ:\n• Phí nền tảng 5% áp dụng cho:\n– Đăng tin\n– Tìm kiếm thành công",

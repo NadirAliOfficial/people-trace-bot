@@ -6,6 +6,7 @@ import geonamescache
 import pycountry
 
 from constant.language_constant import ITEMS_PER_PAGE
+from utils.province_util import get_provinces_for_country
 
 
 def generate_tac():
@@ -38,6 +39,13 @@ def get_city_matches(country_name, query):
     return [
         c for c in get_cities_by_country(country_name) if query.lower() in c.lower()
     ]
+
+
+def get_province_matches(query, country):
+    """Geting the province match with query and inside the country which provided"""
+    query = query.lower()
+    provinces = get_provinces_for_country(country)
+    return [province for province in provinces if query in province.lower()]
 
 
 gc = geonamescache.GeonamesCache()

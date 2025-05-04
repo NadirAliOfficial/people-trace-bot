@@ -63,7 +63,7 @@ from handlers.listing_handler import (
     update_case_field,
     update_choose_country,
 )
-from handlers.stats_handler import back_to_stats, invalid_selection, my_case_detail_callback, stats_command, stats_menu_callback, unsolved_country_callback, view_my_cases_callback
+from handlers.stats_handler import back_to_stats, handle_local_province_city, invalid_selection, my_case_detail_callback, stats_command, stats_menu_callback, unsolved_country_callback, view_my_cases_callback
 from handlers.wallet_handler import (
     back_to_wallet_menu,
     confirm_delete_wallet,
@@ -527,9 +527,8 @@ settings_handler = ConversationHandler(
 
 # ---------------------- Settings Conversation Handler End  ---------------------
 
+# handlers/stats_handler.py
 
-
-# ConversationHandler setup
 stats_handler = ConversationHandler(
     entry_points=[CommandHandler("stats", stats_command)],
     states={
@@ -546,7 +545,12 @@ stats_handler = ConversationHandler(
             CallbackQueryHandler(view_my_cases_callback, pattern="^view_my_cases$"),
             CallbackQueryHandler(back_to_stats, pattern="^back_to_stats$"),
         ],
+        State.ASK_LOCAL_PROVINCE_CITY: [
+            MessageHandler(filters.TEXT & ~filters.COMMAND, handle_local_province_city),
+        ],
     },
-    fallbacks=[CallbackQueryHandler(invalid_selection),         CommandHandler("cancel", cancel),
-],
+    fallbacks=[
+        CallbackQueryHandler(invalid_selection),
+        CommandHandler("cancel", cancel),
+    ],
 )

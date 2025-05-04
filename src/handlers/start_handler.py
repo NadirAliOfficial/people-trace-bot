@@ -263,13 +263,13 @@ async def show_disclaimer(update: Update, context: ContextTypes.DEFAULT_TYPE) ->
         ]
     )
     if update.callback_query:
-        # Send a new message instead of editing
         await update.callback_query.message.reply_text(
             text, parse_mode="Markdown", reply_markup=kb
         )
     else:
-        await update.message.reply_text(text, parse_mode="Markdown", reply_markup=kb)
-
+        await update.message.reply_text(
+            text, parse_mode="Markdown", reply_markup=kb
+        )
     return State.SHOW_DISCLAIMER
 
 

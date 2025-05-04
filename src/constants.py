@@ -110,7 +110,7 @@ class State(Enum):
     SHOW_STATS_MENU = "SHOW_STATS_MENU"
     SHOW_UNSOLVED_COUNTRIES = "SHOW_UNSOLVED_COUNTRIES"
     SHOW_MY_CASES = "SHOW_MY_CASES"
-    
+    ASK_LOCAL_PROVINCE_CITY = "ASK_LOCAL_PROVINCE_CITY"
 
 # ======================
 # Language Data & Constants
