@@ -67,8 +67,8 @@ START_LANG_DATA = {
             "Public Key: <code>{public_key}</code>\n"
             "Balance: {balance} {wallet_type}\n\n"
         ),
-        "usdt_wallet": "USDT Wallet",
-        "sol_wallet": "SOL Wallet",
+        "usdt_wallet": "USDT (TRC20 - Tron Network)",
+        "sol_wallet": "Solana (SOL)",
         "choose_wallet": "Please choose a wallet type:",
         "choose_existing_or_new_wallet": "Choose an existing wallet or create a new one:",
         "main_menu": "Choose an option below to continue:",
