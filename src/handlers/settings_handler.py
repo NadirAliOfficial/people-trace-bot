@@ -3,6 +3,7 @@ from telegram import InlineKeyboardButton, InlineKeyboardMarkup, Update
 from telegram.ext import ContextTypes
 from constants import State
 from constant.language_constant import get_text, user_data_store, LANG_DATA
+from models.mobile_number_model import MobileNumber
 from services.otp_service import send_otp, verify_otp
 from services.user_service import (
     delete_user_mobile,
@@ -193,6 +194,12 @@ async def handle_setting_mobile(update: Update, context: ContextTypes.DEFAULT_TY
         return State.WAITING_FOR_MOBILE
 
     context.user_data["mobile"] = mobile
+
+    is_already_exist = await MobileNumber.find_one({"number": mobile})
+
+    if is_already_exist:
+        await update.message.reply_text("This number is already registered.")
+    
 
     if NODE_ENV == "production":
         tac = generate_tac()
