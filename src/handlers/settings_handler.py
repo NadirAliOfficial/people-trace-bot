@@ -1,6 +1,5 @@
 from config.config_manager import NODE_ENV
 from telegram import InlineKeyboardButton, InlineKeyboardMarkup, Update
-from telegram.ext import ContextTypes
 from constants import State
 from constant.language_constant import get_text, user_data_store, LANG_DATA
 from models.mobile_number_model import MobileNumber
@@ -15,7 +14,10 @@ from services.user_service import (
 )
 from utils.error_wrapper import catch_async
 from utils.helper import generate_tac
-
+from telegram.ext import (
+    ConversationHandler,
+    ContextTypes,
+)
 
 # Initialization of settings 
 async def settings_command(update: Update, context: ContextTypes.DEFAULT_TYPE):
@@ -199,7 +201,7 @@ async def handle_setting_mobile(update: Update, context: ContextTypes.DEFAULT_TY
 
     if is_already_exist:
         await update.message.reply_text("This number is already registered.")
-    
+        return ConversationHandler.END  
 
     if NODE_ENV == "production":
         tac = generate_tac()
