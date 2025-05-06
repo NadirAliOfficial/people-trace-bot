@@ -28,15 +28,15 @@ from constant.language_constant import LANG_DATA, get_text, user_data_store
 async def start(update: Update, context: ContextTypes.DEFAULT_TYPE) -> int:
     """/start command entry point."""
     user_id = update.message.from_user.id
-    user_lang = await get_user_lang(user_id)
-    if user_lang:
-        user_data_store[user_id] = {"lang": user_lang}
-        context.user_data["lang"] = user_lang
-        await update.message.reply_text(get_text(user_id, "choose_country"))
-        return State.CHOOSE_COUNTRY
+    # user_lang = await get_user_lang(user_id)
+    # if user_lang:
+    #     user_data_store[user_id] = {"lang": user_lang}
+    #     context.user_data["lang"] = user_lang
+    #     await update.message.reply_text(get_text(user_id, "choose_country"))
+    #     return State.CHOOSE_COUNTRY
 
     # ✅ Show banner if user doesn't have a language set
-    await update.message.reply_text(LANG_DATA['en']['welcome'])
+    await update.message.reply_text(get_text(user_id, "welcome"))
 
     # ⬇️ Language selection buttons
     btns = [
@@ -64,7 +64,7 @@ async def start(update: Update, context: ContextTypes.DEFAULT_TYPE) -> int:
 
 
     await update.message.reply_text(
-        f"{LANG_DATA['en']['start_msg']}\n\n{LANG_DATA['zh']['start_msg']}",
+        f"{get_text(user_id, 'start_msg')}",
         reply_markup=InlineKeyboardMarkup(btns),
     )
     return State.SELECT_LANG

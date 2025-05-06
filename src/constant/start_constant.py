@@ -98,7 +98,7 @@ START_LANG_DATA = {
     },
    "zh": {  # 中文
     "lang_choice": "中文",
-    "lang_button": "中文",
+    "lang_button": "Chinese (中文)",
     "start_msg": "你好！欢迎使用 People Finder 机器人。\n请选择您的语言：",
     "choose_country": "您所在的国家是？（可以输入部分名称，例如 Swed 表示瑞典）",
     "country_not_found": "未找到匹配的国家，请重试：",
@@ -196,7 +196,7 @@ START_LANG_DATA = {
 },
    "ms": {  # Malay
         "lang_choice": "Bahasa Melayu",
-        "lang_button": "Bahasa Melayu",
+        "lang_button": "Malay (Bahasa Melayu)",
         "start_msg": "Hai! Selamat datang ke People Finder Bot.\nSila pilih bahasa anda:",
         "choose_country": "Di negara manakah anda berada? (Anda boleh taip sebahagian nama, contohnya, Swed untuk Sweden)",
         "country_not_found": "Tiada negara yang sepadan ditemui. Sila cuba lagi:",
@@ -294,7 +294,7 @@ START_LANG_DATA = {
     },
    "th": {  # Thai
     "lang_choice": "ไทย",
-    "lang_button": "ไทย",
+    "lang_button": "Thai (ไทย)",
     "start_msg": "สวัสดี! ยินดีต้อนรับสู่ People Finder Bot\nกรุณาเลือกภาษาของคุณ:",
     "choose_country": "คุณอยู่ประเทศใด? (คุณสามารถพิมพ์ชื่อประเทศบางส่วนได้ เช่น พิมพ์ Swed สำหรับประเทศสวีเดน)",
     "country_not_found": "ไม่พบประเทศที่ตรงกัน กรุณาลองใหม่:",
@@ -392,7 +392,7 @@ START_LANG_DATA = {
 },
    "vi": {  # Vietnamese
     "lang_choice": "Tiếng Anh",
-    "lang_button": "Tiếng Anh",
+"lang_button": "Vietnamese (Tiếng Việt)",
     "start_msg": "Xin chào! Chào mừng bạn đến với People Finder Bot.\nVui lòng chọn ngôn ngữ của bạn:",
     "choose_country": "Bạn đang ở quốc gia nào? (Bạn có thể nhập một phần tên, ví dụ: Viet cho Việt Nam)",
     "country_not_found": "Không tìm thấy quốc gia phù hợp. Vui lòng thử lại:",
@@ -490,7 +490,7 @@ START_LANG_DATA = {
 },
    "ur": {  # اردو
     "lang_choice": "اردو",
-    "lang_button": "اردو",
+"lang_button": "Urdu (اردو)",
     "start_msg": "ہیلو! پیوپل فائنڈر بوٹ میں خوش آمدید۔\nبراہ کرم اپنی زبان منتخب کریں:",
     "choose_country": "آپ کس ملک میں ہیں؟ (آپ نام کا حصہ بھی ٹائپ کر سکتے ہیں، مثال کے طور پر سویڈن کے لیے Swed)",
     "country_not_found": "کوئی ملک نہیں ملا۔ دوبارہ کوشش کریں:",
@@ -589,7 +589,7 @@ START_LANG_DATA = {
 },
     "ja": {  # 日本語
     "lang_choice": "日本語",
-    "lang_button": "日本語",
+"lang_button": "Japanese (日本語)",
     "start_msg": "こんにちは！ People Finder Bot へようこそ。\n言語を選択してください:",
     "choose_country": "どの国にいますか？（名前の一部を入力することもできます。例：スウェーデンは「Swed」）",
     "country_not_found": "一致する国が見つかりません。もう一度やり直してください:",
@@ -688,7 +688,7 @@ START_LANG_DATA = {
 },
    "ko": {  # Korean
     "lang_choice": "영어",
-    "lang_button": "영어",
+"lang_button": "Korean (한국어)",
     "start_msg": "안녕하세요! People Finder Bot에 오신 것을 환영합니다.\n사용할 언어를 선택해 주세요:",
     "choose_country": "어느 나라에 계십니까? (예: 스웨덴은 'Swed'라고 입력 가능)",
     "country_not_found": "일치하는 국가가 없습니다. 다시 시도해 주세요:",
@@ -787,7 +787,7 @@ START_LANG_DATA = {
 },
        "km": {  # Khmer
     "lang_choice": "អង់គ្លេស",
-    "lang_button": "អង់គ្លេស",
+"lang_button": "Khmer (ភាសាខ្មែរ)",
     "start_msg": "សួស្តី! សូមស្វាគមន៍មកកាន់ People Finder Bot។\nសូមជ្រើសរើសភាសារបស់អ្នក:",
     "choose_country": "តើ​អ្នក​កំពុង​នៅ​ប្រទេស​ណា? (អ្នក​អាច​វាយ​ផ្នែក​នៃ​ឈ្មោះ ឧទាហរណ៍ Swed សម្រាប់ Sweden)",
     "country_not_found": "គ្មាន​ប្រទេស​ណាដែល​ត្រូវគ្នា​ទេ។ សូម​ព្យាយាម​ម្តងទៀត:",
@@ -886,7 +886,7 @@ START_LANG_DATA = {
 },
     "id": {
   "lang_choice": "Bahasa Inggris",
-  "lang_button": "Bahasa Inggris",
+  "lang_button": "Indonesian (Bahasa Indonesia)",
   "start_msg": "Halo! Selamat datang di People Finder Bot.\nSilakan pilih bahasa Anda:",
   "choose_country": "Di negara mana Anda berada? (Anda dapat mengetik sebagian nama, misal Swed untuk Sweden)",
   "country_not_found": "Negara tidak ditemukan. Silakan coba lagi:",
