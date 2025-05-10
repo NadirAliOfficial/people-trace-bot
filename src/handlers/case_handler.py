@@ -67,7 +67,7 @@ async def handle_name(update: Update, context: ContextTypes.DEFAULT_TYPE) -> int
         )
         return State.MOBILE_MANAGEMENT
     else:
-        await update.message.reply_text(get_text(user_id, "enter_mobile"))
+        await update.message.reply_text(get_text(user_id, "enter_mobile"), parse_mode="Markdown")
         return State.CREATE_CASE_MOBILE
 
 
@@ -81,7 +81,11 @@ async def handle_select_mobile(
     user_id = query.from_user.id
 
     if query.data == "mobile_add":
-        await query.edit_message_text(get_text(user_id, "enter_mobile"))
+        await query.edit_message_text(
+            get_text(user_id, "enter_mobile"), 
+                        parse_mode="Markdown"
+
+        )        
         return State.CREATE_CASE_MOBILE  # Transition to state for mobile number input
     else:
         selected_mobile = query.data.replace("select_mobile_", "")
@@ -172,12 +176,14 @@ async def handle_tac(update: Update, context: ContextTypes.DEFAULT_TYPE) -> int:
 
             # Proceed to the next step
             await show_disclaimer_2(update, context)
+            
             return State.CREATE_CASE_DISCLAIMER
         else:
             await update.message.reply_text(get_text(user_id, "tac_invalid"))
             return State.CREATE_CASE_TAC
     else: 
         print(f"Skipping OTP verification in {NODE_ENV} mode.")
+        await update.message.reply_text(get_text(user_id, "tac_verified"))
         await show_disclaimer_2(update, context)
         return State.CREATE_CASE_DISCLAIMER
 
@@ -193,17 +199,17 @@ async def show_disclaimer_2(update: Update, context: ContextTypes.DEFAULT_TYPE) 
         [
             [
                 InlineKeyboardButton(
-                    get_text(user_id, "agree_btn"), callback_data="agree"
+                    get_text(user_id, "understood_and_agree"), callback_data="agree"
                 )
             ],
             [
                 InlineKeyboardButton(
-                    get_text(user_id, "disagree_btn"), callback_data="disagree"
+                    get_text(user_id, "cancel_button"), callback_data="disagree"
                 )
             ],
         ]
     )
-    await update.message.reply_text(get_text(user_id, "disclaimer_2"), reply_markup=kb)
+    await update.message.reply_text(get_text(user_id, "disclaimer_2"), reply_markup=kb, parse_mode="Markdown")
     return State.CREATE_CASE_DISCLAIMER
 
 

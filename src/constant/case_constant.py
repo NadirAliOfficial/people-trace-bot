@@ -4,11 +4,17 @@ CASE_CONSTANT = {
         "create_case_title": "Create New Case",
         "enter_name": "Enter your name:",
         "disclaimer_2": (
-            "Disclaimer 2:\n\n"
-            "1. The reward amount will be held in escrow until the case is resolved.\n"
-            "2. Misuse of this service is prohibited.\n"
-            "3. All information provided will be publicly visible.\n\n"
-            "Do you agree?"
+            "📜 *Before You Continue – Please Read Carefully*\n\n"
+            "By participating as a *Finder* on PeopleTrace, you agree to the following:\n\n"
+            "• 🔍 You will only use this platform to help locate missing persons lawfully\n"
+            "• 📹 Leads must include verifiable evidence (photo/video)\n"
+            "• 💬 Communication with posters must remain respectful and ethical\n"
+            "• 🧾 Do not use false, AI-generated, or misleading content\n"
+            "• 📍 You may be asked for additional clarification or location proof\n"
+            "• 💸 5% platform fee is deducted from successful reward claims\n"
+            "• 🚫 Misuse, extortion, or suspicious behavior will lead to a permanent ban and legal action\n"
+            "• ❗️ We reserve the right to reject false or unverified claims\n\n"
+            "*Do you agree to these terms?*"
         ),
         "mobile_number_doesnt_exist": "The mobile number you entered does not exist. Please try again.",
         "enter_person_name": "Enter the name of the person you're looking for:",
@@ -50,7 +56,6 @@ CASE_CONSTANT = {
         # Newly Added Constants
         "mobile_selected_with_tac": "The mobile number you entered has been verified. Please enter the verification code:",
         "choose_existing_mobile": "Please select an existing number or add a new one.",
-        "enter_mobile": "Please enter your mobile number (with country code):",
         "enter_valid_mobile": "❌ Invalid mobile number. Please enter a valid 10-digit number.",
         "tac_verified": "✅ TAC verified successfully.",
         "tac_invalid": "❌ Invalid TAC. Please try again.",
@@ -76,6 +81,8 @@ CASE_CONSTANT = {
             "5️⃣ Review the transaction details and confirm the transfer.\n\n"
             "Once the transfer is successful, the {wallet_type} will appear in your wallet balance."
         ),
+        # New 
+        "understood_and_agree": "✅ I Understand and Agree"
     },
     "zh": {
     # Existing Constants
@@ -129,7 +136,6 @@ CASE_CONSTANT = {
     # Newly Added Constants
     "mobile_selected_with_tac": "您输入的手机号已验证成功。请输入验证码：",
     "choose_existing_mobile": "请选择现有号码或添加新号码。",
-    "enter_mobile": "请输入您的手机号（包含国家代码）：",
     "enter_valid_mobile": "❌ 无效手机号。请输入有效的10位数字。",
     "tac_verified": "✅ TAC 验证成功。",
     "tac_invalid": "❌ 无效 TAC。请再试一次。",
@@ -155,6 +161,8 @@ CASE_CONSTANT = {
         "5️⃣ 检查交易详情并确认转账。\n\n"
         "一旦转账成功，{wallet_type} 将显示在您的钱包余额中。"
     )
+    ,
+    
 },
     "ms": {
     # Existing Constants
@@ -208,7 +216,6 @@ CASE_CONSTANT = {
     # Newly Added Constants
     "mobile_selected_with_tac": "Nombor telefon bimbit yang dimasukkan telah disahkan. Sila masukkan kod pengesahan:",
     "choose_existing_mobile": "Sila pilih nombor sedia ada atau tambah nombor baru.",
-    "enter_mobile": "Sila masukkan nombor telefon bimbit anda (termasuk kod negara):",
     "enter_valid_mobile": "❌ Nombor telefon bimbit tidak sah. Sila masukkan nombor 10 digit yang betul.",
     "tac_verified": "✅ TAC berjaya disahkan.",
     "tac_invalid": "❌ TAC tidak sah. Sila cuba lagi.",
@@ -287,7 +294,6 @@ CASE_CONSTANT = {
     # Newly Added Constants
     "mobile_selected_with_tac": "เบอร์โทรศัพท์มือถือที่คุณป้อนได้รับการยืนยันแล้ว กรุณาป้อนรหัสยืนยัน:",
     "choose_existing_mobile": "กรุณาเลือกเบอร์โทรศัพท์เดิม หรือเพิ่มเบอร์ใหม่",
-    "enter_mobile": "กรุณาป้อนเบอร์โทรศัพท์มือถือของคุณ (รวมรหัสประเทศ):",
     "enter_valid_mobile": "❌ เบอร์โทรศัพท์ไม่ถูกต้อง กรุณาป้อนเบอร์โทรศัพท์ 10 หลักที่ถูกต้อง",
     "tac_verified": "✅ TAC ยืนยันสำเร็จ",
     "tac_invalid": "❌ TAC ไม่ถูกต้อง กรุณาลองอีกครั้ง",
@@ -366,7 +372,6 @@ CASE_CONSTANT = {
     # Newly Added Constants
     "mobile_selected_with_tac": "Số điện thoại bạn nhập đã được xác minh. Vui lòng nhập mã xác thực:",
     "choose_existing_mobile": "Vui lòng chọn số điện thoại hiện có hoặc thêm số mới.",
-    "enter_mobile": "Vui lòng nhập số điện thoại của bạn (bao gồm mã quốc gia):",
     "enter_valid_mobile": "❌ Số điện thoại không hợp lệ. Vui lòng nhập số 10 chữ số đúng định dạng.",
     "tac_verified": "✅ TAC xác thực thành công.",
     "tac_invalid": "❌ TAC không hợp lệ. Vui lòng thử lại.",
@@ -445,7 +450,6 @@ CASE_CONSTANT = {
     # Newly Added Constants
     "mobile_selected_with_tac": "موبائل نمبر جو آپ نے درج کیا ہے وہ تصدیق شدہ ہے۔ براہ کرم تصدیقی کوڈ درج کریں:",
     "choose_existing_mobile": "براہ کرم موجودہ نمبر کو منتخب کریں یا نیا نمبر شامل کریں۔",
-    "enter_mobile": "براہ کرم اپنا موبائل نمبر درج کریں (ممالک کا کوڈ سمیت):",
     "enter_valid_mobile": "❌ غلط موبائل نمبر۔ براہ کرم درست 10 ہندسی نمبر درج کریں۔",
     "tac_verified": "✅ TAC کامیابی سے تصدیق شدہ۔",
     "tac_invalid": "❌ غلط TAC۔ براہ کرم دوبارہ کوشش کریں۔",
@@ -524,7 +528,6 @@ CASE_CONSTANT = {
     # Newly Added Constants
     "mobile_selected_with_tac": "入力した電話番号は検証済みです。認証コードを入力してください:",
     "choose_existing_mobile": "既存の番号を選ぶか、新しい番号を追加してください。",
-    "enter_mobile": "携帯電話番号を入力してください（国コード付き）:",
     "enter_valid_mobile": "❌ 無効な電話番号です。正しい10桁の番号を入力してください。",
     "tac_verified": "✅ TAC 認証済み。",
     "tac_invalid": "❌ 無効なTACです。もう一度お試しください。",
@@ -603,7 +606,6 @@ CASE_CONSTANT = {
     # Newly Added Constants
     "mobile_selected_with_tac": "입력한 전화번호가 인증되었습니다. 인증 코드를 입력해 주세요:",
     "choose_existing_mobile": "기존 번호를 선택하거나 새 번호를 추가하세요.",
-    "enter_mobile": "휴대폰 번호를 입력하세요 (국가코드 포함):",
     "enter_valid_mobile": "❌ 유효하지 않은 휴대폰 번호입니다. 올바른 10자리 번호를 입력하세요.",
     "tac_verified": "✅ TAC 인증 성공.",
     "tac_invalid": "❌ 잘못된 TAC입니다. 다시 시도해 주세요.",
@@ -682,7 +684,6 @@ CASE_CONSTANT = {
     # Newly Added Constants
     "mobile_selected_with_tac": "លេខទូរសព្ទដែលអ្នកបានបញ្ចូលត្រូវបានផ្ទៀងផ្ទាត់។ សូមបញ្ចូលលេខកូដផ្ទៀងផ្ទាត់:",
     "choose_existing_mobile": "សូមជ្រើសរើសលេខដែលមានស្រាប់ ឬបន្ថែមលេខថ្មី។",
-    "enter_mobile": "សូមបញ្ចូលលេខទូរសព្ទរបស់អ្នក (រួមទាំងលេខកូដប្រទេស):",
     "enter_valid_mobile": "❌ លេខទូរសព្ទមិនត្រឹមត្រូវ។ សូមបញ្ចូលលេខទូរសព្ទ១០ខ្ទង់ត្រឹមត្រូវ។",
     "tac_verified": "✅ TAC ត្រូវបានផ្ទៀងផ្ទាត់។",
     "tac_invalid": "❌ TAC មិនត្រឹមត្រូវ។ សូមព្យាយាមម្តងទៀត។",
@@ -760,7 +761,6 @@ CASE_CONSTANT = {
     # Newly Added Constants
     "mobile_selected_with_tac": "Nomor telepon yang dimasukkan telah diverifikasi. Silakan masukkan kode verifikasi:",
     "choose_existing_mobile": "Pilih nomor yang sudah ada atau tambahkan nomor baru.",
-    "enter_mobile": "Masukkan nomor ponsel Anda (termasuk kode negara):",
     "enter_valid_mobile": "❌ Nomor ponsel tidak valid. Masukkan nomor 10 digit yang benar.",
     "tac_verified": "✅ Verifikasi TAC berhasil.",
     "tac_invalid": "❌ TAC tidak valid. Silakan coba lagi.",

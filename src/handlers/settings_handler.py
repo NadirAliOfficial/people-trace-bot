@@ -104,7 +104,7 @@ async def settings_menu_callback(update: Update, context: ContextTypes.DEFAULT_T
         print(f"Getting the mobile numbers : {mobiles}")
         if not mobiles:
             await query.edit_message_text(
-                get_text(user_id, "enter_mobile"), parse_mode="HTML"
+                get_text(user_id, "enter_mobile"), parse_mode="Markdown"
             )
             return State.WAITING_FOR_MOBILE
         else:
@@ -151,7 +151,7 @@ async def settings_menu_callback(update: Update, context: ContextTypes.DEFAULT_T
 
         if mobile == "add":
             await query.edit_message_text(
-                get_text(user_id, "enter_mobile"), parse_mode="HTML"
+                get_text(user_id, "enter_mobile"), parse_mode="Markdown"
             )
             return State.WAITING_FOR_MOBILE
         else:

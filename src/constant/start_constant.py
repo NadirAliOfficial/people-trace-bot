@@ -35,16 +35,22 @@ START_LANG_DATA = {
         "city_not_found": "No matching cities found. Please try again:",
         "city_multi": "Multiple cities found (Page {page} of {total}):",
         "city_selected": "City recorded:",
-        "choose_action": "Would you like to Advertise or Find People?",
-        "advertise_btn": "Post a Case 📢",
-        "find_btn": "Find People 👥",
+        "choose_action": "You're all set! What would you like to do? ",
+        "advertise_btn": "📢 Post a Case",
+        "find_btn": "🔍 Find People ",
         "change_location": "Change Location 📍",
         "find_dev": "Find People is under development.",
         "btn_language": "Change Language",
         "create_new_wallet": "➕ Create New Wallet",
         "btn_mobile_number": "Mobile Number",
         "btn_close_menu": "Close Menu",
-        "enter_mobile": "Please enter your mobile number, including the country code (a verification code will be sent to this number):",        "lang_updated": "Language has been updated.",
+        "enter_mobile": (
+            "📢 *Ready to Help Find Someone? Let’s Verify You First*\n\n"
+            "To maintain safety and trust in the community, we need to verify your contact number.\n\n"
+            "We'll send you a TAC (one-time code) for confirmation.🔢 Enter the TAC sent to your phone via WhatsApp:\n"
+            "e.g., 123456\n\n"
+            "📞 Please enter your mobile number (with country code):"
+        ),        
         "invalid_choice": "Invalid choice. Conversation ended.",
         "invalid_mobile_number": "❌ Invalid mobile number. Please enter a valid 10-digit number.",
         "menu_settings_title": "Settings Menu",
@@ -139,8 +145,8 @@ START_LANG_DATA = {
     "city_multi": "找到多个城市（第 {page} 页，共 {total} 页）：",
     "city_selected": "已记录城市：",
     "choose_action": "您想发布案件还是寻找人员？",
-    "advertise_btn": "发布案件 📢",
-    "find_btn": "寻找人员 👥",
+    "advertise_btn": "📢 发布案件",
+    "find_btn": "🔍 寻找人员",
     "change_location": "更改位置 📍",
     "find_dev": "“寻找人员”功能正在开发中。",
     "btn_language": "更改语言",
@@ -244,7 +250,7 @@ START_LANG_DATA = {
         "city_selected": "Bandar direkodkan:",
         "choose_action": "Adakah anda ingin Iklankan Kes atau Cari Orang?",
         "advertise_btn": "Hantar Kes 📢",
-        "find_btn": "Cari Orang 👥",
+        "find_btn": "🔍 Cari Orang",
         "change_location": "Tukar Lokasi 📍",
         "find_dev": "Cari Orang sedang dalam pembangunan.",
         "btn_language": "Tukar Bahasa",
