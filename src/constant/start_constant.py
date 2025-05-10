@@ -1,7 +1,7 @@
 START_LANG_DATA = {
     "en": {  # English
         "lang_choice": "English",
-        "lang_button": "English",
+        "lang_button": " 🇬🇧 English",
         "start_msg": "Hello! Welcome to People Finder Bot.\nPlease select your language:",
         "choose_country": "What country are you in? (You can type part of the name, for example, Swed for Sweden)",
         "country_not_found": "No matching countries found. Please try again:",
@@ -9,17 +9,23 @@ START_LANG_DATA = {
         "country_selected": "Got it! You’re in ",
         "disclaimer_title": "Disclaimer\n\n",
         "welcome": "👋 Welcome to our bot!\nPlease choose your language below 👇",
-        "disclaimer_text": (
-              "• All rewards are held in escrow until the case is resolved \n"
-          "• Misuse of AI-generated or false content results in a permanent ba \n"
-          "• Report to local authorities before posting a case \n"
-          "• We are not responsible for disputes or misus \n"
-          "• A 5% platform fee applies to both posting and successful finding \n"
-          "• All info submitted is publicly visible"
-        )        ,
+"disclaimer_text": (
+    "📜 *Terms & Conditions*\n"
+    "• All rewards are held in escrow until the case is resolved\n"
+    "• Misuse of AI-generated or false content results in a permanent ban\n"
+    "• Report to local authorities before posting a case\n"
+    "• We are not responsible for disputes or misuse\n"
+    "• 5% platform fee applies to both posting and successful findings\n"
+    "• All info submitted is publicly visible\n"
+    "💼 *Fees:*\n"
+    "• A 5% platform fee applies to both:\n"
+    "  – Case submissions\n"
+    "  – Successful findings"
+)
+,
         "fee_details": "Fees:\n• A 5% platform fee applies to both:\n– Case submissions\n– Successful findings \n",
-        "agree_btn": "I Agree ✅",
-        "disagree_btn": "I Disagree ❌",
+        "agree_btn": "✅ I Agree",
+        "disagree_btn": "❌ I Disagree",
         "disagree_end": "You did not agree. Conversation ended.",
         "enter_province": "Now, let’s narrow it down. What’s your province/state or region? (Par al name is okay.)",
         "province_not_exist": "No matching provinces found. Please try again.",
@@ -98,7 +104,7 @@ START_LANG_DATA = {
     },
    "zh": {  # 中文
     "lang_choice": "中文",
-    "lang_button": "Chinese (中文)",
+    "lang_button": "🇨🇳 简体中文  ",
     "start_msg": "你好！欢迎使用 People Finder 机器人。\n请选择您的语言：",
     "choose_country": "您所在的国家是？（可以输入部分名称，例如 Swed 表示瑞典）",
     "country_not_found": "未找到匹配的国家，请重试：",
@@ -106,17 +112,23 @@ START_LANG_DATA = {
     "country_selected": "已确认！您所在国家为 ",
     "disclaimer_title": "免责声明\n\n",
     "welcome": "👋 欢迎使用本机器人！\n请在下方选择您的语言 👇",
-    "disclaimer_text":(
-         "• 所有悬赏金由平台托管直至案件 \n"
-        "• 使用AI生成或虚假内容将导致永久 \n"
-        "• 发布寻人信息前需先向当地警方 \n"
-        "• 我们不对任何纠纷或滥用行为 \n"
-        "• 发布和成功找回均收取5%平台 \n"
-        "• 所有提交的信息将公开可见"
-    ),
+"disclaimer_text": (
+    "📜 *条款与条件*\n"
+    "• 所有奖励将在案件解决前托管\n"
+    "• 滥用 AI 生成或虚假内容将导致永久封禁\n"
+    "• 在发布案件前，请向当地当局报告\n"
+    "• 我们不对争议或滥用负责\n"
+    "• 对发布和成功发现都收取 5% 的平台费用\n"
+    "• 所有提交的信息都是公开可见的\n"
+    "💼 *费用：*\n"
+    "• 5% 的平台费用适用于以下两项：\n"
+    "  – 案件提交\n"
+    "  – 成功发现"
+)
+,
     "fee_details": "费用说明：\n• 5%平台费适用于以下两种情况：\n– 发布案件\n– 成功找回",
-    "agree_btn": "我同意 ✅",
-    "disagree_btn": "我不同意 ❌",
+    "agree_btn": "✅ 我同意",
+    "disagree_btn": "❌ 我不同意",
     "disagree_end": "您未同意协议，对话结束。",
     "enter_province": "现在，请输入您的省份/州/地区（支持模糊搜索）：",
     "province_not_exist": "未找到匹配的省份，请重试。",
@@ -196,7 +208,7 @@ START_LANG_DATA = {
 },
    "ms": {  # Malay
         "lang_choice": "Bahasa Melayu",
-        "lang_button": "Malay (Bahasa Melayu)",
+        "lang_button": "🇲🇾 Bahasa Malaysia  ",
         "start_msg": "Hai! Selamat datang ke People Finder Bot.\nSila pilih bahasa anda:",
         "choose_country": "Di negara manakah anda berada? (Anda boleh taip sebahagian nama, contohnya, Swed untuk Sweden)",
         "country_not_found": "Tiada negara yang sepadan ditemui. Sila cuba lagi:",
@@ -204,17 +216,23 @@ START_LANG_DATA = {
         "country_selected": "Maklum! Anda berada di ",
         "disclaimer_title": "Penafian\n\n",
         "welcome": "👋 Selamat datang ke bot kami!\nSila pilih bahasa di bawah 👇",
-        "disclaimer_text": (
-          "• Semua ganjaran disimpan dalam pegangan sehingga kes diselesaik \n"
-          "• Penyalahgunaan kandungan palsu atau dijana AI menyebabkan penggantungan kek \n"
-          "• Laporkan kepada pihak berkuasa tempatan sebelum memuat naik k \n"
-          "• Kami tidak bertanggungjawab atas pertelingkahan atau penyalahguna \n"
-          "• Caj platform 5% dikenakan untuk kedua-dua hantaran kes dan penemuan berja \n"
-          "• Semua maklumat yang dihantar adalah kelihatan awam"
-        ),
+  "disclaimer_text": (
+    "📜 *Terma & Syarat*\n"
+    "• Semua ganjaran disimpan dalam akaun escrow sehingga kes diselesaikan\n"
+    "• Penyalahgunaan kandungan yang dihasilkan AI atau kandungan palsu akan mengakibatkan larangan kekal\n"
+    "• Laporkan kepada pihak berkuasa tempatan sebelum menghantar kes\n"
+    "• Kami tidak bertanggungjawab terhadap pertikaian atau penyalahgunaan\n"
+    "• Yuran platform 5% dikenakan ke atas kedua-dua penghantaran kes dan penemuan yang berjaya\n"
+    "• Semua maklumat yang dihantar adalah boleh dilihat oleh umum\n"
+    "💼 *Yuran:*\n"
+    "• Yuran platform 5% dikenakan ke atas kedua-dua:\n"
+    "  – Penghantaran kes\n"
+    "  – Penemuan yang berjaya"
+)
+,
         "fee_details": "Bayaran:\n• Caj platform 5% dikenakan untuk kedua-dua:\n– Penghantaran kes\n– Penemuan berjaya",
-        "agree_btn": "Saya Setuju ✅",
-        "disagree_btn": "Saya Tidak Setuju ❌",
+        "agree_btn": "✅ Saya Setuju", 
+        "disagree_btn": "❌ Saya Tidak Setuju",
         "disagree_end": "Anda tidak bersetuju. Perbualan tamat.",
         "enter_province": "Sekarang, mari perkecilkan pencarian. Apakah negeri/daerah atau kawasan anda? (Nama sebahagian diterima.)",
         "province_not_exist": "Tiada negeri yang sepadan ditemui. Sila cuba lagi.",
@@ -294,7 +312,7 @@ START_LANG_DATA = {
     },
    "th": {  # Thai
     "lang_choice": "ไทย",
-    "lang_button": "Thai (ไทย)",
+    "lang_button": " 🇹🇭 ภาษาไทย ",
     "start_msg": "สวัสดี! ยินดีต้อนรับสู่ People Finder Bot\nกรุณาเลือกภาษาของคุณ:",
     "choose_country": "คุณอยู่ประเทศใด? (คุณสามารถพิมพ์ชื่อประเทศบางส่วนได้ เช่น พิมพ์ Swed สำหรับประเทศสวีเดน)",
     "country_not_found": "ไม่พบประเทศที่ตรงกัน กรุณาลองใหม่:",
@@ -302,17 +320,22 @@ START_LANG_DATA = {
     "country_selected": "เข้าใจแล้ว! คุณอยู่ใน ",
     "disclaimer_title": "ข้อจำกัดความรับผิดชอบ",
     "welcome": "👋 ยินดีต้อนรับสู่บอทของเรา!\nกรุณาเลือกภาษาจากตัวเลือกด้านล่าง 👇",
-    "disclaimer_text": (
-        "• รางวัลทั้งหมดจะถูกเก็บไว้จนกว่าเรื่องจะ \n"
-        "• การใช้งานเนื้อหาเท็จหรือสร้างจาก AI จะทำให้ถูกแบนตลอดชีว \n"
-        "• กรุณาแจ้งความกับเจ้าหน้าที่ท้องถิ่นก่อนโพสต์เรื่ \n"
-        "• เราไม่รับผิดชอบต่อการโต้แย้งหรือการใช้งานที่ไม่เหมาะ \n"
-        "• มีค่าธรรมเนียมแพลตฟอร์ม 5% สำหรับการโพสต์และการค้นหาที่สำเร \n"
-        "• ข้อมูลที่ส่งมาทั้งหมดจะแสดงให้สาธารณะเห็น"
-    ),
+  "disclaimer_text": (
+    "📜 *ข้อกำหนดและเงื่อนไข*\n"
+    "• รางวัลทั้งหมดจะถูกเก็บไว้ในบัญชีเอสโครว์จนกว่าคดีจะถูกแก้ไข\n"
+    "• การใช้เนื้อหาที่สร้างโดย AI หรือเนื้อหาปลอมอย่างไม่เหมาะสมจะส่งผลให้ถูกแบนถาวร\n"
+    "• แจ้งหน่วยงานท้องถิ่นก่อนที่จะโพสต์คดี\n"
+    "• เราไม่รับผิดชอบต่อข้อพิพาทหรือการใช้ไม่เหมาะสม\n"
+    "• ค่าธรรมเนียมแพลตฟอร์ม 5% ใช้กับทั้งการส่งคดีและการค้นพบที่สำเร็จ\n"
+    "• ข้อมูลทั้งหมดที่ส่งเป็นข้อมูลสาธารณะ\n"
+    "💼 *ค่าธรรมเนียม:*\n"
+    "• ค่าธรรมเนียมแพลตฟอร์ม 5% ใช้กับทั้ง:\n"
+    "  – การส่งคดี\n"
+    "  – การค้นพบที่สำเร็จ"
+),
     "fee_details": "ค่าธรรมเนียม:\n• ค่าธรรมเนียมแพลตฟอร์ม 5% จะถูกหักจาก:\n– การโพสต์เรื่อง\n– การค้นหาที่สำเร็จ",
-    "agree_btn": "ฉันยอมรับ ✅",
-    "disagree_btn": "ฉันไม่ยอมรับ ❌",
+    "agree_btn": "✅ ฉันยอมรับ",
+    "disagree_btn": "❌ ฉันไม่ยอมรับ", 
     "disagree_end": "คุณไม่ได้ยอมรับ บทสนทนาสิ้นสุดลงแล้ว",
     "enter_province": "ตอนนี้ โปรดระบุจังหวัด/รัฐ/เขตของคุณ (อนุญาตให้ใช้ชื่อเพียงบางส่วนได้)",
     "province_not_exist": "ไม่พบจังหวัดที่ตรงกัน กรุณาลองใหม่",
@@ -392,7 +415,7 @@ START_LANG_DATA = {
 },
    "vi": {  # Vietnamese
     "lang_choice": "Tiếng Anh",
-"lang_button": "Vietnamese (Tiếng Việt)",
+"lang_button": " 🇻🇳 Tiếng Việt  ",
     "start_msg": "Xin chào! Chào mừng bạn đến với People Finder Bot.\nVui lòng chọn ngôn ngữ của bạn:",
     "choose_country": "Bạn đang ở quốc gia nào? (Bạn có thể nhập một phần tên, ví dụ: Viet cho Việt Nam)",
     "country_not_found": "Không tìm thấy quốc gia phù hợp. Vui lòng thử lại:",
@@ -400,17 +423,23 @@ START_LANG_DATA = {
     "country_selected": "Đã xác nhận! Bạn đang ở ",
     "disclaimer_title": "Miễn trừ trách nhiệm\n\n",
     "welcome": "👋 Chào mừng bạn đến với bot của chúng tôi!\nVui lòng chọn ngôn ngữ bên dưới 👇",
-    "disclaimer_text": (
-        "• Mọi phần thưởng sẽ được giữ trong tài khoản ký quỹ cho đến khi vụ việc được giải quy \n"
-        "• Lạm dụng nội dung giả mạo hoặc do AI tạo ra sẽ bị cấm vĩnh vi \n"
-        "• Báo cáo với cơ quan chức năng địa phương trước khi đăng t \n"
-        "• Chúng tôi không chịu trách nhiệm về tranh chấp hoặc lạm dụ \n"
-        "• Phí nền tảng 5% áp dụng cho cả hai trường hợp:\n– Đăng tin\n– Tìm kiếm thành cô \n"
-        "• Mọi thông tin gửi đi đều công khai"
-    ),
+  "disclaimer_text": (
+    "📜 *Điều Khoản & Điều Kiện*\n"
+    "• Tất cả phần thưởng được giữ trong tài khoản ký quỹ cho đến khi vụ án được giải quyết\n"
+    "• Lạm dụng nội dung do AI tạo ra hoặc nội dung giả mạo sẽ dẫn đến lệnh cấm vĩnh viễn\n"
+    "• Báo cáo cho cơ quan địa phương trước khi đăng vụ án\n"
+    "• Chúng tôi không chịu trách nhiệm về tranh chấp hoặc lạm dụng\n"
+    "• Phí nền tảng 5% áp dụng cho cả việc gửi vụ án và phát hiện thành công\n"
+    "• Tất cả thông tin được gửi đều công khai\n"
+    "💼 *Phí:*\n"
+    "• Phí nền tảng 5% áp dụng cho cả hai:\n"
+    "  – Gửi vụ án\n"
+    "  – Phát hiện thành công"
+)
+,
     "fee_details": "Phí dịch vụ:\n• Phí nền tảng 5% áp dụng cho:\n– Đăng tin\n– Tìm kiếm thành công",
-    "agree_btn": "Tôi Đồng Ý ✅",
-    "disagree_btn": "Tôi Không Đồng Ý ❌",
+    "agree_btn": "✅ Tôi Đồng Ý",
+    "disagree_btn": "❌ Tôi Không Đồng Ý",
     "disagree_end": "Bạn không đồng ý. Cuộc trò chuyện đã kết thúc.",
     "enter_province": "Hãy thu hẹp phạm vi. Bạn đang ở tỉnh/thành phố hoặc khu vực nào? (Tên viết tắt được chấp nhận):",
     "province_not_exist": "Không tìm thấy tỉnh phù hợp. Vui lòng thử lại.",
@@ -490,7 +519,7 @@ START_LANG_DATA = {
 },
    "ur": {  # اردو
     "lang_choice": "اردو",
-"lang_button": "Urdu (اردو)",
+"lang_button": "🇵🇰 اردو",
     "start_msg": "ہیلو! پیوپل فائنڈر بوٹ میں خوش آمدید۔\nبراہ کرم اپنی زبان منتخب کریں:",
     "choose_country": "آپ کس ملک میں ہیں؟ (آپ نام کا حصہ بھی ٹائپ کر سکتے ہیں، مثال کے طور پر سویڈن کے لیے Swed)",
     "country_not_found": "کوئی ملک نہیں ملا۔ دوبارہ کوشش کریں:",
@@ -498,18 +527,22 @@ START_LANG_DATA = {
     "country_selected": "سمجھ گئے! آپ {country} میں ہیں",
     "disclaimer_title": "ذمہ داری سے انکار",
     "welcome": "👋 ہمارے بوٹ میں خوش آمدید!\nبراہ کرم نیچے سے اپنی زبان منتخب کریں 👇",
- "disclaimer_text": (
-    "•  تمام انعامات معاملہ حل ہونے تک جمع رہیں گے\n"
-    "• AI سے بنائے گئے غلط مواد کے استعمال پر دائمی پابندی عائد ہو گی\n"
-    "• کیس شائع کرنے سے قبل مقامی حکام کو مطلع کریں\n"
-    "• ہم تنازعات یا غلط استعمال کے لیے ذمہ دار نہیں ہیں\n"
-    "• دونوں صورتوں پر 5% پلیٹ فارم فیس وصول کی جائے گی: کیس شائع کرنا اور کامیابی سے تلاش کرنا\n"
-    "• جمع کرائی گئی تمام معلومات عوامی طور پر دیکھی جا سکتی ہیں"
+  "disclaimer_text": (
+    "📜 <strong>شرائط و ضوابط</strong><br>"
+    "• تمام انعامات کیس کے حل ہونے تک اسکریو میں رکھی جاتی ہیں<br>"
+    "• AI تخلیق شدہ یا جھوٹی مواد کا غلط استعمال مستقل پابندی کا سبب بنتا ہے<br>"
+    "• کیس پوسٹ کرنے سے پہلے مقامی حکام کو رپورٹ کریں<br>"
+    "• ہم تنازعات یا غلط استعمال کے ذمہ دار نہیں ہیں<br>"
+    "• دونوں کیس پوسٹنگ اور کامیاب نتائج پر 5% پلیٹ فارم فیس لاگو ہوتی ہے<br>"
+    "• تمام جمع کرائی گئی معلومات عوامی طور پر دیکھی جا سکتی ہیں<br><br>"
+    "💼 <strong>فیس:</strong><br>"
+    "• 5% پلیٹ فارم فیس دونوں پر لاگو ہوتی ہے:<br>"
+    "&emsp;– کیس کی سبمیشن<br>"
+    "&emsp;– کامیاب نتائج"
 ),
-
     "fee_details": "فیس:\n• 5% پلیٹ فارم فیس دونوں پر لاگو ہوتی ہے:\n– کیس جمع کروانا\n– کامیابی سے تلاش کرنا",
-    "agree_btn": "میں اتفاق کرتا ہوں ✅",
-    "disagree_btn": "میں اتفاق نہیں کرتا ❌",
+    "agree_btn": "✅ میں اتفاق کرتا ہوں",
+    "disagree_btn": "❌ میں اتفاق نہیں کرتا", 
     "disagree_end": "آپ اتفاق نہیں کر رہے۔ گفتگو ختم ہو گئی۔",
     "enter_province": "اب، اپنی صوبہ/ریاست/علاقہ درج کریں (نام کا حصہ بھی ٹائپ کر سکتے ہیں)",
     "province_not_exist": "کوئی صوبہ نہیں ملا۔ دوبارہ کوشش کریں",
@@ -589,7 +622,7 @@ START_LANG_DATA = {
 },
     "ja": {  # 日本語
     "lang_choice": "日本語",
-"lang_button": "Japanese (日本語)",
+"lang_button": "🇯🇵 日本語",
     "start_msg": "こんにちは！ People Finder Bot へようこそ。\n言語を選択してください:",
     "choose_country": "どの国にいますか？（名前の一部を入力することもできます。例：スウェーデンは「Swed」）",
     "country_not_found": "一致する国が見つかりません。もう一度やり直してください:",
@@ -597,18 +630,21 @@ START_LANG_DATA = {
     "country_selected": "確認しました！ あなたは {country} にいます",
     "disclaimer_title": "免責事項",
     "welcome": "👋 当ボットへようこそ！\n以下から言語を選択してください 👇",
-    "disclaimer_text": (
-    "• 全ての報酬金は解決までエスクローされます\n"
-    "• AI生成または偽のコンテンツ使用は永久利用禁止となります\n"
-    "• 案件投稿前に地元の当局に通報してください\n"
-    "• 紛争や不正利用については責任を負いません\n"
-    "• 投稿および成功時の両方に5%プラットフォーム手数料がかかります\n"
-    "• 提出された情報はすべて公開されます"
+   "disclaimer_text": (
+    "📜 *利用規約*\n"
+    "• すべての報酬は、事件が解決されるまでエスクローに保管されます\n"
+    "• AI生成または虚偽のコンテンツの不正使用は、永久的な禁止につながります\n"
+    "• ケースを投稿する前に、地元の当局に報告してください\n"
+    "• 争議や不正使用については責任を負いません\n"
+    "• ケースの提出と成功した発見の両方に5%のプラットフォーム手数料が適用されます\n"
+    "• 提出されたすべての情報は公開されます\n"
+    "💼 *手数料：*\n"
+    "• ケースの提出と成功した発見の両方に5%のプラットフォーム手数料が適用されます"
 )
 ,
     "fee_details": "手数料:\n• 5%のプラットフォーム手数料が次の項目に適用されます:\n– 案件投稿\n– 成功時",
-    "agree_btn": "同意する ✅",
-    "disagree_btn": "同意しない ❌",
+    "agree_btn": "✅ 同意する ",
+    "disagree_btn": "❌ 同意しない",
     "disagree_end": "同意しませんでした。会話を終了します。",
     "enter_province": "次に、都道府県/州/地域を入力してください（部分一致可）",
     "province_not_exist": "一致する都道府県が見つかりません。もう一度やり直してください",
@@ -688,7 +724,7 @@ START_LANG_DATA = {
 },
    "ko": {  # Korean
     "lang_choice": "영어",
-"lang_button": "Korean (한국어)",
+"lang_button": "🇰🇷 한국어",
     "start_msg": "안녕하세요! People Finder Bot에 오신 것을 환영합니다.\n사용할 언어를 선택해 주세요:",
     "choose_country": "어느 나라에 계십니까? (예: 스웨덴은 'Swed'라고 입력 가능)",
     "country_not_found": "일치하는 국가가 없습니다. 다시 시도해 주세요:",
@@ -696,18 +732,22 @@ START_LANG_DATA = {
     "country_selected": "확인되었습니다! 당신은 ",
     "disclaimer_title": "면책 조항\n\n",
     "welcome": "👋 우리 봇에 오신 것을 환영합니다!\n아래에서 언어를 선택해 주세요 👇",
-   "disclaimer_text": (
-    "• 모든 보상은 케이스 해결 전까지 에스크로에 보관됩니다.\n"
-    "• AI 생성 또는 허위 콘텐츠의 악용 시 영구 차단될 수 있습니다.\n"
-    "• 케이스 등록 전에 현지 당국에 신고하십시오.\n"
-    "• 분쟁이나 부정확한 사용에 대해 책임을 지지 않습니다.\n"
-    "• 케이스 등록 및 성공적인 발견 시 각각 5%의 플랫폼 수수료가 부과됩니다.\n"
-    "• 제출된 모든 정보는 공개됩니다."
+"disclaimer_text": (
+    "📜 *이용 약관*\n"
+    "• 모든 보상은 사건이 해결될 때까지 에스크로에 보관됩니다\n"
+    "• AI가 생성한 콘텐츠나 허위 콘텐츠를 오용할 경우 영구 금지됩니다\n"
+    "• 사건을 게시하기 전에 지역 당국에 신고하십시오\n"
+    "• 분쟁이나 오용에 대해서는 책임을 지지 않습니다\n"
+    "• 사건 제출 및 성공적인 발견 모두에 5%의 플랫폼 수수료가 적용됩니다\n"
+    "• 제출된 모든 정보는 공개적으로 표시됩니다\n"
+    "💼 *수수료:*\n"
+    "• 사건 제출 및 성공적인 발견 모두에 5%의 플랫폼 수수료가 적용됩니다"
 )
+
 ,
     "fee_details": "수수료:\n• 다음 항목에 대해 5% 플랫폼 수수료가 부과됩니다:\n– 케이스 등록\n– 성공적인 발견",
-    "agree_btn": "동의함 ✅",
-    "disagree_btn": "동의하지 않음 ❌",
+    "agree_btn": "✅ 동의함",
+    "disagree_btn": "❌ 동의하지 않음",
     "disagree_end": "동의하지 않으셨습니다. 대화가 종료됩니다.",
     "enter_province": "이제 지역을 좁혀 보겠습니다. 어느 도/주/지역에 계십니까? (부분 이름도 가능합니다):",
     "province_not_exist": "일치하는 도가 없습니다. 다시 시도해 주세요.",
@@ -787,7 +827,7 @@ START_LANG_DATA = {
 },
        "km": {  # Khmer
     "lang_choice": "អង់គ្លេស",
-"lang_button": "Khmer (ភាសាខ្មែរ)",
+"lang_button": "🇰🇭 ភាសាខ្មែរ",
     "start_msg": "សួស្តី! សូមស្វាគមន៍មកកាន់ People Finder Bot។\nសូមជ្រើសរើសភាសារបស់អ្នក:",
     "choose_country": "តើ​អ្នក​កំពុង​នៅ​ប្រទេស​ណា? (អ្នក​អាច​វាយ​ផ្នែក​នៃ​ឈ្មោះ ឧទាហរណ៍ Swed សម្រាប់ Sweden)",
     "country_not_found": "គ្មាន​ប្រទេស​ណាដែល​ត្រូវគ្នា​ទេ។ សូម​ព្យាយាម​ម្តងទៀត:",
@@ -795,18 +835,23 @@ START_LANG_DATA = {
     "country_selected": "យល់ដឹងហើយ! អ្នក​កំពុង​នៅ ",
     "disclaimer_title": "ការ​បដិសេធ​ទទួលខុសត្រូវ\n\n",
     "welcome": "👋 សូមស្វាគមន៍មកកាន់​ប៊ូត​របស់​យើង!\nសូម​ជ្រើសរើស​ភាសា​ខាងក្រោម 👇",
-  "disclaimer_text": (
-    "• រង្វាន់​ទាំងអស់​នឹង​ត្រូវ​រក្សាទុក​ដល់​ពេល​ដែល​បញ្ហា​ត្រូវ​បាន​ដោះស្រាយ\n"
-    "• ការប្រើប្រាស់ខុស​ប្រយោជន៍​នៃ​ខ្លឹមសារ​ AI ឬ​ខ្លឹមសារ​ក្លែងកំពូល នឹង​បណ្តាល​ឱ្យ​ត្រូវ​ហាមឃាត់​ជារៀងរហូត\n"
-    "• សូម​ជូន​ដំណឹង​ទៅ​អាជ្ញាធរ​ក្នុង​ស្រុក​មុន​នឹង​បង្ហោះ​ករណី\n"
-    "• យើង​មិន​ទទួលខុសត្រូវ​ចំពោះ​វិវាទ ឬ​ការប្រើប្រាស់​ខុស​ប្រយោជន៍​ទេ\n"
-    "• ថ្លៃ​សេវា 5% នឹង​ត្រូវ​បន្ថែម​លើ​ការ​បង្ហោះ​ករណី និង​ការ​ស្វែងរក​ដោយ​ជោគជ័យ\n"
-    "• ព័ត៌មាន​ទាំងអស់​ដែល​បាន​ដាក់​បញ្ជូន​នឹង​បង្ហាញ​ជា​សាធារណៈ"
+ "disclaimer_text": (
+    "📜 *ល័ក្ខខ័ណ្ឌ និង សេចក្តីព្រាង*\n"
+    "• រង្វាន់ទាំងអស់ត្រូវបានរក្សាទុកក្នុងការសន្និដ្ឋានរហូតដល់ករណីត្រូវបានដោះស្រាយ\n"
+    "• ការប្រើប្រាស់មាតិកាដែលបង្កើតដោយ AI ឬមាតិការក្លែងក្លាយនឹងធ្វើឲ្យមានការបង្រ្កាបយ៉ាងអស់កល្បឌ\n"
+    "• រាយការណ៍ទៅកាន់អាជ្ញាធរមូលដ្ឋានមុននឹងបង្ហោះករណី\n"
+    "• យើងមិន chịu trách nhiệmចំពោះការប្រកួត ឬការប្រើប្រាស់មិនសមរម្យ\n"
+    "• ខ្ពស់ 5% គឺត្រូវបានអនុវត្តសម្រាប់ទាំងការបញ្ជូនករណី និងការរកឃើញជោគជ័យ\n"
+    "• ព័ត៌មានទាំងអស់ដែលបានដាក់ស្នើមានស្រាប់សម្រាប់សាធារណៈ\n"
+    "💼 *ថ្លៃកំណត់:*\n"
+    "• ខ្ពស់ 5% គឺត្រូវបានអនុវត្តសម្រាប់ទាំងពីរ:\n"
+    "  – ការបញ្ជូនករណី\n"
+    "  – ការរកឃើញជោគជ័យ"
 )
 ,
     "fee_details": "ថ្លៃសេវា:\n• ថ្លៃសេវា 5% នឹង​ត្រូវ​បន្ថែម​លើ:\n– ការ​ដាក់​ករណី\n– ការ​ស្វែងរក​ដោយ​ជោគជ័យ",
-    "agree_btn": "ខ្ញុំយល់ព្រម ✅",
-    "disagree_btn": "ខ្ញុំមិនយល់ព្រម ❌",
+    "agree_btn": "✅ ខ្ញុំយល់ព្រម",
+    "disagree_btn": "❌ ខ្ញុំមិនយល់ព្រម",
     "disagree_end": "អ្នកមិនយល់ព្រមទេ។ ការសន្ទនាត្រូវបានបញ្ឈប់។",
     "enter_province": "ឥឡូវ សូម​បញ្ជាក់​អំពី​ខេត្ត/រដ្ឋ ឬ​តំបន់​របស់​អ្នក (ឈ្មោះ​ផ្នែក​ក៏​អាច​ទទួលយក​បាន):",
     "province_not_exist": "គ្មាន​ខេត្ត​ណាដែល​ត្រូវគ្នា​ទេ។ សូម​ព្យាយាម​ម្តងទៀត។",
@@ -886,7 +931,7 @@ START_LANG_DATA = {
 },
     "id": {
   "lang_choice": "Bahasa Inggris",
-  "lang_button": "Indonesian (Bahasa Indonesia)",
+  "lang_button": " 🇮🇩 Bahasa Indonesia  ",
   "start_msg": "Halo! Selamat datang di People Finder Bot.\nSilakan pilih bahasa Anda:",
   "choose_country": "Di negara mana Anda berada? (Anda dapat mengetik sebagian nama, misal Swed untuk Sweden)",
   "country_not_found": "Negara tidak ditemukan. Silakan coba lagi:",
@@ -903,8 +948,8 @@ START_LANG_DATA = {
     "• Semua informasi yang dikirimkan akan ditampilkan secara publik"
   ),
   "fee_details": "Biaya layanan:\n• Biaya 5% akan ditambahkan pada:\n– Pemostingan kasus\n– Pencarian yang berhasil",
-  "agree_btn": "Saya setuju ✅",
-  "disagree_btn": "Saya tidak setuju ❌",
+  "agree_btn": "✅ Saya setuju",
+  "disagree_btn": "❌ Saya tidak setuju", 
   "disagree_end": "Anda tidak setuju. Percakapan dihentikan.",
   "enter_province": "Sekarang, mohon tentukan provinsi/wilayah Anda (nama sebagian juga diperbolehkan):",
   "province_not_exist": "Provinsi tidak ditemukan. Silakan coba lagi.",

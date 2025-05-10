@@ -36,7 +36,7 @@ async def start(update: Update, context: ContextTypes.DEFAULT_TYPE) -> int:
     #     return State.CHOOSE_COUNTRY
 
     # ✅ Show banner if user doesn't have a language set
-    await update.message.reply_text(get_text(user_id, "welcome"))
+    # await update.message.reply_text(get_text(user_id, "welcome"))
 
     # ⬇️ Language selection buttons
     btns = [
@@ -246,20 +246,12 @@ async def show_disclaimer(update: Update, context: ContextTypes.DEFAULT_TYPE) ->
         else update.callback_query.from_user.id
     )
     text = (
-        f"{get_text(user_id, 'disclaimer_title')}{get_text(user_id, 'disclaimer_text')}"
+        f"{get_text(user_id, 'disclaimer_text')}"
     )
     kb = InlineKeyboardMarkup(
         [
-            [
-                InlineKeyboardButton(
-                    get_text(user_id, "agree_btn"), callback_data="agree"
-                )
-            ],
-            [
-                InlineKeyboardButton(
-                    get_text(user_id, "disagree_btn"), callback_data="disagree"
-                )
-            ],
+            [InlineKeyboardButton(get_text(user_id, "agree_btn"), callback_data="agree")],
+            [InlineKeyboardButton(get_text(user_id, "disagree_btn"), callback_data="disagree")]
         ]
     )
     if update.callback_query:

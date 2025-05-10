@@ -55,7 +55,7 @@ async def init_db():
         print(f"MONGODB_URI = {MONGODB_URI}")
         print(f"{NODE_ENV.lower() == "production"}")
         client = AsyncIOMotorClient(
-            MONGODB_URI if NODE_ENV.lower() == "production" else MONGODB_URI
+            MONGODB_URI if NODE_ENV.lower() == "production" else "mongodb://localhost:27017/finder_advertiser"
         )
         await init_beanie(
             database=client[MONGODB_NAME],
