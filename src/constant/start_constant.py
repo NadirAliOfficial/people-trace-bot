@@ -2,7 +2,7 @@ START_LANG_DATA = {
     "en": {  # English
         "lang_choice": "English",
         "lang_button": " 🇬🇧 English",
-        "start_msg": "Hello! Welcome to People Finder Bot.\nPlease select your language:",
+        "start_msg": "*👋 Welcome to PeopleTrace. \n \n🌐 Please select your language:",
         "choose_country": "What country are you in? (You can type part of the name, for example, Swed for Sweden)",
         "country_not_found": "No matching countries found. Please try again:",
         "country_multi": "Multiple countries found (Page {page} of {total}):",
@@ -151,7 +151,13 @@ START_LANG_DATA = {
         "create_new_wallet": "➕ 创建新钱包",
         "btn_mobile_number": "手机号码",
         "btn_close_menu": "关闭菜单",
-        "enter_mobile": "请输入您的手机号码（包括国家代码），验证码将发送至此号码：",
+        "enter_mobile": (
+            "📢 *准备好发布案例了吗？请先验证您的身份*\n\n"
+            "为确保合法性并保护社区，请先验证您的联系电话。\n\n"
+            "我们会向您发送 TAC（一次性验证码）以确认。🔢 输入通过 WhatsApp 发送到您手机的 TAC：\n"
+            "例如：123456\n\n"
+            "📞 请输入您的手机号码（带国家代码）："
+        ),
         "lang_updated": "语言已更新。",
         "invalid_choice": "无效选项。对话结束。",
         "invalid_mobile_number": "❌ 无效的手机号码。请输入有效的10位数字。",

@@ -26,47 +26,38 @@ from constant.language_constant import LANG_DATA, get_text, user_data_store
 
 @catch_async
 async def start(update: Update, context: ContextTypes.DEFAULT_TYPE) -> int:
-    """/start command entry point."""
+    """Start command: show banner, ask for language, then show disclaimer."""
     user_id = update.message.from_user.id
-    # user_lang = await get_user_lang(user_id)
-    # if user_lang:
-    #     user_data_store[user_id] = {"lang": user_lang}
-    #     context.user_data["lang"] = user_lang
-    #     await update.message.reply_text(get_text(user_id, "choose_country"))
-    #     return State.CHOOSE_COUNTRY
 
-    # ✅ Show banner if user doesn't have a language set
-    # await update.message.reply_text(get_text(user_id, "welcome"))
+   
+    # Step 1: Send Banner Image
+    BANNER_URL = "https://ibb.co/SDj7ycyZ"  # Replace with your actual image URL
 
-    # ⬇️ Language selection buttons
+    # Language buttons
     btns = [
-        [
-            InlineKeyboardButton(f"{LANG_DATA['en']['lang_button']}", callback_data="lang_en"),
-            InlineKeyboardButton(f"{LANG_DATA['zh']['lang_button']}", callback_data="lang_zh"),
-        ],
-        [
-            InlineKeyboardButton(f"{LANG_DATA['ms']['lang_button']}", callback_data="lang_ms"),
-            InlineKeyboardButton(f"{LANG_DATA['th']['lang_button']}", callback_data="lang_th"),
-        ],
-        [
-            InlineKeyboardButton(f"{LANG_DATA['vi']['lang_button']}", callback_data="lang_vi"),
-            InlineKeyboardButton(f"{LANG_DATA['ur']['lang_button']}", callback_data="lang_ur"),
-        ],
-        [
-            InlineKeyboardButton(f"{LANG_DATA['ja']['lang_button']}", callback_data="lang_ja"),
-            InlineKeyboardButton(f"{LANG_DATA['ko']['lang_button']}", callback_data="lang_ko"),
-        ],
-        [
-            InlineKeyboardButton(f"{LANG_DATA['km']['lang_button']}", callback_data="lang_km"),
-            InlineKeyboardButton(f"{LANG_DATA['id']['lang_button']}", callback_data="lang_id"),
-        ]
+        [InlineKeyboardButton(LANG_DATA['en']['lang_button'], callback_data="lang_en"),
+         InlineKeyboardButton(LANG_DATA['zh']['lang_button'], callback_data="lang_zh")],
+        [InlineKeyboardButton(LANG_DATA['ms']['lang_button'], callback_data="lang_ms"),
+         InlineKeyboardButton(LANG_DATA['th']['lang_button'], callback_data="lang_th")],
+        [InlineKeyboardButton(LANG_DATA['vi']['lang_button'], callback_data="lang_vi"),
+         InlineKeyboardButton(LANG_DATA['ur']['lang_button'], callback_data="lang_ur")],
+        [InlineKeyboardButton(LANG_DATA['ja']['lang_button'], callback_data="lang_ja"),
+         InlineKeyboardButton(LANG_DATA['ko']['lang_button'], callback_data="lang_ko")],
+        [InlineKeyboardButton(LANG_DATA['km']['lang_button'], callback_data="lang_km"),
+         InlineKeyboardButton(LANG_DATA['id']['lang_button'], callback_data="lang_id")]
     ]
 
+    reply_markup = InlineKeyboardMarkup(btns)
 
-    await update.message.reply_text(
-        f"{get_text(user_id, 'start_msg')}",
-        reply_markup=InlineKeyboardMarkup(btns),
+    # Step 2: Send image + caption asking to choose language
+    await update.message.reply_photo(
+        photo=BANNER_URL,
+        caption="<b>👋 Welcome to PeopleTrace</b>\n\n🌐 Please select your language:",
+        reply_markup=reply_markup,
+        parse_mode="HTML"
     )
+
+
     return State.SELECT_LANG
 
 #  ----------------------- Language LOGIC ------------------------
