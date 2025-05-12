@@ -20,6 +20,7 @@ from constants import (
 )
 from services.user_service import get_user_lang, save_user_lang
 from utils.error_wrapper import catch_async
+from utils.get_network import get_network
 from utils.helper import get_city_matches, get_country_matches, paginate_list
 from constant.language_constant import LANG_DATA, get_text, user_data_store
 
@@ -702,11 +703,12 @@ async def wallet_selection_callback(
         context.user_data["wallet"] = wallet_details  # Store in memory
         await update_or_create_case(user_id, wallet=str(wallet_details["id"]))
 
-        msg = get_text(user_id, "wallet_create_details").format(
+        msg = get_text(user_id, "wallet_create_details_with_balance").format(
             name=wallet_details["name"],
             public_key=wallet_details["public_key"],
             balance=total_sol, 
             wallet_type=wallet_type,
+            network = get_network(wallet_type),
         )
 
         transfer_instructions = get_text(user_id, "transfer_instructions").format(
@@ -796,10 +798,10 @@ async def wallet_name_handler(
 
         context.user_data["wallet"] = wallet
         await update_or_create_case(user_id, wallet=str(wallet.id))
-        msg = get_text(user_id, "wallet_create_details").format(
+        msg = get_text(user_id, "wallet_create_details_with_balance").format(
             name=wallet.name,
             public_key=wallet.public_key,
-            # secret_key=wallet.private_key,
+            network = get_network(wallet_type),
             balance=total_sol,  # For USDT, the balance logic will vary
             wallet_type=wallet_type,
         )

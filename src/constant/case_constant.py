@@ -1,6 +1,5 @@
 CASE_CONSTANT = {
     "en": {
-        # Existing Constants
         "create_case_title": "Create New Case",
         "enter_name": "Enter your name:",
         "disclaimer_2": (
@@ -17,20 +16,20 @@ CASE_CONSTANT = {
             "*Do you agree to these terms?*"
         ),
         "mobile_number_doesnt_exist": "The mobile number you entered does not exist. Please try again.",
-        "enter_person_name": "Enter the name of the person you're looking for:",
-        "relationship": "What is your relationship to the person? (e.g., Friend, Family, Partner, etc.):",
-        "upload_photo": "Upload a clear photo of the person (max. 5 MB):",
-        "last_seen_location": "Where was the last seen location of this person?",
-        "sex": "What is the person's gender? (Male/Female):",
-        "age": "What is the person's age?",
-        "hair_color": "What is the person's hair color? (e.g., Blonde, Brown, etc.):",
-        "eye_color": "What is the person's eye color? (e.g., Blue, Green, etc.):",
-        "height": "What is the person's height (cm):",
-        "weight": "What is the person's weight (kg):",
+        "enter_person_name": "👤 Enter the full name of the person you’re looking for:",
+        "relationship": "🤝 What is your relationship to this person?",
+        "upload_photo": "📸 Upload a clear, recent photo (Max 5MB):",
+        "last_seen_location": "📍 Where was this person last seen?",
+        "sex": "⚧️ Gender:",
+        "age": "🎂 Age (or approximate):",
+        "hair_color": "🧑 Hair color:",
+        "eye_color": "👁️ Eye color:",
+        "height": "📏 Height (in cm):",
+        "weight": "⚖️ Weight (in kg)",
         "enter_valid_height": "Please enter a valid height (cm).",
         "enter_valid_weight": "Please enter a valid weight (kg).",
-        "distinctive_features": "What are the person's distinctive physical features? (e.g., Tattoo of eagle):",
-        "reason_for_finding": "Why are you looking for this person?",
+        "distinctive_features": "🧷 Any distinctive physical features? (tattoos, scars, etc.)",
+        "reason_for_finding": "❓ Why are you looking for this person?",
         "enter_reward_amount_sol": "Please enter the reward amount in SOL.",
         "enter_reward_amount_usdt": "Please enter the reward amount in USDT.",
         "enter_reward_amount_unknown": "Please enter the reward amount (unknown wallet type).",
@@ -53,7 +52,6 @@ CASE_CONSTANT = {
         "transaction_failed": "❌ <b>Transfer Failed</b>\n\nSomething went wrong while processing the reward transfer. Please try again later.",
         "transfer_canceled": "❌ <b>Transfer Canceled</b>\n\nThe reward transfer has been canceled as per your request.",
         "invalid_choice": "⚠️ <b>Invalid Selection</b>\n\nPlease choose a valid option.",
-        # Newly Added Constants
         "mobile_selected_with_tac": "The mobile number you entered has been verified. Please enter the verification code:",
         "choose_existing_mobile": "Please select an existing number or add a new one.",
         "enter_valid_mobile": "❌ Invalid mobile number. Please enter a valid 10-digit number.",
@@ -63,12 +61,21 @@ CASE_CONSTANT = {
         "wallet_create_err": "An error occurred while creating the wallet. Please try again.",
         "wallet_name_prompt": "Please enter a name for your {wallet_type} wallet:",
         "wallet_name_empty": "Wallet name cannot be empty. Please try again.",
-        "wallet_name_exists": "A wallet with this name already exists. Please choose a different name.",
+        "wallet_name_exists": "❌ A wallet with this name already exists. Please choose a different name.",
         "wallet_create_details": (
             "✅ Wallet Created!\n"
-            "Name: {name}\n"
-            "Public Key: <code>{public_key}</code>\n"
-            "Balance: {balance} {wallet_type}\n\n"
+            "🧾 Name: {name}\n"
+            "💰 Type: {wallet_type}\n"
+            "🔐 Public Key: <code>{public_key}</code>\n"
+            "🌐 Network: {network}\n"
+        ),
+        "wallet_create_details_with_balance": (
+            "✅ Wallet Created!\n"
+            "🧾 Name: {name}\n"
+            "💰 Type: {wallet_type}\n"
+            "🔐 Public Key: <code>{public_key}</code>\n"
+            "🌐 Network: {network}\n"
+            "💵 Balance: {balance} {wallet_type}\n"
         ),
         "transfer_instructions": (
             "\n\n<b>How to Transfer {wallet_type} to Your Wallet:</b>\n\n"
@@ -80,320 +87,97 @@ CASE_CONSTANT = {
             "5️⃣ Review the transaction details and confirm the transfer.\n\n"
             "Once the transfer is successful, the {wallet_type} will appear in your wallet balance."
         ),
-        # New
         "understood_and_agree": "✅ I Understand and Agree",
     },
     "zh": {
-        # Existing Constants
-        "create_case_title": "📢 发布案例",
+        "create_case_title": "创建新案件",
         "enter_name": "请输入您的姓名：",
         "disclaimer_2": (
-            "📜 *在继续之前 – 请仔细阅读*\n\n"
-            "通过在 PeopleTrace 上发布案例，您同意以下事项：\n\n"
-            "• 🧾 所有信息必须准确和诚实\n"
-            "• 🚫 本平台不得用于骚扰、跟踪或伤害他人\n"
-            "• 🕵️‍♂️ 使用仅限于合法定位人员\n"
-            "• 📍 您必须首先向当地当局报告\n"
-            "• 🔍 所有详细信息将公开显示\n"
-            "• 💰 奖励将暂时保留，直到验证\n"
-            "• ⚠️ PeopleTrace 对任何滥用或后果不承担责任\n"
-            "• ❗️ 虚假报告、攻击性内容或非法意图将导致永久禁令和法律行动\n\n"
-            "*您是否同意这些条款？*"
+            "📜 *在您继续之前–请仔细阅读*\n\n"
+            "作为 PeopleTrace 上的*查找者*，您同意以下内容：\n\n"
+            "• 🔍 您只能合法使用此平台帮助寻找失踪人员\n"
+            "• 📹 线索必须包含可验证的证据（照片/视频）\n"
+            "• 💬 与发布者沟通时需保持尊重和道德\n"
+            "• 🧾 不得使用虚假、AI生成或误导性内容\n"
+            "• 📍 您可能需要提供额外说明或位置证明\n"
+            "• 💸 成功领取奖励时将扣除 5% 平台费用\n"
+            "• 🚫 滥用、勒索或可疑行为将导致永久封禁及法律行动\n"
+            "• ❗ 我们保留拒绝虚假或未经核实声明的权利\n\n"
+            "*您是否同意以上条款？*"
         ),
-        "mobile_number_doesnt_exist": "您输入的手机号不存在。请再试一次。",
-        "enter_person_name": "请输入您要寻找的人的姓名：",
-        "relationship": "您与该人的关系是什么？（例如：朋友、家人、伴侣等）：",
-        "upload_photo": "上传一张清晰的照片（最大5MB）：",
-        "last_seen_location": "此人最后出现的地点是哪里？",
-        "sex": "此人的性别是？（男/女）：",
-        "age": "此人的年龄是多少？",
-        "hair_color": "此人的发色是什么？（例如：金发、棕色等）：",
-        "eye_color": "此人的瞳色是什么？（例如：蓝色、绿色等）：",
-        "height": "此人的身高（厘米）：",
-        "weight": "此人的体重（公斤）：",
+        "mobile_number_doesnt_exist": "您输入的手机号码不存在。请再试一次。",
+        "enter_person_name": "👤 请输入您要寻找的人的全名：",
+        "relationship": "🤝 您与此人的关系是什么？",
+        "upload_photo": "📸 上传一张清晰、近期的照片（最大 5MB）：",
+        "last_seen_location": "📍 此人最后一次出现的地点是哪里？",
+        "sex": "⚧️ 性别：",
+        "age": "🎂 年龄（或大致年龄）：",
+        "hair_color": "🧑 发色：",
+        "eye_color": "👁️ 眼色：",
+        "height": "📏 身高（厘米）：",
+        "weight": "⚖️ 体重（公斤）",
         "enter_valid_height": "请输入有效的身高（厘米）。",
         "enter_valid_weight": "请输入有效的体重（公斤）。",
-        "distinctive_features": "此人有哪些显著的体貌特征？（例如：老鹰纹身）：",
-        "reason_for_finding": "您为什么要寻找此人？",
-        "enter_reward_amount_sol": "请输入以 SOL 计的奖励金额。",
-        "enter_reward_amount_usdt": "请输入以 USDT 计的奖励金额。",
-        "enter_reward_amount_unknown": "请输入奖励金额（未知钱包类型）。",
-        "insufficient_balance": "您的余额不足。您当前可用余额为 {0}。",
+        "distinctive_features": "🧷 是否有明显身体特征？（纹身、疤痕等）",
+        "reason_for_finding": "❓ 您为何要寻找此人？",
+        "enter_reward_amount_sol": "请输入以 SOL 计算的赏金金额。",
+        "enter_reward_amount_usdt": "请输入以 USDT 计算的赏金金额。",
+        "enter_reward_amount_unknown": "请输入赏金金额（未知钱包类型）。",
+        "insufficient_balance": "余额不足。您当前可用余额为 {0}。",
         "refresh_wallet_balance": "请刷新您的钱包余额。",
-        "reward_amount_confirmed": "您设置的奖励金额 {0} 已确认。",
-        "insufficient_balance_for_transfer": "您的余额不足以完成转账。您的当前余额为 {0}。",
+        "reward_amount_confirmed": "您的赏金金额 {0} 已确认。",
+        "insufficient_balance_for_transfer": "您的余额不足以转账。您的余额为 {0}。",
         "transfer_successful": "转账成功。",
         "transfer_failed": "转账失败，请重试。",
         "transfer_error": "处理转账时发生错误，请重试。",
         "transfer_canceled": "转账已取消。",
-        "invalid_confirmation": "无效响应。请用 'yes' 或 'no' 回答。",
-        "enter_reason_for_finding": "请输入寻找此人的原因。",
+        "invalid_confirmation": "无效响应。请用 '是' 或 '否' 回复。",
+        "enter_reason_for_finding": "请输入寻找原因。",
         "case_submitted": "您的案件已成功提交。",
         "case_completed": "您的案件已完成。",
-        "reward_amount_negative": "奖励金额不能为负数。",
+        "reward_amount_negative": "赏金金额不能为负数。",
         "male_option": "♂ 男性",
         "female_option": "♀ 女性",
         "other_option": "其他",
-        "transaction_failed": "❌ <b>转账失败</b>\n\n处理奖励转账时出错，请稍后再试。",
-        "transfer_canceled": "❌ <b>转账取消</b>\n\n根据您的请求，奖励转账已被取消。",
-        "invalid_choice": "⚠️ <b>无效选择</b>\n\n请选择一个有效的选项。",
-        # Newly Added Constants
-        "mobile_selected_with_tac": "您输入的手机号已验证成功。请输入验证码：",
+        "transaction_failed": "❌ <b>转账失败</b>\n\n处理赏金转账时出现问题，请稍后再试。",
+        "transfer_canceled": "❌ <b>转账取消</b>\n\n根据您的请求，赏金转账已被取消。",
+        "invalid_choice": "⚠️ <b>无效选择</b>\n\n请选择有效选项。",
+        "mobile_selected_with_tac": "您输入的手机号码已验证。请输入验证码：",
         "choose_existing_mobile": "请选择现有号码或添加新号码。",
-        "enter_valid_mobile": "❌ 无效手机号。请输入有效的10位数字。",
-        "tac_invalid": "❌ 无效 TAC。请再试一次。",
-        "no_photo_found": "未找到照片。请上传有效的图片文件。",
+        "enter_valid_mobile": "❌ 无效手机号码。请输入一个有效的10位数字。",
+        "tac_invalid": "❌ 验证码无效。请再试一次。",
+        "no_photo_found": "未找到照片。请上传有效的图像文件。",
         "case_not_found": "未找到案件。请再试一次。",
-        "wallet_create_err": "创建钱包时发生错误。请再试一次。",
+        "wallet_create_err": "创建钱包时出错。请再试一次。",
         "wallet_name_prompt": "请输入您的 {wallet_type} 钱包名称：",
         "wallet_name_empty": "钱包名称不能为空。请再试一次。",
-        "wallet_name_exists": "已有同名钱包存在。请选择其他名称。",
+        "wallet_name_exists": "❌ 同名钱包已存在。请选择其他名称。",
         "wallet_create_details": (
-            "✅ 钱包创建成功！\n"
-            "名称: {name}\n"
-            "公钥: <code>{public_key}</code>\n"
-            "余额: {balance} {wallet_type}\n\n"
+            "✅ 钱包已创建！\n"
+            "🧾 名称: {name}\n"
+            "💰 类型: {wallet_type}\n"
+            "🔐 公钥: <code>{public_key}</code>\n"
+            "🌐 网络: {network}\n"
+        ),
+        "wallet_create_details_with_balance": (
+            "✅ 钱包已创建！\n"
+            "🧾 名称: {name}\n"
+            "💰 类型: {wallet_type}\n"
+            "🔐 公钥: <code>{public_key}</code>\n"
+            "🌐 网络: {network}\n"
+            "💵 余额: {balance} {wallet_type}\n"
         ),
         "transfer_instructions": (
-            "\n\n<b>如何将 {wallet_type} 转账到您的钱包：</b>\n\n"
+            "\n\n<b>如何向您的钱包转账 {wallet_type}：</b>\n\n"
             "1️⃣ 打开您的 {wallet_type} 钱包应用或任何兼容的钱包。\n"
             "2️⃣ 进入钱包中的 <b>发送</b> 或 <b>转账</b> 页面。\n"
-            "3️⃣ 将您的 <b>公钥</b> 粘贴到收件人地址栏中。您的公钥是:\n"
+            "3️⃣ 将您的 <b>公钥</b> 粘贴到收件地址栏。您的公钥为：\n"
             "<code>{public_key}</code>\n\n"
             "4️⃣ 输入您要转账的 {wallet_type} 数量。\n"
-            "5️⃣ 检查交易详情并确认转账。\n\n"
-            "一旦转账成功，{wallet_type} 将显示在您的钱包余额中。"
+            "5️⃣ 查看交易详情并确认转账。\n\n"
+            "一旦转账成功，{wallet_type} 将出现在您的钱包余额中。"
         ),
-        # New
         "understood_and_agree": "✅ 我理解并同意",
-    },
-    "ms": {
-        # Existing Constants
-        "create_case_title": "Cipta Kes Baru",
-        "enter_name": "Sila masukkan nama anda:",
-        "disclaimer_2": (
-            "Penafian 2:\n\n"
-            "1. Jumlah ganjaran akan dipegang dalam pegangan sehingga kes diselesaikan.\n"
-            "2. Penyalahgunaan perkhidmatan ini adalah dilarang.\n"
-            "3. Semua maklumat yang diberikan akan kelihatan awam.\n\n"
-            "Adakah anda bersetuju?"
-        ),
-        "mobile_number_doesnt_exist": "Nombor telefon bimbit yang dimasukkan tidak wujud. Sila cuba lagi.",
-        "enter_person_name": "Sila masukkan nama orang yang anda cari:",
-        "relationship": "Apakah hubungan anda dengan orang ini? (contoh: Rakan, Keluarga, Pasangan, dll.):",
-        "upload_photo": "Muat naik foto yang jelas tentang orang ini (maks. 5 MB):",
-        "last_seen_location": "Di manakah lokasi terakhir orang ini dilihat?",
-        "sex": "Apakah jantina orang ini? (Lelaki/Perempuan):",
-        "age": "Berapakah umur orang ini?",
-        "hair_color": "Apakah warna rambut orang ini? (contoh: Perang, Coklat, dll.):",
-        "eye_color": "Apakah warna mata orang ini? (contoh: Biru, Hijau, dll.):",
-        "height": "Berapakah ketinggian orang ini (dalam cm):",
-        "weight": "Berapakah berat badan orang ini (dalam kg):",
-        "enter_valid_height": "Sila masukkan ketinggian yang sah (dalam cm).",
-        "enter_valid_weight": "Sila masukkan berat badan yang sah (dalam kg).",
-        "distinctive_features": "Apakah ciri fizikal unik orang ini? (contoh: Tatu helang):",
-        "reason_for_finding": "Kenapa anda mencari orang ini?",
-        "enter_reward_amount_sol": "Sila masukkan jumlah ganjaran dalam bentuk SOL.",
-        "enter_reward_amount_usdt": "Sila masukkan jumlah ganjaran dalam bentuk USDT.",
-        "enter_reward_amount_unknown": "Sila masukkan jumlah ganjaran (jenis dompet tidak diketahui).",
-        "insufficient_balance": "Baki anda tidak mencukupi. Baki tersedia anda ialah {0}.",
-        "refresh_wallet_balance": "Sila kemaskini baki dompet anda.",
-        "reward_amount_confirmed": "Jumlah ganjaran anda sebanyak {0} telah disahkan.",
-        "insufficient_balance_for_transfer": "Baki anda tidak mencukupi untuk membuat pemindahan. Baki semasa anda ialah {0}.",
-        "transfer_successful": "Pemindahan berjaya.",
-        "transfer_failed": "Pemindahan gagal, sila cuba lagi.",
-        "transfer_error": "Ralat berlaku semasa memproses pemindahan. Sila cuba lagi.",
-        "transfer_canceled": "Pemindahan telah dibatalkan.",
-        "invalid_confirmation": "Jawapan tidak sah. Sila sahkan dengan 'ya' atau 'tidak'.",
-        "enter_reason_for_finding": "Sila nyatakan sebab mencari orang ini.",
-        "case_submitted": "Kes anda telah berjaya dihantar.",
-        "case_completed": "Kes anda telah selesai.",
-        "reward_amount_negative": "Jumlah ganjaran tidak boleh negatif.",
-        "male_option": "♂ Lelaki",
-        "female_option": "♀ Perempuan",
-        "other_option": "Lain-lain",
-        "transaction_failed": "❌ <b>Pemindahan Gagal</b>\n\nRalat berlaku semasa memproses pemindahan ganjaran. Sila cuba lagi nanti.",
-        "transfer_canceled": "❌ <b>Pemindahan Dibatalkan</b>\n\nPemindahan ganjaran telah dibatalkan mengikut permintaan anda.",
-        "invalid_choice": "⚠️ <b>Pilihan Tidak Sah</b>\n\nSila pilih pilihan yang sah.",
-        # Newly Added Constants
-        "mobile_selected_with_tac": "Nombor telefon bimbit yang dimasukkan telah disahkan. Sila masukkan kod pengesahan:",
-        "choose_existing_mobile": "Sila pilih nombor sedia ada atau tambah nombor baru.",
-        "enter_valid_mobile": "❌ Nombor telefon bimbit tidak sah. Sila masukkan nombor 10 digit yang betul.",
-        "tac_invalid": "❌ TAC tidak sah. Sila cuba lagi.",
-        "no_photo_found": "Tiada foto dijumpai. Sila muat naik fail imej yang sah.",
-        "case_not_found": "Kes tidak dijumpai. Sila cuba lagi.",
-        "wallet_create_err": "Ralat berlaku semasa mencipta dompet. Sila cuba lagi.",
-        "wallet_name_prompt": "Sila masukkan nama untuk dompet {wallet_type} anda:",
-        "wallet_name_empty": "Nama dompet tidak boleh kosong. Sila cuba lagi.",
-        "wallet_name_exists": "Dompet dengan nama ini sudah wujud. Sila pilih nama lain.",
-        "wallet_create_details": (
-            "✅ Dompet Berjaya Dicipta!\n"
-            "Nama: {name}\n"
-            "Kunci Awam: <code>{public_key}</code>\n"
-            "Baki: {balance} {wallet_type}\n\n"
-        ),
-        "transfer_instructions": (
-            "\n\n<b>Cara Memindahkan {wallet_type} ke Dompet Anda:</b>\n\n"
-            "1️⃣ Buka aplikasi dompet {wallet_type} anda atau mana-mana dompet yang serasi.\n"
-            "2️⃣ Pergi ke bahagian <b>Hantar</b> atau <b>Pindah</b> dalam dompet tersebut.\n"
-            "3️⃣ Tampalkan <b>Kunci Awam</b> anda ke dalam medan alamat penerima. Kunci awam anda adalah:\n"
-            "<code>{public_key}</code>\n\n"
-            "4️⃣ Masukkan jumlah {wallet_type} yang ingin dipindahkan.\n"
-            "5️⃣ Semak butiran transaksi dan sahkan pemindahan.\n\n"
-            "Setelah pemindahan berjaya, {wallet_type} akan muncul dalam baki dompet anda."
-        ),
-    },
-    "th": {
-        # Existing Constants
-        "create_case_title": "สร้างเคสใหม่",
-        "enter_name": "กรุณาป้อนชื่อของคุณ:",
-        "disclaimer_2": (
-            "ข้อปฏิเสธความรับผิดชอบ 2:\n\n"
-            "1. จำนวนรางวัลจะถูกเก็บไว้ใน escrow จนกว่าเคสจะได้รับการแก้ไข\n"
-            "2. ห้ามใช้บริการนี้ในทางที่ผิด\n"
-            "3. ข้อมูลที่ให้มาทั้งหมดจะสามารถมองเห็นได้โดยสาธารณะ\n\n"
-            "คุณยอมรับหรือไม่?"
-        ),
-        "mobile_number_doesnt_exist": "เบอร์โทรศัพท์มือถือที่คุณป้อนไม่มีอยู่จริง กรุณาลองอีกครั้ง",
-        "enter_person_name": "กรุณาป้อนชื่อบุคคลที่คุณกำลังตามหา:",
-        "relationship": "คุณมีความสัมพันธ์กับบุคคลนี้อย่างไร? (เช่น: เพื่อน, ครอบครัว, คนรัก, ฯลฯ):",
-        "upload_photo": "อัปโหลดรูปภาพที่ชัดเจนของบุคคลนี้ (สูงสุด 5 MB):",
-        "last_seen_location": "สถานที่ล่าสุดที่เห็นบุคคลนี้คือที่ไหน?",
-        "sex": "เพศของบุคคลนี้คืออะไร? (ชาย/หญิง):",
-        "age": "อายุของบุคคลนี้เท่าไหร่?",
-        "hair_color": "สีผมของบุคคลนี้คืออะไร? (เช่น: บลอนด์, น้ำตาล, ฯลฯ):",
-        "eye_color": "สีตาของบุคคลนี้คืออะไร? (เช่น: ฟ้า, เขียว, ฯลฯ):",
-        "height": "ความสูงของบุคคลนี้เป็นเท่าไร? (ซม.):",
-        "weight": "น้ำหนักของบุคคลนี้เป็นเท่าไร? (กก.):",
-        "enter_valid_height": "กรุณาป้อนความสูงที่ถูกต้อง (ซม.)",
-        "enter_valid_weight": "กรุณาป้อนน้ำหนักที่ถูกต้อง (กก.)",
-        "distinctive_features": "ลักษณะทางกายภาพที่เด่นชัดของบุคคลนี้คืออะไร? (เช่น: สักลายเหยี่ยว)",
-        "reason_for_finding": "คุณกำลังตามหาบุคคลนี้ทำไม?",
-        "enter_reward_amount_sol": "กรุณาป้อนจำนวนเงินรางวัลเป็น SOL",
-        "enter_reward_amount_usdt": "กรุณาป้อนจำนวนเงินรางวัลเป็น USDT",
-        "enter_reward_amount_unknown": "กรุณาป้อนจำนวนเงินรางวัล (ประเภทกระเป๋าเงินไม่ทราบ)",
-        "insufficient_balance": "ยอดคงเหลือไม่เพียงพอ คุณมียอดคงเหลือ {0}",
-        "refresh_wallet_balance": "กรุณาอัปเดทยอดคงเหลือของกระเป๋าเงิน",
-        "reward_amount_confirmed": "จำนวนเงินรางวัลของคุณ {0} ได้รับการยืนยันแล้ว",
-        "insufficient_balance_for_transfer": "ยอดคงเหลือไม่เพียงพอสำหรับการทำธุรกรรม ยอดคงเหลือปัจจุบันคือ {0}",
-        "transfer_successful": "โอนเงินสำเร็จ",
-        "transfer_failed": "การทำธุรกรรมล้มเหลว กรุณาลองอีกครั้ง",
-        "transfer_error": "เกิดข้อผิดพลาดขณะประมวลผลการโอน กรุณาลองใหม่อีกครั้ง",
-        "transfer_canceled": "การทำธุรกรรมถูกยกเลิก",
-        "invalid_confirmation": "คำตอบไม่ถูกต้อง กรุณายืนยันด้วย 'yes' หรือ 'no'",
-        "enter_reason_for_finding": "กรุณาป้อนเหตุผลในการตามหาบุคคลนี้",
-        "case_submitted": "เคสของคุณได้รับการส่งเรียบร้อยแล้ว",
-        "case_completed": "เคสของคุณเสร็จสมบูรณ์แล้ว",
-        "reward_amount_negative": "จำนวนเงินรางวัลต้องไม่เป็นลบ",
-        "male_option": "♂ ชาย",
-        "female_option": "♀ หญิง",
-        "other_option": "อื่น ๆ",
-        "transaction_failed": "❌ <b>การทำธุรกรรมล้มเหลว</b>\n\nเกิดข้อผิดพลาดขณะประมวลผลการโอนเงินรางวัล กรุณาลองอีกครั้งภายหลัง",
-        "transfer_canceled": "❌ <b>การทำธุรกรรมถูกยกเลิก</b>\n\nการโอนเงินรางวัลถูกยกเลิกตามคำขอของคุณ",
-        "invalid_choice": "⚠️ <b>ตัวเลือกไม่ถูกต้อง</b>\n\nกรุณาเลือกตัวเลือกที่ถูกต้อง",
-        # Newly Added Constants
-        "mobile_selected_with_tac": "เบอร์โทรศัพท์มือถือที่คุณป้อนได้รับการยืนยันแล้ว กรุณาป้อนรหัสยืนยัน:",
-        "choose_existing_mobile": "กรุณาเลือกเบอร์โทรศัพท์เดิม หรือเพิ่มเบอร์ใหม่",
-        "enter_valid_mobile": "❌ เบอร์โทรศัพท์ไม่ถูกต้อง กรุณาป้อนเบอร์โทรศัพท์ 10 หลักที่ถูกต้อง",
-        "tac_invalid": "❌ TAC ไม่ถูกต้อง กรุณาลองอีกครั้ง",
-        "no_photo_found": "ไม่พบรูปภาพ กรุณาอัปโหลดไฟล์รูปภาพที่ถูกต้อง",
-        "case_not_found": "ไม่พบเคส กรุณาลองอีกครั้ง",
-        "wallet_create_err": "เกิดข้อผิดพลาดขณะสร้างกระเป๋าเงิน กรุณาลองอีกครั้ง",
-        "wallet_name_prompt": "กรุณาป้อนชื่อสำหรับกระเป๋าเงิน {wallet_type} ของคุณ:",
-        "wallet_name_empty": "ชื่อกระเป๋าเงินต้องไม่ว่าง กรุณาลองอีกครั้ง",
-        "wallet_name_exists": "มีกระเป๋าเงินชื่อนี้อยู่แล้ว กรุณาเลือกชื่ออื่น",
-        "wallet_create_details": (
-            "✅ สร้างกระเป๋าเงินสำเร็จ!\n"
-            "ชื่อ: {name}\n"
-            "กุญแจสาธารณะ: <code>{public_key}</code>\n"
-            "ยอดคงเหลือ: {balance} {wallet_type}\n\n"
-        ),
-        "transfer_instructions": (
-            "\n\n<b>วิธีการโอน {wallet_type} เข้ากระเป๋าเงินของคุณ:</b>\n\n"
-            "1️⃣ เปิดแอปกระเป๋าเงิน {wallet_type} ของคุณ หรือกระเป๋าเงินใด ๆ ที่รองรับได้\n"
-            "2️⃣ เข้าไปที่ส่วน <b>ส่ง</b> หรือ <b>โอน</b> ในกระเป๋าเงิน\n"
-            "3️⃣ วาง <b>กุญแจสาธารณะ</b> ของคุณลงในช่องที่อยู่ผู้รับ กุญแจสาธารณะของคุณคือ:\n"
-            "<code>{public_key}</code>\n\n"
-            "4️⃣ ป้อนจำนวน {wallet_type} ที่คุณต้องการโอน\n"
-            "5️⃣ ตรวจสอบรายละเอียดการทำธุรกรรมและยืนยันการโอน\n\n"
-            "เมื่อการโอนสำเร็จ {wallet_type} จะแสดงในยอดคงเหลือของกระเป๋าเงินคุณ"
-        ),
-    },
-    "vi": {
-        # Existing Constants
-        "create_case_title": "Tạo Hồ Sơ Mới",
-        "enter_name": "Vui lòng nhập tên của bạn:",
-        "disclaimer_2": (
-            "Miễn Trừ Trách Nhiệm 2:\n\n"
-            "1. Số tiền thưởng sẽ được giữ trong tài khoản ký quỹ cho đến khi hồ sơ được giải quyết.\n"
-            "2. Nghiêm cấm việc lạm dụng dịch vụ này.\n"
-            "3. Tất cả thông tin cung cấp sẽ được công khai.\n\n"
-            "Bạn có đồng ý không?"
-        ),
-        "mobile_number_doesnt_exist": "Số điện thoại di động bạn nhập không tồn tại. Vui lòng thử lại.",
-        "enter_person_name": "Vui lòng nhập tên người mà bạn đang tìm kiếm:",
-        "relationship": "Mối quan hệ của bạn với người này là gì? (ví dụ: Bạn bè, Gia đình, Người yêu, v.v.):",
-        "upload_photo": "Tải lên một bức ảnh rõ ràng của người này (tối đa 5MB):",
-        "last_seen_location": "Địa điểm cuối cùng người này xuất hiện ở đâu?",
-        "sex": "Giới tính của người này là gì? (Nam/Nữ):",
-        "age": "Tuổi của người này là bao nhiêu?",
-        "hair_color": "Màu tóc của người này là gì? (ví dụ: Vàng, Nâu, v.v.):",
-        "eye_color": "Màu mắt của người này là gì? (ví dụ: Xanh, Nâu, v.v.):",
-        "height": "Chiều cao của người này là bao nhiêu? (cm):",
-        "weight": "Cân nặng của người này là bao nhiêu? (kg):",
-        "enter_valid_height": "Vui lòng nhập chiều cao hợp lệ (cm).",
-        "enter_valid_weight": "Vui lòng nhập cân nặng hợp lệ (kg).",
-        "distinctive_features": "Những đặc điểm ngoại hình nổi bật của người này là gì? (ví dụ: Hình xăm đại bàng):",
-        "reason_for_finding": "Tại sao bạn đang tìm người này?",
-        "enter_reward_amount_sol": "Vui lòng nhập số tiền thưởng bằng SOL.",
-        "enter_reward_amount_usdt": "Vui lòng nhập số tiền thưởng bằng USDT.",
-        "enter_reward_amount_unknown": "Vui lòng nhập số tiền thưởng (loại ví chưa xác định).",
-        "insufficient_balance": "Số dư của bạn không đủ. Bạn còn lại {0}.",
-        "refresh_wallet_balance": "Vui lòng làm mới số dư ví của bạn.",
-        "reward_amount_confirmed": "Số tiền thưởng {0} đã được xác nhận.",
-        "insufficient_balance_for_transfer": "Số dư không đủ để thực hiện giao dịch. Số dư hiện tại là {0}.",
-        "transfer_successful": "Chuyển tiền thành công.",
-        "transfer_failed": "Giao dịch thất bại, vui lòng thử lại.",
-        "transfer_error": "Đã xảy ra lỗi khi xử lý giao dịch. Vui lòng thử lại.",
-        "transfer_canceled": "Giao dịch đã bị hủy.",
-        "invalid_confirmation": "Phản hồi không hợp lệ. Vui lòng xác nhận bằng 'yes' hoặc 'no'.",
-        "enter_reason_for_finding": "Vui lòng nhập lý do tìm kiếm người này.",
-        "case_submitted": "Hồ sơ của bạn đã được gửi thành công.",
-        "case_completed": "Hồ sơ của bạn đã hoàn tất.",
-        "reward_amount_negative": "Số tiền thưởng không được âm.",
-        "male_option": "♂ Nam",
-        "female_option": "♀ Nữ",
-        "other_option": "Khác",
-        "transaction_failed": "❌ <b>Giao dịch thất bại</b>\n\nĐã xảy ra lỗi khi xử lý chuyển tiền thưởng. Vui lòng thử lại sau.",
-        "transfer_canceled": "❌ <b>Giao dịch bị hủy</b>\n\nGiao dịch tiền thưởng đã bị hủy theo yêu cầu của bạn.",
-        "invalid_choice": "⚠️ <b>Lựa chọn không hợp lệ</b>\n\nVui lòng chọn một tùy chọn hợp lệ.",
-        # Newly Added Constants
-        "mobile_selected_with_tac": "Số điện thoại bạn nhập đã được xác minh. Vui lòng nhập mã xác thực:",
-        "choose_existing_mobile": "Vui lòng chọn số điện thoại hiện có hoặc thêm số mới.",
-        "enter_valid_mobile": "❌ Số điện thoại không hợp lệ. Vui lòng nhập số 10 chữ số đúng định dạng.",
-        "tac_invalid": "❌ TAC không hợp lệ. Vui lòng thử lại.",
-        "no_photo_found": "Không tìm thấy ảnh. Vui lòng tải lên tệp ảnh hợp lệ.",
-        "case_not_found": "Không tìm thấy hồ sơ. Vui lòng thử lại.",
-        "wallet_create_err": "Đã xảy ra lỗi khi tạo ví. Vui lòng thử lại.",
-        "wallet_name_prompt": "Vui lòng nhập tên cho ví {wallet_type} của bạn:",
-        "wallet_name_empty": "Tên ví không được để trống. Vui lòng thử lại.",
-        "wallet_name_exists": "Ví với tên này đã tồn tại. Vui lòng chọn tên khác.",
-        "wallet_create_details": (
-            "✅ Ví đã được tạo thành công!\n"
-            "Tên: {name}\n"
-            "Khóa Công Khai: <code>{public_key}</code>\n"
-            "Số Dư: {balance} {wallet_type}\n\n"
-        ),
-        "transfer_instructions": (
-            "\n\n<b>Cách Chuyển {wallet_type} Vào Ví Của Bạn:</b>\n\n"
-            "1️⃣ Mở ứng dụng ví {wallet_type} của bạn hoặc bất kỳ ví tương thích nào.\n"
-            "2️⃣ Đi đến phần <b>Gửi</b> hoặc <b>Chuyển</b> trong ví.\n"
-            "3️⃣ Dán <b>Khóa Công Khai</b> của bạn vào ô địa chỉ người nhận. Khóa công khai của bạn là:\n"
-            "<code>{public_key}</code>\n\n"
-            "4️⃣ Nhập số lượng {wallet_type} mà bạn muốn chuyển.\n"
-            "5️⃣ Kiểm tra thông tin giao dịch và xác nhận chuyển tiền.\n\n"
-            "Khi chuyển tiền thành công, {wallet_type} sẽ hiển thị trong số dư ví của bạn."
-        ),
     },
     "ur": {
         # Existing Constants
@@ -699,79 +483,366 @@ CASE_CONSTANT = {
             "នៅពេលផ្ទេរដោយជោគជ័យ {wallet_type} នឹងបង្ហាញក្នុងចំនួនប្រាក់កាបូបរបស់អ្នក។"
         ),
     },
-    "id": {
-        "create_case_title": "Buat kasus baru",
-        "enter_name": "Silakan masukkan nama Anda:",
-        "disclaimer_2": (
-            "Penafian 2:\n\n"
-            "1. Hadiah akan disimpan dalam escrow hingga kasus selesai.\n"
-            "2. Penggunaan layanan secara tidak benar dilarang.\n"
-            "3. Semua informasi yang diberikan bersifat publik.\n\n"
-            "Apakah Anda setuju?"
-        ),
-        "mobile_number_doesnt_exist": "Nomor ponsel yang dimasukkan tidak ditemukan. Silakan coba lagi.",
-        "enter_person_name": "Masukkan nama orang yang sedang Anda cari:",
-        "relationship": "Apa hubungan Anda dengan orang ini? (Contoh: Teman, Keluarga, Pasangan, dll):",
-        "upload_photo": "Unggah foto jelas dari orang tersebut (maksimal 5 MB):",
-        "last_seen_location": "Di mana terakhir kali orang ini terlihat?",
-        "sex": "Jenis kelamin orang ini? (Pria/Wanita):",
-        "age": "Berapa usia orang ini?",
-        "hair_color": "Warna rambut orang ini? (Contoh: Pirang, Coklat, dll):",
-        "eye_color": "Warna mata orang ini? (Contoh: Biru, Hijau, dll):",
-        "height": "Tinggi badan orang ini (dalam cm):",
-        "weight": "Berat badan orang ini (dalam kg):",
-        "enter_valid_height": "Silakan masukkan tinggi badan yang valid (cm).",
-        "enter_valid_weight": "Silakan masukkan berat badan yang valid (kg).",
-        "distinctive_features": "Apa ciri khas fisik orang ini? (Contoh: Tato Burung Elang)",
-        "reason_for_finding": "Mengapa Anda mencari orang ini?",
-        "enter_reward_amount_sol": "Masukkan jumlah hadiah dalam SOL:",
-        "enter_reward_amount_usdt": "Masukkan jumlah hadiah dalam USDT:",
-        "enter_reward_amount_unknown": "Masukkan jumlah hadiah. (Jenis dompet tidak diketahui)",
-        "insufficient_balance": "Saldo tidak mencukupi. Saldo tersisa: {0}",
-        "refresh_wallet_balance": "Silakan perbarui saldo dompet Anda",
-        "reward_amount_confirmed": "Jumlah hadiah {0} telah dikonfirmasi.",
-        "insufficient_balance_for_transfer": "Saldo tidak cukup untuk transfer. Saldo saat ini: {0}",
-        "transfer_successful": "Transfer berhasil.",
-        "transfer_failed": "Transfer gagal. Silakan coba lagi.",
-        "transfer_error": "Terjadi kesalahan selama proses transfer. Silakan coba lagi.",
-        "transfer_canceled": "Transfer dibatalkan.",
-        "invalid_confirmation": "Respon tidak valid. Silakan konfirmasi dengan 'yes' atau 'no'.",
-        "enter_reason_for_finding": "Silakan masukkan alasan pencarian Anda.",
-        "case_submitted": "Kasus berhasil diajukan.",
-        "case_completed": "Kasus telah selesai.",
-        "reward_amount_negative": "Jumlah hadiah tidak boleh negatif.",
-        "male_option": "♂ Pria",
-        "female_option": "♀ Wanita",
-        "other_option": "Lainnya",
-        "transaction_failed": "❌ <b>Transaksi Gagal</b>\n\nTerjadi masalah saat mentransfer hadiah. Silakan coba lagi nanti.",
-        "transfer_canceled": "❌ <b>Transfer Dibatalkan</b>\n\nTransfer hadiah dibatalkan sesuai permintaan.",
-        "invalid_choice": "⚠️ <b>Pilihan Tidak Valid</b>\n\nSilakan pilih opsi yang benar.",
-        # Newly Added Constants
-        "mobile_selected_with_tac": "Nomor telepon yang dimasukkan telah diverifikasi. Silakan masukkan kode verifikasi:",
-        "choose_existing_mobile": "Pilih nomor yang sudah ada atau tambahkan nomor baru.",
-        "enter_valid_mobile": "❌ Nomor ponsel tidak valid. Masukkan nomor 10 digit yang benar.",
-        "tac_invalid": "❌ TAC tidak valid. Silakan coba lagi.",
-        "no_photo_found": "Foto tidak ditemukan. Silakan unggah file gambar yang valid.",
-        "case_not_found": "Kasus tidak ditemukan. Silakan coba lagi.",
-        "wallet_create_err": "Terjadi kesalahan saat membuat dompet. Silakan coba lagi.",
-        "wallet_name_prompt": "Masukkan nama dompet {wallet_type}:",
-        "wallet_name_empty": "Nama dompet tidak boleh kosong. Silakan coba lagi.",
-        "wallet_name_exists": "Dompet dengan nama ini sudah ada. Silakan pilih nama lain.",
-        "wallet_create_details": (
-            "✅ Dompet Berhasil Dibuat!\n"
-            "Nama: {name}\n"
-            "Public Key: <code>{public_key}</code>\n"
-            "Saldo: {balance} {wallet_type}\n\n"
-        ),
-        "transfer_instructions": (
-            "\n\n<b>Cara Memindahkan {wallet_type} ke Dompet Anda:</b>\n\n"
-            "1️⃣ Buka aplikasi dompet {wallet_type} atau dompet kompatibel lainnya.\n"
-            "2️⃣ Pergi ke bagian <b>Kirim</b> atau <b>Transfer</b> di dompet.\n"
-            "3️⃣ Tempelkan <b>Public Key</b> Anda ke kolom alamat penerima. Public key Anda adalah:\n"
-            "<code>{public_key}</code>\n\n"
-            "4️⃣ Masukkan jumlah {wallet_type} yang ingin Anda transfer.\n"
-            "5️⃣ Periksa detail transaksi dan konfirmasi transfer.\n\n"
-            "Setelah transfer berhasil, {wallet_type} akan muncul di saldo dompet Anda."
-        ),
-    },
-}
+  "ms": {
+    "create_case_title": "Cipta Kes Baru",
+    "enter_name": "Masukkan nama anda:",
+    "disclaimer_2": (
+      "📜 *Sebelum Anda Teruskan – Sila Baca Dengan Teliti*\n\n"
+      "Dengan menyertai sebagai *Pencari* di PeopleTrace, anda bersetuju dengan berikut:\n\n"
+      "• 🔍 Anda hanya akan menggunakan platform ini untuk membantu mencari orang hilang secara sah\n"
+      "• 📹 Petunjuk mesti merangkumi bukti yang boleh disahkan (foto/video)\n"
+      "• 💬 Komunikasi dengan pemberi maklumat harus kekal sopan dan bermoral\n"
+      "• 🧾 Jangan gunakan kandungan palsu, dijana oleh AI atau menyesatkan\n"
+      "• 📍 Anda mungkin diminta memberikan penjelasan tambahan atau bukti lokasi\n"
+      "• 💸 5% yuran platform akan dikenakan pada tuntutan ganjaran yang berjaya\n"
+      "• 🚫 Penyalahgunaan, ugutan atau tingkah laku mencurigakan akan membawa kepada penggantungan kekal dan tindakan undang-undang\n"
+      "• ❗ Kami berhak menolak tuntutan palsu atau tidak disahkan\n\n"
+      "*Adakah anda bersetuju dengan terma-terma ini?*"
+    ),
+    "mobile_number_doesnt_exist": "Nombor telefon bimbit yang anda masukkan tidak wujud. Sila cuba lagi.",
+    "enter_person_name": "👤 Masukkan nama penuh orang yang anda cari:",
+    "relationship": "🤝 Apakah hubungan anda dengan orang ini?",
+    "upload_photo": "📸 Muat naik foto yang jelas dan terkini (Maksimum 5MB):",
+    "last_seen_location": "📍 Di mana orang ini kali terakhir dilihat?",
+    "sex": "⚧️ Jantina:",
+    "age": "🎂 Umur (atau anggaran):",
+    "hair_color": "🧑 Warna rambut:",
+    "eye_color": "👁️ Warna mata:",
+    "height": "📏 Ketinggian (dalam cm):",
+    "weight": "⚖️ Berat (dalam kg)",
+    "enter_valid_height": "Sila masukkan ketinggian yang sah (cm).",
+    "enter_valid_weight": "Sila masukkan berat yang sah (kg).",
+    "distinctive_features": "🧷 Adakah ciri fizikal yang unik? (tatu, parut, dll.)",
+    "reason_for_finding": "❓ Mengapa anda mencari orang ini?",
+    "enter_reward_amount_sol": "Sila masukkan jumlah ganjaran dalam SOL.",
+    "enter_reward_amount_usdt": "Sila masukkan jumlah ganjaran dalam USDT.",
+    "enter_reward_amount_unknown": "Sila masukkan jumlah ganjaran (jenis dompet tidak diketahui).",
+    "insufficient_balance": "Baki anda tidak mencukupi. Anda mempunyai {0} tersedia.",
+    "refresh_wallet_balance": "Sila segarkan baki dompet anda.",
+    "reward_amount_confirmed": "Jumlah ganjaran {0} telah disahkan.",
+    "insufficient_balance_for_transfer": "Anda tidak mempunyai baki yang mencukupi untuk pemindahan. Baki anda adalah {0}.",
+    "transfer_successful": "Pemindahan berjaya.",
+    "transfer_failed": "Pemindahan gagal. Sila cuba lagi.",
+    "transfer_error": "Ralat berlaku semasa memproses pemindahan. Sila cuba lagi.",
+    "transfer_canceled": "Pemindahan telah dibatalkan.",
+    "invalid_confirmation": "Jawapan tidak sah. Sila sahkan dengan 'ya' atau 'tidak'.",
+    "enter_reason_for_finding": "Sila nyatakan sebab mencari.",
+    "case_submitted": "Kes anda telah berjaya dihantar.",
+    "case_completed": "Kes anda telah selesai.",
+    "reward_amount_negative": "Jumlah ganjaran tidak boleh negatif.",
+    "male_option": "♂ Lelaki",
+    "female_option": "♀ Perempuan",
+    "other_option": "Lain-lain",
+    "transaction_failed": "❌ <b>Pemindahan Gagal</b>\n\nAda sesuatu yang salah semasa memproses pemindahan ganjaran. Sila cuba lagi nanti.",
+    "transfer_canceled": "❌ <b>Pemindahan Dibatalkan</b>\n\nPemindahan ganjaran telah dibatalkan mengikut permintaan anda.",
+    "invalid_choice": "⚠️ <b>Pilihan Tidak Sah</b>\n\nSila pilih pilihan yang sah.",
+    "mobile_selected_with_tac": "Nombor telefon bimbit yang dimasukkan telah disahkan. Sila masukkan kod pengesahan:",
+    "choose_existing_mobile": "Sila pilih nombor sedia ada atau tambah yang baru.",
+    "enter_valid_mobile": "❌ Nombor telefon bimbit tidak sah. Sila masukkan nombor 10 digit yang sah.",
+    "tac_invalid": "❌ Kod pengesahan tidak sah. Sila cuba lagi.",
+    "no_photo_found": "Tiada foto dijumpai. Sila muat naik fail imej yang sah.",
+    "case_not_found": "Kes tidak dijumpai. Sila cuba lagi.",
+    "wallet_create_err": "Ralat berlaku semasa mencipta dompet. Sila cuba lagi.",
+    "wallet_name_prompt": "Sila masukkan nama untuk dompet {wallet_type} anda:",
+    "wallet_name_empty": "Nama dompet tidak boleh kosong. Sila cuba lagi.",
+    "wallet_name_exists": "❌ Dompet dengan nama ini sudah wujud. Sila pilih nama lain.",
+    "wallet_create_details": (
+      "✅ Dompet Dicipta!\n"
+      "🧾 Nama: {name}\n"
+      "💰 Jenis: {wallet_type}\n"
+      "🔐 Kunci Awam: <code>{public_key}</code>\n"
+      "🌐 Rangkaian: {network}\n"
+    ),
+    "wallet_create_details_with_balance": (
+      "✅ Dompet Dicipta!\n"
+      "🧾 Nama: {name}\n"
+      "💰 Jenis: {wallet_type}\n"
+      "🔐 Kunci Awam: <code>{public_key}</code>\n"
+      "🌐 Rangkaian: {network}\n"
+      "💵 Baki: {balance} {wallet_type}\n"
+    ),
+    "transfer_instructions": (
+      "\n\n<b>Cara Memindahkan {wallet_type} ke Dompet Anda:</b>\n\n"
+      "1️⃣ Buka aplikasi dompet {wallet_type} atau mana-mana dompet yang serasi.\n"
+      "2️⃣ Pergi ke bahagian <b>Hantar</b> atau <b>Pemindahan</b> dalam dompet.\n"
+      "3️⃣ Salin <b>Kunci Awam</b> anda ke ruangan alamat penerima. Kunci awam anda adalah:\n"
+      "<code>{public_key}</code>\n\n"
+      "4️⃣ Masukkan jumlah {wallet_type} yang ingin dipindahkan.\n"
+      "5️⃣ Semak butiran transaksi dan sahkan pemindahan.\n\n"
+      "Setelah pemindahan berjaya, {wallet_type} akan kelihatan dalam baki dompet anda."
+    ),
+    "understood_and_agree": "✅ Saya Faham dan Setuju"
+  },
+  "id": {
+    "create_case_title": "Buat Kasus Baru",
+    "enter_name": "Masukkan nama Anda:",
+    "disclaimer_2": (
+      "📜 *Sebelum Lanjut – Harap Dibaca Dengan Seksama*\n\n"
+      "Dengan menjadi *Penemu* di PeopleTrace, Anda setuju hal-hal berikut:\n\n"
+      "• 🔍 Anda hanya menggunakan platform ini untuk mencari orang hilang secara legal\n"
+      "• 📹 Bukti harus meliputi data yang dapat diverifikasi (foto/video)\n"
+      "• 💬 Komunikasi dengan pelapor harus tetap sopan dan etis\n"
+      "• 🧾 Jangan gunakan konten palsu, hasil AI, atau menyesatkan\n"
+      "• 📍 Anda mungkin diminta klarifikasi tambahan atau bukti lokasi\n"
+      "• 💸 Biaya platform 5% akan dipotong dari klaim hadiah yang berhasil\n"
+      "• 🚫 Penyalahgunaan, pemerasan, atau perilaku mencurigakan akan berujung pada larangan permanen dan tindakan hukum\n"
+      "• ❗ Kami berhak menolak klaim palsu atau tidak terverifikasi\n\n"
+      "*Apakah Anda setuju dengan ketentuan ini?*"
+    ),
+    "mobile_number_doesnt_exist": "Nomor telepon seluler yang Anda masukkan tidak ada. Silakan coba lagi.",
+    "enter_person_name": "👤 Masukkan nama lengkap orang yang Anda cari:",
+    "relationship": "🤝 Apa hubungan Anda dengan orang ini?",
+    "upload_photo": "📸 Unggah foto yang jelas dan terbaru (Maksimal 5MB):",
+    "last_seen_location": "📍 Di mana orang ini terakhir kali terlihat?",
+    "sex": "⚧️ Jenis Kelamin:",
+    "age": "🎂 Usia (atau perkiraan):",
+    "hair_color": "🧑 Warna rambut:",
+    "eye_color": "👁️ Warna mata:",
+    "height": "📏 Tinggi badan (dalam cm):",
+    "weight": "⚖️ Berat badan (dalam kg)",
+    "enter_valid_height": "Silakan masukkan tinggi badan yang valid (cm).",
+    "enter_valid_weight": "Silakan masukkan berat badan yang valid (kg).",
+    "distinctive_features": "🧷 Apakah ada ciri fisik khusus? (tato, bekas luka, dll.)",
+    "reason_for_finding": "❓ Mengapa Anda mencari orang ini?",
+    "enter_reward_amount_sol": "Silakan masukkan jumlah hadiah dalam SOL.",
+    "enter_reward_amount_usdt": "Silakan masukkan jumlah hadiah dalam USDT.",
+    "enter_reward_amount_unknown": "Silakan masukkan jumlah hadiah (jenis dompet tidak diketahui).",
+    "insufficient_balance": "Saldo Anda tidak mencukupi. Anda memiliki {0} tersisa.",
+    "refresh_wallet_balance": "Harap segarkan saldo dompet Anda.",
+    "reward_amount_confirmed": "Jumlah hadiah {0} telah dikonfirmasi.",
+    "insufficient_balance_for_transfer": "Anda tidak memiliki cukup saldo untuk transfer. Saldo Anda adalah {0}.",
+    "transfer_successful": "Transfer berhasil.",
+    "transfer_failed": "Transfer gagal. Silakan coba lagi.",
+    "transfer_error": "Terjadi kesalahan saat memproses transfer. Silakan coba lagi.",
+    "transfer_canceled": "Transfer telah dibatalkan.",
+    "invalid_confirmation": "Respons tidak valid. Silakan konfirmasi dengan 'ya' atau 'tidak'.",
+    "enter_reason_for_finding": "Silakan tuliskan alasan pencarian.",
+    "case_submitted": "Kasus Anda telah berhasil diajukan.",
+    "case_completed": "Kasus Anda telah selesai.",
+    "reward_amount_negative": "Jumlah hadiah tidak boleh negatif.",
+    "male_option": "♂ Laki-laki",
+    "female_option": "♀ Perempuan",
+    "other_option": "Lainnya",
+    "transaction_failed": "❌ <b>Transfer Gagal</b>\n\nTerjadi masalah saat memproses transfer hadiah. Silakan coba lagi nanti.",
+    "transfer_canceled": "❌ <b>Transfer Dibatalkan</b>\n\nTransfer hadiah telah dibatalkan sesuai permintaan Anda.",
+    "invalid_choice": "⚠️ <b>Pilihan Tidak Valid</b>\n\nSilakan pilih opsi yang benar.",
+    "mobile_selected_with_tac": "Nomor telepon yang Anda masukkan telah diverifikasi. Silakan masukkan kode verifikasi:",
+    "choose_existing_mobile": "Silakan pilih nomor yang ada atau tambah nomor baru.",
+    "enter_valid_mobile": "❌ Nomor telepon tidak valid. Silakan masukkan nomor 10 digit yang benar.",
+    "tac_invalid": "❌ Kode verifikasi tidak valid. Silakan coba lagi.",
+    "no_photo_found": "Tidak ada foto ditemukan. Silakan unggah file gambar yang valid.",
+    "case_not_found": "Kasus tidak ditemukan. Silakan coba lagi.",
+    "wallet_create_err": "Terjadi kesalahan saat membuat dompet. Silakan coba lagi.",
+    "wallet_name_prompt": "Silakan masukkan nama untuk dompet {wallet_type} Anda:",
+    "wallet_name_empty": "Nama dompet tidak boleh kosong. Silakan coba lagi.",
+    "wallet_name_exists": "❌ Dompet dengan nama ini sudah ada. Silakan pilih nama lain.",
+    "wallet_create_details": (
+      "✅ Dompet Dibuat!\n"
+      "🧾 Nama: {name}\n"
+      "💰 Jenis: {wallet_type}\n"
+      "🔐 Kunci Publik: <code>{public_key}</code>\n"
+      "🌐 Jaringan: {network}\n"
+    ),
+    "wallet_create_details_with_balance": (
+      "✅ Dompet Dibuat!\n"
+      "🧾 Nama: {name}\n"
+      "💰 Jenis: {wallet_type}\n"
+      "🔐 Kunci Publik: <code>{public_key}</code>\n"
+      "🌐 Jaringan: {network}\n"
+      "💵 Saldo: {balance} {wallet_type}\n"
+    ),
+    "transfer_instructions": (
+      "\n\n<b>Cara Transfer {wallet_type} ke Dompet Anda:</b>\n\n"
+      "1️⃣ Buka aplikasi dompet {wallet_type} atau dompet kompatibel lainnya.\n"
+      "2️⃣ Masuk ke bagian <b>Kirim</b> atau <b>Transfer</b> di dompet.\n"
+      "3️⃣ Tempelkan <b>Kunci Publik</b> Anda ke kolom alamat penerima. Kunci publik Anda adalah:\n"
+      "<code>{public_key}</code>\n\n"
+      "4️⃣ Masukkan jumlah {wallet_type} yang ingin Anda transfer.\n"
+      "5️⃣ Periksa detail transaksi dan konfirmasi transfer.\n\n"
+      "Setelah transfer berhasil, {wallet_type} akan muncul di saldo dompet Anda."
+    ),
+    "understood_and_agree": "✅ Saya Mengerti dan Setuju"
+  }
+  ,
+  "th": {
+    "create_case_title": "สร้างเคสใหม่",
+    "enter_name": "กรุณาป้อนชื่อของคุณ:",
+    "disclaimer_2": (
+      "📜 *ก่อนที่คุณจะดำเนินการต่อ – กรุณาอ่านอย่างละเอียด*\n\n"
+      "โดยการเข้าร่วมเป็น*ผู้ค้นหา*บน PeopleTrace คุณยอมรับเงื่อนไขดังต่อไปนี้:\n\n"
+      "• 🔍 คุณจะใช้แพลตฟอร์มนี้เพื่อช่วยตามหาบุคคลที่หายสาบสูญอย่างถูกกฎหมายเท่านั้น\n"
+      "• 📹 เอกสารหลักฐานต้องมีข้อมูลที่ตรวจสอบได้ (รูปภาพ/วิดีโอ)\n"
+      "• 💬 การสื่อสารกับผู้ลงประกาศต้องสุภาพและมีจริยธรรม\n"
+      "• 🧾 ห้ามใช้เนื้อหาที่เป็นเท็จหรือสร้างจาก AI หรือทำให้เข้าใจผิด\n"
+      "• 📍 คุณอาจถูกขอให้ให้คำชี้แจงเพิ่มเติมหรือหลักฐานเกี่ยวกับสถานที่\n"
+      "• 💸 มีค่าธรรมเนียมแพลตฟอร์ม 5% จากจำนวนเงินรางวัลที่สำเร็จ\n"
+      "• 🚫 การใช้งานในทางที่ผิด การเรียกร้องเงิน หรือพฤติกรรมน่าสงสัย จะนำไปสู่การแบนถาวรและดำเนินคดี\n"
+      "• ❗ เราขอสงวนสิทธิ์ในการปฏิเสธคำร้องหรือหลักฐานที่ไม่จริงหรือไม่สามารถตรวจสอบได้\n\n"
+      "*คุณยอมรับเงื่อนไขเหล่านี้หรือไม่?*"
+    ),
+    "mobile_number_doesnt_exist": "เบอร์โทรศัพท์มือถือที่คุณป้อนไม่มีอยู่จริง กรุณาลองใหม่อีกครั้ง",
+    "enter_person_name": "👤 กรุณาป้อนชื่อเต็มของบุคคลที่คุณกำลังตามหา:",
+    "relationship": "🤝 คุณมีความสัมพันธ์กับบุคคลนี้อย่างไร?",
+    "upload_photo": "📸 อัปโหลดรูปภาพที่ชัดเจนและใหม่ล่าสุด (สูงสุด 5MB):",
+    "last_seen_location": "📍 สถานที่สุดท้ายที่พบเห็นบุคคลนี้คือที่ไหน?",
+    "sex": "⚧️ เพศ:",
+    "age": "🎂 อายุ (หรือประมาณอายุ):",
+    "hair_color": "🧑 สีผม:",
+    "eye_color": "👁️ สีตา:",
+    "height": "📏 ความสูง (เซนติเมตร):",
+    "weight": "⚖️ น้ำหนัก (กิโลกรัม)",
+    "enter_valid_height": "กรุณาป้อนความสูงที่ถูกต้อง (ซม.).",
+    "enter_valid_weight": "กรุณาป้อนน้ำหนักที่ถูกต้อง (กก.).",
+    "distinctive_features": "🧷 มีลักษณะเด่นทางกายภาพใดบ้าง? (รอยสัก, แผลเป็น ฯลฯ)",
+    "reason_for_finding": "❓ ทำไมคุณถึงตามหาบุคคลนี้?",
+    "enter_reward_amount_sol": "กรุณาป้อนจำนวนเงินรางวัลในรูปแบบ SOL.",
+    "enter_reward_amount_usdt": "กรุณาป้อนจำนวนเงินรางวัลในรูปแบบ USDT.",
+    "enter_reward_amount_unknown": "กรุณาป้อนจำนวนเงินรางวัล (ประเภทกระเป๋าเงินไม่ทราบ)",
+    "insufficient_balance": "ยอดคงเหลือไม่เพียงพอ คุณมี {0} อยู่ในบัญชี",
+    "refresh_wallet_balance": "กรุณาอัปเดทยอดคงเหลือของกระเป๋าเงิน",
+    "reward_amount_confirmed": "จำนวนเงินรางวัล {0} ของคุณได้รับการยืนยันแล้ว",
+    "insufficient_balance_for_transfer": "ยอดคงเหลือไม่เพียงพอสำหรับการโอน ยอดคงเหลือของคุณคือ {0}",
+    "transfer_successful": "โอนสำเร็จ",
+    "transfer_failed": "โอนล้มเหลว กรุณาลองใหม่",
+    "transfer_error": "เกิดข้อผิดพลาดขณะดำเนินการโอน กรุณาลองใหม่",
+    "transfer_canceled": "การโอนถูกยกเลิก",
+    "invalid_confirmation": "คำตอบไม่ถูกต้อง กรุณายืนยันด้วย 'ใช่' หรือ 'ไม่'",
+    "enter_reason_for_finding": "กรุณาป้อนเหตุผลในการตามหา",
+    "case_submitted": "เคสของคุณถูกส่งสำเร็จแล้ว",
+    "case_completed": "เคสของคุณเสร็จสมบูรณ์แล้ว",
+    "reward_amount_negative": "จำนวนเงินรางวัลต้องไม่ติดลบ",
+    "male_option": "♂ ชาย",
+    "female_option": "♀ หญิง",
+    "other_option": "อื่น ๆ",
+    "transaction_failed": "❌ <b>การทำธุรกรรมล้มเหลว</b>\n\nเกิดปัญหาขึ้นขณะประมวลผลการโอนเงินรางวัล กรุณาลองใหม่ภายหลัง",
+    "transfer_canceled": "❌ <b>การโอนถูกยกเลิก</b>\n\nการโอนเงินรางวัลถูกยกเลิกตามคำขอของคุณ",
+    "invalid_choice": "⚠️ <b>เลือกไม่ถูกต้อง</b>\n\nกรุณาเลือกตัวเลือกที่ถูกต้อง",
+    "mobile_selected_with_tac": "เบอร์โทรศัพท์ที่คุณเลือกได้รับการยืนยันแล้ว กรุณาป้อนรหัสยืนยัน:",
+    "choose_existing_mobile": "กรุณาเลือกเบอร์โทรศัพท์ที่มีอยู่ หรือเพิ่มเบอร์ใหม่",
+    "enter_valid_mobile": "❌ เบอร์โทรศัพท์ไม่ถูกต้อง กรุณาป้อนเบอร์ 10 หลักที่ถูกต้อง",
+    "tac_invalid": "❌ รหัสยืนยันไม่ถูกต้อง กรุณาลองใหม่",
+    "no_photo_found": "ไม่พบไฟล์รูปภาพ กรุณาอัปโหลดไฟล์รูปภาพที่ถูกต้อง",
+    "case_not_found": "ไม่พบเคส กรุณาลองใหม่",
+    "wallet_create_err": "เกิดข้อผิดพลาดขณะสร้างกระเป๋าเงิน กรุณาลองใหม่",
+    "wallet_name_prompt": "กรุณาป้อนชื่อกระเป๋าเงินของคุณสำหรับ {wallet_type}:",
+    "wallet_name_empty": "ชื่อกระเป๋าเงินห้ามว่าง กรุณาลองใหม่",
+    "wallet_name_exists": "❌ มีกระเป๋าเงินชื่อนี้อยู่แล้ว กรุณาเลือกชื่ออื่น",
+    "wallet_create_details": (
+      "✅ กระเป๋าเงินถูกสร้างแล้ว!\n"
+      "🧾 ชื่อ: {name}\n"
+      "💰 ประเภท: {wallet_type}\n"
+      "🔐 กุญแจสาธารณะ: <code>{public_key}</code>\n"
+      "🌐 เครือข่าย: {network}\n"
+    ),
+    "wallet_create_details_with_balance": (
+      "✅ กระเป๋าเงินถูกสร้างแล้ว!\n"
+      "🧾 ชื่อ: {name}\n"
+      "💰 ประเภท: {wallet_type}\n"
+      "🔐 กุญแจสาธารณะ: <code>{public_key}</code>\n"
+      "🌐 เครือข่าย: {network}\n"
+      "💵 ยอดคงเหลือ: {balance} {wallet_type}\n"
+    ),
+    "transfer_instructions": (
+      "\n\n<b>วิธีการโอน {wallet_type} เข้ากระเป๋าเงินของคุณ:</b>\n\n"
+      "1️⃣ เปิดแอปกระเป๋าเงิน {wallet_type} หรือกระเป๋าเงินที่รองรับได้\n"
+      "2️⃣ เข้าไปที่ส่วน <b>ส่ง</b> หรือ <b>โอน</b> ในกระเป๋าเงิน\n"
+      "3️⃣ วาง <b>กุญแจสาธารณะ</b> ของคุณในช่องที่อยู่ผู้รับ กุญแจสาธารณะของคุณคือ:\n"
+      "<code>{public_key}</code>\n\n"
+      "4️⃣ ป้อนจำนวน {wallet_type} ที่คุณต้องการโอน\n"
+      "5️⃣ ตรวจสอบรายละเอียดการทำธุรกรรมและยืนยันการโอน\n\n"
+      "เมื่อการโอนสำเร็จ {wallet_type} จะแสดงในยอดคงเหลือของกระเป๋าเงินคุณ"
+    ),
+    "understood_and_agree": "✅ ฉันเข้าใจและยอมรับ"
+  },
+  "vi": {
+    "create_case_title": "Tạo Hồ Sơ Mới",
+    "enter_name": "Nhập tên của bạn:",
+    "disclaimer_2": (
+      "📜 *Trước Khi Tiếp Tục – Vui Lòng Đọc Kỹ*\n\n"
+      "Bằng việc tham gia với tư cách là *Người Tìm Kiếm* trên PeopleTrace, bạn đồng ý với các điều sau:\n\n"
+      "• 🔍 Bạn chỉ sử dụng nền tảng này để hỗ trợ tìm người mất tích một cách hợp pháp\n"
+      "• 📹 Bằng chứng phải có hình ảnh/video xác thực được\n"
+      "• 💬 Giao tiếp với người đăng tin phải tôn trọng và đúng đạo đức\n"
+      "• 🧾 Không dùng nội dung giả mạo, tạo bởi AI hoặc gây hiểu lầm\n"
+      "• 📍 Bạn có thể bị yêu cầu cung cấp bằng chứng bổ sung hoặc vị trí cụ thể\n"
+      "• 💸 Phí nền tảng 5% sẽ được trừ từ số tiền thưởng thành công\n"
+      "• 🚫 Hành vi lạm dụng, đe dọa hoặc đáng ngờ sẽ dẫn đến cấm vĩnh viễn và xử lý pháp lý\n"
+      "• ❗ Chúng tôi có quyền từ chối các yêu cầu không xác thực hoặc sai sự thật\n\n"
+      "*Bạn có đồng ý với các điều khoản này không?*"
+    ),
+    "mobile_number_doesnt_exist": "Số điện thoại di động bạn nhập không tồn tại. Vui lòng thử lại.",
+    "enter_person_name": "👤 Nhập tên đầy đủ của người bạn đang tìm kiếm:",
+    "relationship": "🤝 Mối quan hệ của bạn với người này là gì?",
+    "upload_photo": "📸 Tải lên một bức ảnh rõ ràng và mới nhất (Tối đa 5MB):",
+    "last_seen_location": "📍 Người này lần cuối được nhìn thấy ở đâu?",
+    "sex": "⚧️ Giới tính:",
+    "age": "🎂 Tuổi (hoặc khoảng tuổi):",
+    "hair_color": "🧑 Màu tóc:",
+    "eye_color": "👁️ Màu mắt:",
+    "height": "📏 Chiều cao (cm):",
+    "weight": "⚖️ Cân nặng (kg)",
+    "enter_valid_height": "Vui lòng nhập chiều cao hợp lệ (cm).",
+    "enter_valid_weight": "Vui lòng nhập cân nặng hợp lệ (kg).",
+    "distinctive_features": "🧷 Có đặc điểm ngoại hình nào nổi bật không? (hình xăm, sẹo, v.v.)",
+    "reason_for_finding": "❓ Tại sao bạn muốn tìm người này?",
+    "enter_reward_amount_sol": "Vui lòng nhập số tiền thưởng bằng SOL.",
+    "enter_reward_amount_usdt": "Vui lòng nhập số tiền thưởng bằng USDT.",
+    "enter_reward_amount_unknown": "Vui lòng nhập số tiền thưởng (loại ví không xác định).",
+    "insufficient_balance": "Số dư không đủ. Bạn còn lại {0}.",
+    "refresh_wallet_balance": "Vui lòng làm mới số dư ví của bạn.",
+    "reward_amount_confirmed": "Số tiền thưởng {0} đã được xác nhận.",
+    "insufficient_balance_for_transfer": "Bạn không có đủ số dư để chuyển tiền. Số dư hiện tại là {0}.",
+    "transfer_successful": "Chuyển tiền thành công.",
+    "transfer_failed": "Chuyển tiền thất bại. Vui lòng thử lại.",
+    "transfer_error": "Đã xảy ra lỗi khi xử lý giao dịch. Vui lòng thử lại.",
+    "transfer_canceled": "Giao dịch đã bị hủy.",
+    "invalid_confirmation": "Phản hồi không hợp lệ. Vui lòng xác nhận bằng 'có' hoặc 'không'.",
+    "enter_reason_for_finding": "Vui lòng nhập lý do tìm kiếm.",
+    "case_submitted": "Hồ sơ của bạn đã được gửi thành công.",
+    "case_completed": "Hồ sơ của bạn đã hoàn tất.",
+    "reward_amount_negative": "Số tiền thưởng không thể âm.",
+    "male_option": "♂ Nam",
+    "female_option": "♀ Nữ",
+    "other_option": "Khác",
+    "transaction_failed": "❌ <b>Giao Dịch Thất Bại</b>\n\nCó vấn đề xảy ra trong quá trình xử lý tiền thưởng. Vui lòng thử lại sau.",
+    "transfer_canceled": "❌ <b>Giao Dịch Đã Hủy</b>\n\nGiao dịch tiền thưởng đã bị hủy theo yêu cầu của bạn.",
+    "invalid_choice": "⚠️ <b>Lựa Chọn Không Hợp Lệ</b>\n\nVui lòng chọn tùy chọn hợp lệ.",
+    "mobile_selected_with_tac": "Số điện thoại bạn nhập đã được xác minh. Vui lòng nhập mã xác nhận:",
+    "choose_existing_mobile": "Vui lòng chọn số hiện có hoặc thêm số mới.",
+    "enter_valid_mobile": "❌ Số điện thoại không hợp lệ. Vui lòng nhập số 10 chữ số đúng.",
+    "tac_invalid": "❌ Mã xác nhận không hợp lệ. Vui lòng thử lại.",
+    "no_photo_found": "Không tìm thấy ảnh. Vui lòng tải lên tệp hình ảnh hợp lệ.",
+    "case_not_found": "Không tìm thấy hồ sơ. Vui lòng thử lại.",
+    "wallet_create_err": "Đã xảy ra lỗi khi tạo ví. Vui lòng thử lại.",
+    "wallet_name_prompt": "Vui lòng nhập tên cho ví {wallet_type} của bạn:",
+    "wallet_name_empty": "Tên ví không thể trống. Vui lòng thử lại.",
+    "wallet_name_exists": "❌ Một ví cùng tên đã tồn tại. Vui lòng chọn tên khác.",
+    "wallet_create_details": (
+      "✅ Ví đã được tạo!\n"
+      "🧾 Tên: {name}\n"
+      "💰 Loại: {wallet_type}\n"
+      "🔐 Khóa Công Khai: <code>{public_key}</code>\n"
+      "🌐 Mạng lưới: {network}\n"
+    ),
+    "wallet_create_details_with_balance": (
+      "✅ Ví đã được tạo!\n"
+      "🧾 Tên: {name}\n"
+      "💰 Loại: {wallet_type}\n"
+      "🔐 Khóa Công Khai: <code>{public_key}</code>\n"
+      "🌐 Mạng lưới: {network}\n"
+      "💵 Số dư: {balance} {wallet_type}\n"
+    ),
+    "transfer_instructions": (
+      "\n\n<b>Cách Chuyển {wallet_type} Vào Ví Của Bạn:</b>\n\n"
+      "1️⃣ Mở ứng dụng ví {wallet_type} hoặc bất kỳ ví tương thích nào.\n"
+      "2️⃣ Đi đến phần <b>Gửi</b> hoặc <b>Chuyển</b> trong ví.\n"
+      "3️⃣ Dán <b>Khóa Công Khai</b> vào ô địa chỉ người nhận. Khóa công khai của bạn là:\n"
+      "<code>{public_key}</code>\n\n"
+      "4️⃣ Nhập số lượng {wallet_type} mà bạn muốn chuyển.\n"
+      "5️⃣ Kiểm tra thông tin giao dịch và xác nhận chuyển tiền.\n\n"
+      "Khi giao dịch thành công, {wallet_type} sẽ xuất hiện trong số dư ví của bạn."
+    ),
+    "understood_and_agree": "✅ Tôi Hiểu Và Đồng Ý"
+  }
+   }
+

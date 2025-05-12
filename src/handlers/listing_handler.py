@@ -29,6 +29,7 @@ from services.finder_service import FinderService
 from services.tron_wallet_service import TronWallet
 from services.user_service import get_user_lang
 from services.wallet_service import WalletService
+from utils.get_network import get_network
 from utils.logger import logger
 from utils.error_wrapper import catch_async
 from utils.helper import get_city_matches, get_country_matches, paginate_list
@@ -154,7 +155,6 @@ async def listing_command(update: Update, context: ContextTypes.DEFAULT_TYPE) ->
 
     return State.CASE_DETAILS
 
-
 @catch_async
 async def case_details_callback(
     update: Update, context: ContextTypes.DEFAULT_TYPE
@@ -169,71 +169,57 @@ async def case_details_callback(
         case = await Case.find_one(
             {"_id": PydanticObjectId(case_id), "deleted": False}, fetch_links=True
         )
-        print("THIS IS THE CASE", case)
 
         if not case:
             await query.message.edit_text(get_text(user_id, "case_not_found"))
-            return State.END  # Terminate the conversation
+            return State.END
 
-        # Fetch wallet and mobile number details if they exist
+     
 
-        # Format the case details using the constant template
+        # Build proof text
         proof_text = (
             f"[Proof]({case.case_photo})"
             if case.case_photo and case.case_photo.startswith("http")
             else "No proof available"
         )
 
-        case_message = get_text(
-            user_id,
-            "case_details_template",
-        ).format(
+        # Format the case message using localized template
+        case_message = get_text(context.user_data.get("lang", "en"), "case_details_template").format(
             person_name=case.person_name,
             last_seen_location=case.last_seen_location,
-            reward=case.reward or "None",
-            reward_type=case.wallet_type or "None",
-            wallet="wallet",  # TODO: its remains
-            gender=case.gender,
-            age=case.age,
-            height=case.height,
+            age=case.age or "Unknown",
+            reward=case.reward or "0",
+            reward_type=case.wallet.wallet_type if case.wallet else "None",
+            last_seen_date = case.created_at.strftime("%d %B %Y") if case.created_at else "Unknown",
+            height=case.height or "Unknown",
         )
 
         case_message += f"\n\n**Proof:** {proof_text}"
 
+        # Prepare buttons
         keyboard = []
         if case.user_id == user_id:
             row = [
-                InlineKeyboardButton(
-                    get_text(user_id, "edit_button"),
-                    callback_data=f"edit_{str(case.id)}",
-                ),
-                InlineKeyboardButton(
-                    get_text(user_id, "delete_button"),
-                    callback_data=f"delete_{str(case.id)}",
-                ),
+                InlineKeyboardButton(get_text(user_id, "edit_button"), callback_data=f"edit_{str(case.id)}"),
+                InlineKeyboardButton(get_text(user_id, "delete_button"), callback_data=f"delete_{str(case.id)}"),
             ]
             keyboard.append(row)
 
         reply_markup = InlineKeyboardMarkup(keyboard)
 
-        # Edit the message to show case details
+        # Send message
         await query.message.edit_text(
             case_message.strip(),
             reply_markup=reply_markup,
             parse_mode="Markdown",
         )
-        if case.user_id == user_id:
-            return State.CASE_DETAILS
 
-        return State.END  # Terminate the conversation
+        return State.CASE_DETAILS if case.user_id == user_id else State.END
 
     except Exception as e:
-        logger.error(
-            f"Error in case_details_callback: {str(e)}\n{traceback.format_exc()}"
-        )
+        logger.error(f"[ERROR] Failed to show case details: {e}\n{traceback.format_exc()}")
         await query.message.edit_text(get_text(user_id, "error_fetching_case_details"))
-        return State.END  # Terminate the conversation
-
+        return State.END
 
 @catch_async
 async def pagination_callback(
@@ -1340,10 +1326,10 @@ async def advertiser_wallet_selection_callback(
         context.user_data["wallet"] = wallet_details  # Store in memory
         await update_or_create_case(user_id, wallet=str(wallet_details["id"]))
 
-        msg = get_text(user_id, "wallet_create_details").format(
+        msg = get_text(user_id, "wallet_create_details_with_balance").format(
             name=wallet_details["name"],
             public_key=wallet_details["public_key"],
-            # secret_key=wallet_details["private_key"],
+            network=get_network(wallet_details["wallet_type"]),
             balance=total_sol,  # For USDT, balance might be different
             wallet_type=wallet_type,
         )
@@ -1408,12 +1394,12 @@ async def advertiser_wallet_name_handler(
         print(f"This is the wallet type: {wallet_type}")
 
         context.user_data["wallet"] = wallet
-        msg = get_text(user_id, "wallet_create_details").format(
+        msg = get_text(user_id, "wallet_create_details_with_balance").format(
             name=wallet.name,
             public_key=wallet.public_key,
-            secret_key=wallet.private_key,
             balance=total_sol,  # For USDT, the balance logic will vary
             wallet_type=wallet_type,
+            network = get_network(wallet_type),
         )
 
         transfer_instructions = get_text(user_id, "transfer_instructions").format(

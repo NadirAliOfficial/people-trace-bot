@@ -21,6 +21,7 @@ from services.case_service import get_case_by_id
 from services.wallet_service import WalletService
 from utils.cloudinary import CloudinaryError, upload_image, upload_video
 from utils.error_wrapper import catch_async
+from utils.get_network import get_network
 from utils.helper import paginate_list
 from utils.province_util import get_provinces_for_country
 from utils.wallet import load_user_wallet
@@ -634,10 +635,11 @@ async def finder_wallet_selection_callback(
 
         print("\n\n DEBUGGING -002 \n\n")
 
-        msg = get_text(user_id, "wallet_create_details").format(
+        msg = get_text(user_id, "wallet_create_details_with_balance").format(
             name=wallet_details["name"],
             public_key=wallet_details["public_key"],
-            # secret_key=wallet_details["private_key"],
+            type=wallet_details["wallet_type"],
+            network=get_network(wallet_details["wallet_type"]),
             balance=total_sol,  # For USDT, balance might be different
             wallet_type=wallet_type,
         )
@@ -766,11 +768,12 @@ async def finder_wallet_selection_callback(
         print("\n\n DEBUGGING -002 \n\n")
 
         # Show wallet details
-        msg = get_text(user_id, "wallet_create_details").format(
+        msg = get_text(user_id, "wallet_create_details_with_balance").format(
             name=wallet_details["name"],
             public_key=wallet_details["public_key"],
             balance=total_sol,
             wallet_type=wallet_type,
+            network=get_network(wallet_type),
         )
 
         await query.message.reply_text(msg, parse_mode="HTML")
