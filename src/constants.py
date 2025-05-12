@@ -119,7 +119,6 @@ class State(Enum):
 
 DUMMY_DATA = {
     "en": {
-        "enter_mobile": "Please type your mobile number:",
         "mobile_saved": "✅ Mobile number saved: {number}",
         # Case Functionality
         "create_case_title": "Create New Case",
@@ -162,13 +161,11 @@ DUMMY_DATA = {
         "btn_language": "更改语言",
         "btn_mobile_number": "手机号",
         "btn_close_menu": "关闭菜单",
-        "enter_mobile": "请输入您的手机号：",
         "mobile_saved": "✅ 已保存手机号：{number}",
         "lang_updated": "语言已更新。",
         # Case Functionality
         "create_case_title": "创建新案件",
         "enter_name": "请输入您的姓名：",
-        "enter_mobile": "请输入您的手机号（将发送验证码至此号码）：",
         "enter_tac": "请输入发送到您手机的验证码：",
         "verify_tac": "正在验证验证码...",
         "tac_verified": "✅ 验证码验证成功。",

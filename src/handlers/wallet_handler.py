@@ -4,6 +4,7 @@ from constant.language_constant import get_text
 from constants import State
 from services.tron_wallet_service import TronWallet
 from services.wallet_service import WalletService
+from utils.get_network import get_network 
 from utils.error_wrapper import catch_async
 from telegram.ext import ContextTypes
 import re
@@ -591,7 +592,8 @@ async def process_create_wallet(update: Update, context: ContextTypes.DEFAULT_TY
         name=wallet.name,
         wallet_type=wallet.wallet_type,
         public_key=wallet.public_key,
-        secret_key=wallet.private_key,
+        network=get_network(wallet.wallet_type),
+        # secret_key=wallet.private_key,
     )
 
     await update.message.reply_text(

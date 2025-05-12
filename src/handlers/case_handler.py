@@ -67,9 +67,8 @@ async def handle_name(update: Update, context: ContextTypes.DEFAULT_TYPE) -> int
         )
         return State.MOBILE_MANAGEMENT
     else:
-        await update.message.reply_text(get_text(user_id, "enter_mobile"))
+        await update.message.reply_text(get_text(user_id, "enter_mobile"), parse_mode="Markdown")
         return State.CREATE_CASE_MOBILE
-
 
 
 async def handle_select_mobile(
@@ -81,7 +80,11 @@ async def handle_select_mobile(
     user_id = query.from_user.id
 
     if query.data == "mobile_add":
-        await query.edit_message_text(get_text(user_id, "enter_mobile"))
+        await query.edit_message_text(
+            get_text(user_id, "enter_mobile"), 
+                        parse_mode="Markdown"
+
+        )        
         return State.CREATE_CASE_MOBILE  # Transition to state for mobile number input
     else:
         selected_mobile = query.data.replace("select_mobile_", "")
@@ -172,18 +175,19 @@ async def handle_tac(update: Update, context: ContextTypes.DEFAULT_TYPE) -> int:
 
             # Proceed to the next step
             await show_disclaimer_2(update, context)
+            
             return State.CREATE_CASE_DISCLAIMER
         else:
             await update.message.reply_text(get_text(user_id, "tac_invalid"))
             return State.CREATE_CASE_TAC
     else: 
         print(f"Skipping OTP verification in {NODE_ENV} mode.")
+        await update.message.reply_text(get_text(user_id, "tac_verified"))
         await show_disclaimer_2(update, context)
         return State.CREATE_CASE_DISCLAIMER
 
-    
-# ---------------------- Case Mobile Number End ----------------------
 
+# ---------------------- Case Mobile Number End ----------------------
 
 
 async def show_disclaimer_2(update: Update, context: ContextTypes.DEFAULT_TYPE) -> int:
@@ -193,17 +197,17 @@ async def show_disclaimer_2(update: Update, context: ContextTypes.DEFAULT_TYPE) 
         [
             [
                 InlineKeyboardButton(
-                    get_text(user_id, "agree_btn"), callback_data="agree"
+                    get_text(user_id, "understood_and_agree"), callback_data="agree"
                 )
             ],
             [
                 InlineKeyboardButton(
-                    get_text(user_id, "disagree_btn"), callback_data="disagree"
+                    get_text(user_id, "cancel_button"), callback_data="disagree"
                 )
             ],
         ]
     )
-    await update.message.reply_text(get_text(user_id, "disclaimer_2"), reply_markup=kb)
+    await update.message.reply_text(get_text(user_id, "disclaimer_2"), reply_markup=kb, parse_mode="Markdown")
     return State.CREATE_CASE_DISCLAIMER
 
 
@@ -463,7 +467,6 @@ async def handle_ask_reward_amount(
         else await TronWallet.get_usdt_balance(wallet.public_key)
     )
 
-
     # Check if the reward amount is greater than available balance
     if reward_amount <= 0:
         await update.message.reply_text(
@@ -525,8 +528,12 @@ async def handle_transfer_confirmation(
             if wallet.wallet_type in ["USDT", "TRX"] and wallet_balance < reward_amount:
                 await query.answer()
                 await query.edit_message_text(
-                    get_text(user_id, "insurfficient_balance").format(wallet_balance=wallet_balance, wallet_type=wallet_type, reward_amount=reward_amount),
-                    parse_mode="HTML"
+                    get_text(user_id, "insurfficient_balance").format(
+                        wallet_balance=wallet_balance,
+                        wallet_type=wallet_type,
+                        reward_amount=reward_amount,
+                    ),
+                    parse_mode="HTML",
                 )
                 return State.CREATE_CASE_CONFIRM_TRANSFER
 
@@ -543,11 +550,26 @@ async def handle_transfer_confirmation(
             print(f"Transfer_success: {transfer_success}")
             if transfer_success:
                 # Notify the advertiser (user who confirmed)
-                advertiser_message = get_text(user_id, "congratulates_advertiser").format(reward_amount=reward_amount, wallet_type=wallet_type)
-                await query.edit_message_text(advertiser_message, parse_mode="HTML")
+                platform_fee = round(reward_amount * 0.05, 2)
+                net_escrow = round(reward_amount - platform_fee, 2)
+
+                advertiser_message = get_text(user_id, "congratulates_advertiser").format(
+                    reward_amount=reward_amount,
+                    wallet_type=wallet_type,
+                    case_name=case.person_name or "Unknown",
+                    location=case.city or "Unknown",
+                    platform_fee=platform_fee,
+                    net_amount=net_escrow
+                )
 
                 # Notify the bot owner
-                owner_message = get_text(user_id, "owner_message").format(user_id=user_id, case=case, reward_amount=reward_amount, wallet_type=wallet_type, wallet=wallet)
+                owner_message = get_text(user_id, "owner_message").format(
+                    user_id=user_id,
+                    case=case,
+                    reward_amount=reward_amount,
+                    wallet_type=wallet_type,
+                    wallet=wallet,
+                )
                 await context.bot.send_message(
                     chat_id=OWNER_TELEGRAM_ID, text=owner_message, parse_mode="HTML"
                 )
@@ -561,34 +583,29 @@ async def handle_transfer_confirmation(
             else:
                 await query.answer()
                 await query.edit_message_text(
-                    get_text(user_id, "transaction_failed"),
-                    parse_mode="HTML"
+                    get_text(user_id, "transaction_failed"), parse_mode="HTML"
                 )
 
         except Exception as e:
             print(f"Transfer failed: {e}")
             await query.answer()
             await query.edit_message_text(
-                get_text(user_id, "transfer_failed"),
-                parse_mode="HTML"
+                get_text(user_id, "transfer_failed"), parse_mode="HTML"
             )
 
     elif user_input == "cancel_transfer":
         await query.answer()
         await query.edit_message_text(
-            get_text(user_id, "transfer_canceled"),
-            parse_mode="HTML"
+            get_text(user_id, "transfer_canceled"), parse_mode="HTML"
         )
         return State.CREATE_CASE_ASK_REWARD
 
     else:
         await query.answer()
         await query.edit_message_text(
-            get_text(user_id, "invalid_choice"),
-            parse_mode="HTML"
+            get_text(user_id, "invalid_choice"), parse_mode="HTML"
         )
         return State.CREATE_CASE_CONFIRM_TRANSFER
-
 
 
 # async def handle_case_finished(

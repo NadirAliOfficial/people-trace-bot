@@ -19,16 +19,17 @@ async def stats_command(update: Update, context: ContextTypes.DEFAULT_TYPE):
     stats = await StatsService.get_global_stats()
 
     message = (
-        f"{get_text(user_id, 'community_stats_title')}\n"
-        f"{get_text(user_id, 'total_cases_submitted').format(stats['total_cases'])}\n"
-        f"{get_text(user_id, 'regions_covered').format(stats['countries'], stats['cities'])}\n"
-        f"{get_text(user_id, 'unsolved_cases').format(stats['unsolved'])}\n"
-        f"{get_text(user_id, 'successfully_found').format(stats['solved'])}\n"
-        f"{get_text(user_id, 'average_reward_offered').format(stats['avg_reward'])}\n"
-        f"{get_text(user_id, 'fastest_case_solved').format(stats['fastest'])}\n"
-        f"{get_text(user_id, 'top_active_region').format(stats['top_region'])}\n"
-        f"{get_text(user_id, 'common_demographic').format(stats['top_demo'])}\n"
-        f"{get_text(user_id, 'highest_reward').format(stats['highest'])}"
+        f"{get_text(user_id, 'admin_daily_stats_title')}\n"
+        f"{get_text(user_id, 'admin_total_cases_submitted').format(stats['total_cases'])}\n"
+        f"{get_text(user_id, 'admin_regions_covered').format(stats['countries'], stats['cities'])}\n"
+        f"{get_text(user_id, 'admin_unsolved_cases').format(stats['unsolved'])}\n"
+        f"{get_text(user_id, 'admin_successfully_found').format(stats['solved'])}\n"
+        f"{get_text(user_id, 'admin_average_reward_offered').format(stats['avg_reward'])}\n"
+        f"{get_text(user_id, 'admin_fastest_case_solved').format(stats['fastest'])}\n"
+        f"{get_text(user_id, 'admin_top_active_region').format(stats['top_region'])}\n"
+        f"{get_text(user_id, 'admin_common_demographic').format(stats['top_demo'])}\n"
+        f"{get_text(user_id, 'admin_highest_reward').format(stats['highest'])}\n"
+        f"{get_text(user_id, 'admin_footer_message')}"
     )
 
     keyboard = [

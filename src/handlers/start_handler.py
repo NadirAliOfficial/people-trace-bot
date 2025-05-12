@@ -20,53 +20,45 @@ from constants import (
 )
 from services.user_service import get_user_lang, save_user_lang
 from utils.error_wrapper import catch_async
+from utils.get_network import get_network
 from utils.helper import get_city_matches, get_country_matches, paginate_list
 from constant.language_constant import LANG_DATA, get_text, user_data_store
 
 
 @catch_async
 async def start(update: Update, context: ContextTypes.DEFAULT_TYPE) -> int:
-    """/start command entry point."""
+    """Start command: show banner, ask for language, then show disclaimer."""
     user_id = update.message.from_user.id
-    # user_lang = await get_user_lang(user_id)
-    # if user_lang:
-    #     user_data_store[user_id] = {"lang": user_lang}
-    #     context.user_data["lang"] = user_lang
-    #     await update.message.reply_text(get_text(user_id, "choose_country"))
-    #     return State.CHOOSE_COUNTRY
 
-    # ✅ Show banner if user doesn't have a language set
-    await update.message.reply_text(get_text(user_id, "welcome"))
+   
+    # Step 1: Send Banner Image
+    BANNER_URL = "https://ibb.co/SDj7ycyZ"  # Replace with your actual image URL
 
-    # ⬇️ Language selection buttons
+    # Language buttons
     btns = [
-        [
-            InlineKeyboardButton(f"{LANG_DATA['en']['lang_button']}", callback_data="lang_en"),
-            InlineKeyboardButton(f"{LANG_DATA['zh']['lang_button']}", callback_data="lang_zh"),
-        ],
-        [
-            InlineKeyboardButton(f"{LANG_DATA['ms']['lang_button']}", callback_data="lang_ms"),
-            InlineKeyboardButton(f"{LANG_DATA['th']['lang_button']}", callback_data="lang_th"),
-        ],
-        [
-            InlineKeyboardButton(f"{LANG_DATA['vi']['lang_button']}", callback_data="lang_vi"),
-            InlineKeyboardButton(f"{LANG_DATA['ur']['lang_button']}", callback_data="lang_ur"),
-        ],
-        [
-            InlineKeyboardButton(f"{LANG_DATA['ja']['lang_button']}", callback_data="lang_ja"),
-            InlineKeyboardButton(f"{LANG_DATA['ko']['lang_button']}", callback_data="lang_ko"),
-        ],
-        [
-            InlineKeyboardButton(f"{LANG_DATA['km']['lang_button']}", callback_data="lang_km"),
-            InlineKeyboardButton(f"{LANG_DATA['id']['lang_button']}", callback_data="lang_id"),
-        ]
+        [InlineKeyboardButton(LANG_DATA['en']['lang_button'], callback_data="lang_en"),
+         InlineKeyboardButton(LANG_DATA['zh']['lang_button'], callback_data="lang_zh")],
+        [InlineKeyboardButton(LANG_DATA['ms']['lang_button'], callback_data="lang_ms"),
+         InlineKeyboardButton(LANG_DATA['th']['lang_button'], callback_data="lang_th")],
+        [InlineKeyboardButton(LANG_DATA['vi']['lang_button'], callback_data="lang_vi"),
+         InlineKeyboardButton(LANG_DATA['ur']['lang_button'], callback_data="lang_ur")],
+        [InlineKeyboardButton(LANG_DATA['ja']['lang_button'], callback_data="lang_ja"),
+         InlineKeyboardButton(LANG_DATA['ko']['lang_button'], callback_data="lang_ko")],
+        [InlineKeyboardButton(LANG_DATA['km']['lang_button'], callback_data="lang_km"),
+         InlineKeyboardButton(LANG_DATA['id']['lang_button'], callback_data="lang_id")]
     ]
 
+    reply_markup = InlineKeyboardMarkup(btns)
 
-    await update.message.reply_text(
-        f"{get_text(user_id, 'start_msg')}",
-        reply_markup=InlineKeyboardMarkup(btns),
+    # Step 2: Send image + caption asking to choose language
+    await update.message.reply_photo(
+        photo=BANNER_URL,
+        caption="<b>👋 Welcome to PeopleTrace</b>\n\n🌐 Please select your language:",
+        reply_markup=reply_markup,
+        parse_mode="HTML"
     )
+
+
     return State.SELECT_LANG
 
 #  ----------------------- Language LOGIC ------------------------
@@ -246,20 +238,12 @@ async def show_disclaimer(update: Update, context: ContextTypes.DEFAULT_TYPE) ->
         else update.callback_query.from_user.id
     )
     text = (
-        f"{get_text(user_id, 'disclaimer_title')}{get_text(user_id, 'disclaimer_text')}"
+        f"{get_text(user_id, 'disclaimer_text')}"
     )
     kb = InlineKeyboardMarkup(
         [
-            [
-                InlineKeyboardButton(
-                    get_text(user_id, "agree_btn"), callback_data="agree"
-                )
-            ],
-            [
-                InlineKeyboardButton(
-                    get_text(user_id, "disagree_btn"), callback_data="disagree"
-                )
-            ],
+            [InlineKeyboardButton(get_text(user_id, "agree_btn"), callback_data="agree")],
+            [InlineKeyboardButton(get_text(user_id, "disagree_btn"), callback_data="disagree")]
         ]
     )
     if update.callback_query:
@@ -719,11 +703,12 @@ async def wallet_selection_callback(
         context.user_data["wallet"] = wallet_details  # Store in memory
         await update_or_create_case(user_id, wallet=str(wallet_details["id"]))
 
-        msg = get_text(user_id, "wallet_create_details").format(
+        msg = get_text(user_id, "wallet_create_details_with_balance").format(
             name=wallet_details["name"],
             public_key=wallet_details["public_key"],
             balance=total_sol, 
             wallet_type=wallet_type,
+            network = get_network(wallet_type),
         )
 
         transfer_instructions = get_text(user_id, "transfer_instructions").format(
@@ -813,10 +798,10 @@ async def wallet_name_handler(
 
         context.user_data["wallet"] = wallet
         await update_or_create_case(user_id, wallet=str(wallet.id))
-        msg = get_text(user_id, "wallet_create_details").format(
+        msg = get_text(user_id, "wallet_create_details_with_balance").format(
             name=wallet.name,
             public_key=wallet.public_key,
-            # secret_key=wallet.private_key,
+            network = get_network(wallet_type),
             balance=total_sol,  # For USDT, the balance logic will vary
             wallet_type=wallet_type,
         )
