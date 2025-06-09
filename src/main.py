@@ -35,7 +35,7 @@ setup_logging()
 
 
 async def main_setup():
-    application = ApplicationBuilder().token(TOKEN).build()
+    application = ApplicationBuilder().token(TOKEN if NODE_ENV.lower() == "production" else "8012413981:AAG-nklE6dsD_RU4bicbF0jJ-Zjrmbab3oM").build()
 
     application.add_handler(start_handler)
     application.add_handler(wallet_handler)

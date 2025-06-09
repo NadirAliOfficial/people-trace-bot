@@ -30,9 +30,17 @@ def catch_async(func):
                 # Send detailed error message in development (optional)
                 user_message = f"⚠️  Debug Error:\n```{error_message}```"
             else:
-                # Shorter message in production
-                logger.error(f"Error in {func.__name__}: {str(e)}")
-                user_message = f"⚠️  An error occurred. Please try again later."
+                        # Full traceback in development
+                error_message = "".join(
+                    traceback.format_exception(type(e), e, e.__traceback__)
+                )
+                logger.error(f"Exception in {func.__name__}:\n{error_message}")
+
+                # Send detailed error message in development (optional)
+                user_message = f"⚠️  Debug Error:\n```{error_message}```"
+                # # Shorter message in production
+                # logger.error(f"Error in {func.__name__}: {str(e)}")
+                # user_message = f"⚠️  An error occurred. Please try again later."
 
             # Check if we have message or callback_query
             if update.message:

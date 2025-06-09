@@ -29,11 +29,8 @@ from constant.language_constant import LANG_DATA, get_text, user_data_store
 async def start(update: Update, context: ContextTypes.DEFAULT_TYPE) -> int:
     """Start command: show banner, ask for language, then show disclaimer."""
     user_id = update.message.from_user.id
-
-   
     # Step 1: Send Banner Image
     BANNER_URL = "https://ibb.co/SDj7ycyZ"  # Replace with your actual image URL
-
     # Language buttons
     btns = [
         [InlineKeyboardButton(LANG_DATA['en']['lang_button'], callback_data="lang_en"),
@@ -47,9 +44,7 @@ async def start(update: Update, context: ContextTypes.DEFAULT_TYPE) -> int:
         [InlineKeyboardButton(LANG_DATA['km']['lang_button'], callback_data="lang_km"),
          InlineKeyboardButton(LANG_DATA['id']['lang_button'], callback_data="lang_id")]
     ]
-
     reply_markup = InlineKeyboardMarkup(btns)
-
     # Step 2: Send image + caption asking to choose language
     await update.message.reply_photo(
         photo=BANNER_URL,
@@ -57,8 +52,6 @@ async def start(update: Update, context: ContextTypes.DEFAULT_TYPE) -> int:
         reply_markup=reply_markup,
         parse_mode="HTML"
     )
-
-
     return State.SELECT_LANG
 
 #  ----------------------- Language LOGIC ------------------------
@@ -78,29 +71,13 @@ async def select_lang_callback(
     user_data_store[user_id] = {"lang": lang}
     context.user_data["lang"] = lang
 
-    await query.edit_message_text(get_text(user_id, "choose_country"))
+    print("Inside the language seelction")
 
-    return State.CHOOSE_COUNTRY
+    # Delete the original message (photo with language buttons)
+    await query.message.delete()
 
-
-#  ----------------------- Language LOGIC ------------------------
-@catch_async
-async def select_lang_callback(
-    update: Update, context: ContextTypes.DEFAULT_TYPE
-) -> int:
-    """Handle language selection."""
-    query = update.callback_query
-    await query.answer()
-    data = query.data
-    user_id = query.from_user.id
-
-    lang = data.replace("lang_", "")
-    await save_user_lang(user_id, lang)
-
-    user_data_store[user_id] = {"lang": lang}
-    context.user_data["lang"] = lang
-
-    await query.edit_message_text(get_text(user_id, "choose_country"))
+    # Send a new message with the "choose_country" text
+    await query.message.reply_text(get_text(user_id, "choose_country"))
 
     return State.CHOOSE_COUNTRY
 
@@ -125,11 +102,6 @@ async def choose_country(update: Update, context: ContextTypes.DEFAULT_TYPE) -> 
             f"{get_text(user_id, 'country_selected')} {matches[0]}",
             parse_mode="HTML"
         )
-
-        # await update.message.reply_text(
-        #     f"{get_text(user_id, 'country_selected')} {matches[0]}",
-        #     parse_mode="HTML",
-        # )
 
         await show_disclaimer(update, context)
         return State.SHOW_DISCLAIMER
