@@ -18,7 +18,7 @@ from telegram.ext import (
 from constants import (
     State,
 )
-from services.user_service import get_user_lang, save_user_lang
+from services.user_service import get_user_lang, get_user_mobiles, save_user_lang
 from utils.error_wrapper import catch_async
 from utils.get_network import get_network
 from utils.helper import get_city_matches, get_country_matches, paginate_list
@@ -513,22 +513,24 @@ async def action_callback(update: Update, context: ContextTypes.DEFAULT_TYPE) ->
     
     if choice == "advertise":
         # From the original code, it goes to CHOOSE_WALLET_TYPE
-        kb = InlineKeyboardMarkup(
-            [
-                [
-                    InlineKeyboardButton(
-                        get_text(user_id, "usdt_wallet"), callback_data="USDT"
-                    ),
-                    InlineKeyboardButton(
-                        get_text(user_id, "sol_wallet"), callback_data="SOL"
-                    ),
-                ]
+        existing_mobiles = await get_user_mobiles(user_id)
+
+        print(f"Mobile numbers: {existing_mobiles}")
+
+        if existing_mobiles:
+            kb = [
+                [InlineKeyboardButton(mobile, callback_data=f"select_mobile_{mobile}")]
+                for mobile in existing_mobiles
             ]
-        )
-        await query.edit_message_text(
-            get_text(user_id, "choose_wallet"), reply_markup=kb
-        )
-        return State.CHOOSE_WALLET_TYPE
+            kb.append([InlineKeyboardButton("➕ Add New", callback_data="mobile_add")])
+            await update.message.reply_text(
+                get_text(user_id, "choose_existing_mobile"),
+                reply_markup=InlineKeyboardMarkup(kb),
+            )
+            return State.MOBILE_MANAGEMENT
+        else:
+            await query.edit_message_text(get_text(user_id, "enter_mobile"), parse_mode="Markdown")
+            return State.CREATE_CASE_MOBILE
     elif choice == "find_people":
         # Clearing the province
         await FinderService.update_or_create_finder(

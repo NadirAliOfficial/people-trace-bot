@@ -79,6 +79,9 @@ async def handle_select_mobile(
     await query.answer()
     user_id = query.from_user.id
 
+    print("Getting the query data which is ", query.data)
+    
+
     if query.data == "mobile_add":
         await query.edit_message_text(
             get_text(user_id, "enter_mobile"), 
@@ -122,6 +125,10 @@ async def handle_new_mobile(update: Update, context: ContextTypes.DEFAULT_TYPE) 
     user_id = update.effective_user.id
     mobile_number = update.message.text.strip()
 
+    if "case" not in context.user_data:
+        context.user_data["case"] = {}
+
+    print("Mobile Number is:", mobile_number)
     if re.match(r"^\+?\d{10,15}$", mobile_number):  # Basic validation for mobile number
         context.user_data["mobile"] = mobile_number
 

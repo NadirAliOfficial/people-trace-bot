@@ -1,5 +1,7 @@
 [tool.poetry]
 name = "advertise-finder-telegram-bot"
+packages = [{ include = "modules" }]
+
 version = "0.1.0"
 description = "Telegram Bot for advertise and find the telegram user"
 authors = ["sulemanahmedrajput <sulemanahmed2704@gmail.com>"]
