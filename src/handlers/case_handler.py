@@ -179,19 +179,46 @@ async def handle_tac(update: Update, context: ContextTypes.DEFAULT_TYPE) -> int:
 
             # After TAC verification, update the case with the mobile reference
             await update_or_create_case(user_id, mobile=selected_number)
+            kb =[]
 
-            # Proceed to the next step
-            await show_disclaimer_2(update, context)
+            kb.append([
+                InlineKeyboardButton("💵 USDT (TRC20 - Tron Network)", callback_data="USDT"),
+                InlineKeyboardButton("⚡ Solana (SOL)", callback_data="SOL"),
+            ])
+
+            markup = InlineKeyboardMarkup(kb)
             
-            return State.CREATE_CASE_DISCLAIMER
+            await update.message.reply_text(
+                "💼 Before posting your case, you’ll need a crypto wallet for the reward bounty. Please choose a wallet type to proceed:",
+                        reply_markup=markup,
+                        parse_mode="HTML",
+                    )
+            return State.CHOOSE_WALLET_TYPE
+            # # Proceed to the next step
+            # await show_disclaimer_2(update, context)
+            
+            # return State.CREATE_CASE_DISCLAIMER
         else:
             await update.message.reply_text(get_text(user_id, "tac_invalid"))
             return State.CREATE_CASE_TAC
     else: 
         print(f"Skipping OTP verification in {NODE_ENV} mode.")
         await update.message.reply_text(get_text(user_id, "tac_verified"))
-        await show_disclaimer_2(update, context)
-        return State.CREATE_CASE_DISCLAIMER
+        kb =[]
+
+        kb.append([
+            InlineKeyboardButton("💵 USDT (TRC20 - Tron Network)", callback_data="USDT"),
+            InlineKeyboardButton("⚡ Solana (SOL)", callback_data="SOL"),
+        ])
+        markup = InlineKeyboardMarkup(kb)
+        
+        await update.message.reply_text(
+            "💼 Before posting your case, you’ll need a crypto wallet for the reward bounty. Please choose a wallet type to proceed:",
+                    reply_markup=markup,
+                    parse_mode="HTML",
+                )
+        return State.CHOOSE_WALLET_TYPE
+        # await show_disclaimer_2(update, context)
 
 
 # ---------------------- Case Mobile Number End ----------------------
