@@ -45,30 +45,9 @@ logger = logging.getLogger(__name__)
 # --- Create Case Handlers (with separate states for each person detail) ---
 
 # ---------------------------- Case Mobile Number  Start ---------------------------
-async def handle_name(update: Update, context: ContextTypes.DEFAULT_TYPE) -> int:
-    user_id = update.effective_user.id
-    name = update.message.text.strip()
-    await update_or_create_case(user_id, name=name)
-    context.user_data["case"] = {"name": name}
 
-    existing_mobiles = await get_user_mobiles(user_id)
+  
 
-    print(f"Mobile numbers: {existing_mobiles}")
-
-    if existing_mobiles:
-        kb = [
-            [InlineKeyboardButton(mobile, callback_data=f"select_mobile_{mobile}")]
-            for mobile in existing_mobiles
-        ]
-        kb.append([InlineKeyboardButton("➕ Add New", callback_data="mobile_add")])
-        await update.message.reply_text(
-            get_text(user_id, "choose_existing_mobile"),
-            reply_markup=InlineKeyboardMarkup(kb),
-        )
-        return State.MOBILE_MANAGEMENT
-    else:
-        await update.message.reply_text(get_text(user_id, "enter_mobile"), parse_mode="Markdown")
-        return State.CREATE_CASE_MOBILE
 
 
 async def handle_select_mobile(
@@ -262,6 +241,10 @@ async def disclaimer_2_callback(
         return State.END
 
 
+#__________________________ COMPLAINT DETAILS__________________________
+
+
+# _________ PERSON   
 async def handle_person_name(update: Update, context: ContextTypes.DEFAULT_TYPE) -> int:
     """Handle input for the person's name (the case target)."""
     user_id = update.effective_user.id
@@ -269,10 +252,43 @@ async def handle_person_name(update: Update, context: ContextTypes.DEFAULT_TYPE)
     await update_or_create_case(user_id, person_name=person_name)
     context.user_data["case"]["person_name"] = person_name
     logger.info(f"User {user_id} entered person name: {person_name}")
+    kb = InlineKeyboardMarkup([[InlineKeyboardButton(get_text(user_id, "male_option"), callback_data="male"), InlineKeyboardButton(get_text(user_id, "female_option"), callback_data="female")]])
+    await update.message.reply_text(get_text(user_id, "sex"), reply_markup=kb)
+    return State.CREATE_CASE_SEX
+
+
+# _________ WHAT IS THE GENDER OF HIS 
+async def handle_sex(update: Update, context: ContextTypes.DEFAULT_TYPE) -> int:
+    """Handle input for sex."""
+    query = update.callback_query
+    await query.answer()
+    user_id = query.from_user.id
+    sex = query.data
+    await update_or_create_case(user_id, gender=sex)
+    context.user_data["case"]["sex"] = sex
+    logger.info(f"User {user_id} selected sex: {sex}")
+    await query.edit_message_text(get_text(user_id, "age"))
+    return State.CREATE_CASE_AGE
+
+
+# _________ AGE OF THE PERSON 
+async def handle_age(update: Update, context: ContextTypes.DEFAULT_TYPE) -> int:
+    """Handle input for age."""
+    user_id = update.effective_user.id
+    age = update.message.text.strip()
+
+    if not age.isdigit():
+        await update.message.reply_text("Please enter a valid number for age.")
+        return State.CREATE_CASE_AGE
+
+    await update_or_create_case(user_id, age=age)
+    context.user_data["case"]["age"] = age
+    logger.info(f"User {user_id} entered age: {age}")
     await update.message.reply_text(get_text(user_id, "relationship"))
     return State.CREATE_CASE_RELATIONSHIP
 
 
+# _________ RELATION TO THE PERSON
 async def handle_relationship(
     update: Update, context: ContextTypes.DEFAULT_TYPE
 ) -> int:
@@ -287,6 +303,7 @@ async def handle_relationship(
     return State.CREATE_CASE_PHOTO
 
 
+# _________ PHOTO OF HIS/HER
 async def handle_photo(update: Update, context: ContextTypes.DEFAULT_TYPE) -> int:
     """Handle photo upload and store it on Cloudinary."""
     user_id = update.effective_user.id
@@ -294,26 +311,12 @@ async def handle_photo(update: Update, context: ContextTypes.DEFAULT_TYPE) -> in
     if not update.message.photo:
         await update.message.reply_text(get_text(user_id, "no_photo_found"))
         return State.CREATE_CASE_PHOTO
-
-    # Get the highest quality photo from the list (the last element)
     photo_file = await update.message.photo[-1].get_file()
-
-    # Define the absolute path for the photos directory
     photo_dir = os.path.join(os.getcwd(), "photos")
-
-    # Create the directory if it doesn't exist
     os.makedirs(photo_dir, exist_ok=True)
-
-    # Define the path to save the photo
     photo_path = os.path.join(photo_dir, f"{user_id}_photo.jpg")
-
-    # Debug log for the path
     logger.info(f"Saving photo at path: {photo_path}")
-
-    # Download the photo to the server
     await photo_file.download_to_drive(photo_path)
-
-    # Upload the photo to Cloudinary
     upload_result = await upload_image(photo_path)
     if upload_result:
         logger.info(f"Uploaded Photo URL: {upload_result}")
@@ -323,55 +326,12 @@ async def handle_photo(update: Update, context: ContextTypes.DEFAULT_TYPE) -> in
             "photo_url"
         ] = upload_result  # Store URL instead of local path
 
-    await update.message.reply_text(get_text(user_id, "last_seen_location"))
-    return State.CREATE_CASE_LAST_SEEN_LOCATION
-
-
-async def handle_last_seen_location(
-    update: Update, context: ContextTypes.DEFAULT_TYPE
-) -> int:
-    """Handle input for last seen location."""
-    user_id = update.effective_user.id
-    location = update.message.text.strip()
-    await update_or_create_case(user_id, last_seen_location=location)
-    context.user_data["case"]["last_seen_location"] = location
-    logger.info(f"User {user_id} entered last seen location: {location}")
-
-    # Provide options for sex
-    kb = InlineKeyboardMarkup([[InlineKeyboardButton(get_text(user_id, "male_option"), callback_data="male"), InlineKeyboardButton(get_text(user_id, "female_option"), callback_data="female")]])
-    await update.message.reply_text(get_text(user_id, "sex"), reply_markup=kb)
-    return State.CREATE_CASE_SEX
-
-
-async def handle_sex(update: Update, context: ContextTypes.DEFAULT_TYPE) -> int:
-    """Handle input for sex."""
-    query = update.callback_query
-    await query.answer()
-    user_id = query.from_user.id
-    sex = query.data
-    await update_or_create_case(user_id, gender=sex)
-    context.user_data["case"]["sex"] = sex
-    logger.info(f"User {user_id} selected sex: {sex}")
-    await query.edit_message_text(get_text(user_id, "age"))
-    return State.CREATE_CASE_AGE
-
-
-async def handle_age(update: Update, context: ContextTypes.DEFAULT_TYPE) -> int:
-    """Handle input for age."""
-    user_id = update.effective_user.id
-    age = update.message.text.strip()
-
-    if not age.isdigit():
-        await update.message.reply_text("Please enter a valid number for age.")
-        return State.CREATE_CASE_AGE
-
-    await update_or_create_case(user_id, age=age)
-    context.user_data["case"]["age"] = age
-    logger.info(f"User {user_id} entered age: {age}")
     await update.message.reply_text(get_text(user_id, "hair_color"))
     return State.CREATE_CASE_HAIR_COLOR
 
 
+
+# _________ HAIR COLOR OF THE PERSON 
 async def handle_hair_color(update: Update, context: ContextTypes.DEFAULT_TYPE) -> int:
     """Handle input for hair color."""
     user_id = update.effective_user.id
@@ -382,7 +342,7 @@ async def handle_hair_color(update: Update, context: ContextTypes.DEFAULT_TYPE) 
     await update.message.reply_text(get_text(user_id, "eye_color"))
     return State.CREATE_CASE_EYE_COLOR
 
-
+# _________ EYE COLOR OF THE PERSON 
 async def handle_eye_color(update: Update, context: ContextTypes.DEFAULT_TYPE) -> int:
     """Handle input for eye color."""
     user_id = update.effective_user.id
@@ -390,15 +350,30 @@ async def handle_eye_color(update: Update, context: ContextTypes.DEFAULT_TYPE) -
     await update_or_create_case(user_id, eye_color=eye_color)
     context.user_data["case"]["eye_color"] = eye_color
     logger.info(f"User {user_id} entered eye color: {eye_color}")
+    await update.message.reply_text(get_text(user_id, "last_seen_location"))
+    return State.CREATE_CASE_LAST_SEEN_LOCATION
+
+# _________ LOCATION OF THE PERSON WHERE IT CAN BE SEEN
+async def handle_last_seen_location(
+    update: Update, context: ContextTypes.DEFAULT_TYPE
+) -> int:
+    """Handle input for last seen location."""
+    user_id = update.effective_user.id
+    location = update.message.text.strip()
+    await update_or_create_case(user_id, last_seen_location=location)
+    context.user_data["case"]["last_seen_location"] = location
+    logger.info(f"User {user_id} entered last seen location: {location}")
+
     await update.message.reply_text(get_text(user_id, "height"))
     return State.CREATE_CASE_HEIGHT
+    
 
-
+# _________ HEIGHT OF THE PERSON 
 async def handle_height(update: Update, context: ContextTypes.DEFAULT_TYPE) -> int:
     """Handle input for height."""
     user_id = update.effective_user.id
     height = update.message.text.strip()
-
+    print("Step 1")
     if not height.isdigit():
         await update.message.reply_text("Please enter a valid number for height.")
         return State.CREATE_CASE_HEIGHT
@@ -406,10 +381,11 @@ async def handle_height(update: Update, context: ContextTypes.DEFAULT_TYPE) -> i
     await update_or_create_case(user_id, height=height)
     context.user_data["case"]["height"] = height
     logger.info(f"User {user_id} entered height: {height}")
+    print("Step 2")
     await update.message.reply_text(get_text(user_id, "weight"))
     return State.CREATE_CASE_WEIGHT
 
-
+# _________ WEIGHT OF THE PERSON
 async def handle_weight(update: Update, context: ContextTypes.DEFAULT_TYPE) -> int:
     """Handle input for weight."""
     user_id = update.effective_user.id
@@ -426,6 +402,7 @@ async def handle_weight(update: Update, context: ContextTypes.DEFAULT_TYPE) -> i
     return State.CREATE_CASE_DISTINCTIVE_FEATURES
 
 
+# _________ DISTINCTIVE FEATURE  
 async def handle_distinctive_features(
     update: Update, context: ContextTypes.DEFAULT_TYPE
 ) -> int:
@@ -440,7 +417,7 @@ async def handle_distinctive_features(
     return State.CREATE_CASE_ASK_REASON
 
 
-# Handlers for each state
+# _________ REASON OF FINDING 
 async def handle_reason_for_finding(
     update: Update, context: ContextTypes.DEFAULT_TYPE
 ) -> int:
@@ -448,7 +425,6 @@ async def handle_reason_for_finding(
     user_id = update.effective_user.id
     reason = update.message.text.strip()
 
-    # Fetch the case for the user
     case = await Case.find_one(
         {"user_id": user_id, "status": CaseStatus.DRAFT}, fetch_links=True
     )
@@ -457,18 +433,14 @@ async def handle_reason_for_finding(
         await update.message.reply_text(get_text(user_id, "case_not_found"))
         return State.END
 
-    # Store reason in case and ask for reward amount
     case.reason = reason
     await case.save()
-
-    print(f"Case: {case}")
-
-    # Ask for reward amount based on the wallet type (SOL or USDT)
     wallet = case.wallet
+    print("Getting the sol", wallet.wallet_type)
     if wallet.wallet_type == "SOL":
-        await update.message.reply_text(get_text(user_id, "enter_reward_amount_sol"))
+        await update.message.reply_text(get_text(user_id, "enter_reward_amount").format(type =  wallet.wallet_type))
     elif wallet.wallet_type == "USDT":
-        await update.message.reply_text(get_text(user_id, "enter_reward_amount_usdt"))
+        await update.message.reply_text(get_text(user_id, "enter_reward_amount").format(type =  wallet.wallet_type))
     else:
         await update.message.reply_text(
             get_text(user_id, "enter_reward_amount_unknown")
@@ -477,31 +449,24 @@ async def handle_reason_for_finding(
     return State.CREATE_CASE_ASK_REWARD
 
 
-# Handlers for each state
-
-
+# _________ REWARD AMOUNT OF THE CASE 
 async def handle_ask_reward_amount(
     update: Update, context: ContextTypes.DEFAULT_TYPE
 ) -> int:
     """Handle asking for reward amount and check wallet balance."""
     user_id = update.effective_user.id
     print(f"I am calling from the ask reward amount handler")
-    reward_amount = float(update.message.text.strip())  # User's input as float
+    reward_amount = float(update.message.text.strip()) 
 
-    # Fetch the case and wallet info
     case = await Case.find_one({"user_id": user_id, "status": CaseStatus.DRAFT})
     wallet = await case.wallet.fetch()
 
-    print(f"Wallet: {wallet}")
-
-    # Get wallet balance (assuming you have a method to fetch balance)
     wallet_balance = (
         await WalletService.get_sol_balance(wallet.public_key)
         if wallet.wallet_type == "SOL"
         else await TronWallet.get_usdt_balance(wallet.public_key)
     )
 
-    # Check if the reward amount is greater than available balance
     if reward_amount <= 0:
         await update.message.reply_text(
             get_text(user_id, "reward_amount_negative").format(reward_amount)
@@ -515,11 +480,9 @@ async def handle_ask_reward_amount(
         await update.message.reply_text(get_text(user_id, "refresh_wallet_balance"))
         return State.CREATE_CASE_ASK_REWARD
 
-    # If balance is sufficient, save the reward amount in the case
     case.reward = reward_amount
     await case.save()
 
-    # Confirm the reward amount and proceed with a button
     await update.message.reply_text(
         get_text(user_id, "reward_amount_confirmed").format(reward_amount),
         reply_markup=InlineKeyboardMarkup(
@@ -535,6 +498,7 @@ async def handle_ask_reward_amount(
     return State.CREATE_CASE_CONFIRM_TRANSFER
 
 
+# _________ COFIRMATION FO THE REWARD BY ASKING YES OR NO & IF YES THEN TRANSFER THE COIN TO THE STAKE WALLET 
 async def handle_transfer_confirmation(
     update: Update, context: ContextTypes.DEFAULT_TYPE
 ) -> int:
@@ -552,7 +516,6 @@ async def handle_transfer_confirmation(
 
     if user_input == "confirm_transfer":
         try:
-            # Check if wallet has sufficient balance
             wallet_balance = (
                 await WalletService.get_sol_balance(wallet.public_key)
                 if wallet.wallet_type == "SOL"

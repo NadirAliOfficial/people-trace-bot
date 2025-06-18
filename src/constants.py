@@ -121,8 +121,8 @@ DUMMY_DATA = {
     "en": {
         "mobile_saved": "✅ Mobile number saved: {number}",
         # Case Functionality
-        "create_case_title": "Create New Case",
-        "enter_name": "Enter your name:",
+        "create_case_title": "<b>Case Details</b>",
+        "enter_name": "👤 Enter the full name of the person you’re looking for:",
         "disclaimer_2": (
             "Disclaimer 2:\n\n"
             "1. The reward amount will be held in escrow until the case is resolved.\n"

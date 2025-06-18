@@ -58,14 +58,12 @@ START_LANG_DATA = {
         "tac_invalid": "❌ Invalid TAC. Please try again.",
         "choose_existing_mobile": "Please select an existing number or add a new one.",
         "transfer_instructions": (
-            "\n\n<b>How to Transfer {wallet_type} to Your Wallet:</b>\n\n"
-            "1️⃣ Open your {wallet_type} wallet app or any compatible wallet.\n"
-            "2️⃣ Go to the <b>Send</b> or <b>Transfer</b> section of the wallet.\n"
-            "3️⃣ Paste your <b>Public Key</b> into the recipient address field. Your public key is:\n"
-            "<code>{public_key}</code>\n\n"
-            "4️⃣ Enter the amount of {wallet_type} you want to transfer.\n"
-            "5️⃣ Review the transaction details and confirm the transfer.\n\n"
-            "Once the transfer is successful, the {wallet_type} will appear in your wallet balance."
+            "\n\n<b>💡 How to Transfer {wallet_type} to Your Wallet:</b>\n\n"
+            "1️⃣ Open your {wallet_type}-compatible wallet app.\n"
+            "2️⃣ Tap <b>Send</b> or <b>Transfer</b>.\n"
+            "3️⃣ Paste your <b>Public Key</b> as the recipient:\n<code>{public_key}</code>\n"
+            "4️⃣ Select the correct network: <b>TRC20 (Tron Network)</b>\n"
+            "5️⃣ Enter the amount and confirm the transfer.\n"
         ),
         "no_case_found_in_province": "No cases found in {province} right now. Try another province or check back later!",
         "wallet_name_prompt": "Please enter a name for your {wallet_type} wallet:",

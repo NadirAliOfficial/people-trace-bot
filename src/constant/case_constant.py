@@ -19,7 +19,7 @@ CASE_CONSTANT = {
         "enter_person_name": "👤 Enter the full name of the person you’re looking for:",
         "relationship": "🤝 What is your relationship to this person?",
         "upload_photo": "📸 Upload a clear, recent photo (Max 5MB):",
-        "last_seen_location": "📍 Where was this person last seen?",
+        "last_seen_location": "👕 What was this person last seen wearing? \n (Include clothing type, color, accessories, shoes, etc.)",
         "sex": "⚧️ Gender:",
         "age": "🎂 Age (or approximate):",
         "hair_color": "🧑 Hair color:",
@@ -30,7 +30,7 @@ CASE_CONSTANT = {
         "enter_valid_weight": "Please enter a valid weight (kg).",
         "distinctive_features": "🧷 Any distinctive physical features? (tattoos, scars, etc.)",
         "reason_for_finding": "❓ Why are you looking for this person?",
-        "enter_reward_amount_sol": "Please enter the reward amount in SOL.",
+        "enter_reward_amount": "What reward would you like to offer for verified leads? (in {type})",
         "enter_reward_amount_usdt": "Please enter the reward amount in USDT.",
         "enter_reward_amount_unknown": "Please enter the reward amount (unknown wallet type).",
         "insufficient_balance": "Your balance is insufficient. You have {0} available.",
@@ -69,24 +69,14 @@ CASE_CONSTANT = {
             "🔐 Public Key: <code>{public_key}</code>\n"
             "🌐 Network: {network}\n"
         ),
-        "wallet_create_details_with_balance": (
-            "✅ Wallet Created!\n"
-            "🧾 Name: {name}\n"
-            "💰 Type: {wallet_type}\n"
-            "🔐 Public Key: <code>{public_key}</code>\n"
-            "🌐 Network: {network}\n"
-            "💵 Balance: {balance} {wallet_type}\n"
-        ),
-        "transfer_instructions": (
-            "\n\n<b>How to Transfer {wallet_type} to Your Wallet:</b>\n\n"
-            "1️⃣ Open your {wallet_type} wallet app or any compatible wallet.\n"
-            "2️⃣ Go to the <b>Send</b> or <b>Transfer</b> section of the wallet.\n"
-            "3️⃣ Paste your <b>Public Key</b> into the recipient address field. Your public key is:\n"
-            "<code>{public_key}</code>\n\n"
-            "4️⃣ Enter the amount of {wallet_type} you want to transfer.\n"
-            "5️⃣ Review the transaction details and confirm the transfer.\n\n"
-            "Once the transfer is successful, the {wallet_type} will appear in your wallet balance."
-        ),
+       "wallet_create_details_with_balance": (
+    "<b>✅ Wallet Created!</b>\n"
+    "🧾 <b>Name:</b> {name}\n"
+    "💰 <b>Type:</b> {wallet_type}\n"
+    "🔐 <b>Public Key:</b> <code>{public_key}</code>\n"
+    "🌐 <b>Network:</b> {network}\n"
+    "💵 <b>Balance:</b> {balance} {wallet_type}\n"
+),
         "understood_and_agree": "✅ I Understand and Agree",
     },
     "zh": {
@@ -120,7 +110,7 @@ CASE_CONSTANT = {
         "enter_valid_weight": "请输入有效的体重（公斤）。",
         "distinctive_features": "🧷 是否有明显身体特征？（纹身、疤痕等）",
         "reason_for_finding": "❓ 您为何要寻找此人？",
-        "enter_reward_amount_sol": "请输入以 SOL 计算的赏金金额。",
+        "enter_reward_amount": "请输入以 SOL 计算的赏金金额。",
         "enter_reward_amount_usdt": "请输入以 USDT 计算的赏金金额。",
         "enter_reward_amount_unknown": "请输入赏金金额（未知钱包类型）。",
         "insufficient_balance": "余额不足。您当前可用余额为 {0}。",
@@ -167,16 +157,7 @@ CASE_CONSTANT = {
             "🌐 网络: {network}\n"
             "💵 余额: {balance} {wallet_type}\n"
         ),
-        "transfer_instructions": (
-            "\n\n<b>如何向您的钱包转账 {wallet_type}：</b>\n\n"
-            "1️⃣ 打开您的 {wallet_type} 钱包应用或任何兼容的钱包。\n"
-            "2️⃣ 进入钱包中的 <b>发送</b> 或 <b>转账</b> 页面。\n"
-            "3️⃣ 将您的 <b>公钥</b> 粘贴到收件地址栏。您的公钥为：\n"
-            "<code>{public_key}</code>\n\n"
-            "4️⃣ 输入您要转账的 {wallet_type} 数量。\n"
-            "5️⃣ 查看交易详情并确认转账。\n\n"
-            "一旦转账成功，{wallet_type} 将出现在您的钱包余额中。"
-        ),
+      
         "understood_and_agree": "✅ 我理解并同意",
     },
     "ur": {
@@ -205,7 +186,7 @@ CASE_CONSTANT = {
         "enter_valid_weight": "براہ کرم درست وزن درج کریں (کلو گرام میں)۔",
         "distinctive_features": "اس شخص کی خصوصی جسمانی خصوصیات کیا ہیں؟ (مثلاً: باز کا ٹیٹو)",
         "reason_for_finding": "آپ اس شخص کو کیوں تلاش کر رہے ہیں؟",
-        "enter_reward_amount_sol": "براہ کرم SOL میں انعامی رقم درج کریں۔",
+        "enter_reward_amount": "براہ کرم SOL میں انعامی رقم درج کریں۔",
         "enter_reward_amount_usdt": "براہ کرم USDT میں انعامی رقم درج کریں۔",
         "enter_reward_amount_unknown": "براہ کرم انعامی رقم درج کریں (نامعلوم والیٹ قسم)۔",
         "insufficient_balance": "آپ کا بیلنس کافی نہیں ہے۔ آپ کے پاس {0} دستیاب ہے۔",
@@ -244,16 +225,7 @@ CASE_CONSTANT = {
             "عوامی کنجی: <code>{public_key}</code>\n"
             "بقایا: {balance} {wallet_type}\n\n"
         ),
-        "transfer_instructions": (
-            "\n\n<b>{wallet_type} کو اپنے والیٹ میں منتقل کرنے کا طریقہ:</b>\n\n"
-            "1️⃣ اپنا {wallet_type} والیٹ ایپ یا کسی بھی مطابقت رکھنے والے والیٹ کو کھولیں۔\n"
-            "2️⃣ والیٹ کے <b>بھیجیں</b> یا <b>منتقل کریں</b> سیکشن پر جائیں۔\n"
-            "3️⃣ وصول کنندہ کے پتے کے خانے میں اپنی <b>عوامی کنجی</b> چِسپاں کریں۔ آپ کی عوامی کنجی یہ ہے:\n"
-            "<code>{public_key}</code>\n\n"
-            "4️⃣ {wallet_type} کی رقم درج کریں جو آپ منتقل کرنا چاہتے ہیں۔\n"
-            "5️⃣ لین دین کی تفصیلات کو دیکھیں اور منتقلی کی تصدیق کریں۔\n\n"
-            "جب ٹرانسفر کامیاب ہو جائے تو {wallet_type} آپ کے والیٹ میں ظاہر ہو گا۔"
-        ),
+      
     },
     "ja": {
         # Existing Constants
@@ -281,7 +253,7 @@ CASE_CONSTANT = {
         "enter_valid_weight": "有効な体重（kg）を入力してください。",
         "distinctive_features": "その人の特徴的な身体的特徴は何ですか？（例：鷲のタトゥー）:",
         "reason_for_finding": "なぜその人を探していますか？",
-        "enter_reward_amount_sol": "報酬金額をSOLで入力してください。",
+        "enter_reward_amount": "報酬金額をSOLで入力してください。",
         "enter_reward_amount_usdt": "報酬金額をUSDTで入力してください。",
         "enter_reward_amount_unknown": "報酬金額を入力してください（ウォレット種別不明）。",
         "insufficient_balance": "残高が不足しています。現在利用可能なのは {0} です。",
@@ -320,16 +292,7 @@ CASE_CONSTANT = {
             "パブリックキー: <code>{public_key}</code>\n"
             "残高: {balance} {wallet_type}\n\n"
         ),
-        "transfer_instructions": (
-            "\n\n<b>{wallet_type} をあなたのウォレットに転送する方法:</b>\n\n"
-            "1️⃣ ご自身の {wallet_type} ウォレットアプリ、または互換性のあるウォレットを開きます。\n"
-            "2️⃣ ウォレット内の <b>送る</b> または <b>転送</b> のセクションへ移動します。\n"
-            "3️⃣ 受信者のアドレス欄に <b>パブリックキー</b> を貼り付けます。あなたのパブリックキーは以下の通りです:\n"
-            "<code>{public_key}</code>\n\n"
-            "4️⃣ 転送したい {wallet_type} の数量を入力します。\n"
-            "5️⃣ トランザクション内容を確認し、転送を確定します。\n\n"
-            "転送が成功すると、{wallet_type} がウォレット残高に表示されます。"
-        ),
+
     },
     "ko": {
         # Existing Constants
@@ -357,7 +320,7 @@ CASE_CONSTANT = {
         "enter_valid_weight": "유효한 몸무게(kg)를 입력하세요.",
         "distinctive_features": "그 사람의 특징적인 신체적 특징은 무엇입니까? (예: 독수리 문신)",
         "reason_for_finding": "왜 그 사람을 찾고 있습니까?",
-        "enter_reward_amount_sol": "보상금액을 SOL로 입력하세요.",
+        "enter_reward_amount": "보상금액을 SOL로 입력하세요.",
         "enter_reward_amount_usdt": "보상금액을 USDT로 입력하세요.",
         "enter_reward_amount_unknown": "보상금액을 입력하세요. (지갑 타입 미확인)",
         "insufficient_balance": "잔액이 부족합니다. 사용 가능한 잔액: {0}",
@@ -396,16 +359,7 @@ CASE_CONSTANT = {
             "공개 키: <code>{public_key}</code>\n"
             "잔액: {balance} {wallet_type}\n\n"
         ),
-        "transfer_instructions": (
-            "\n\n<b>{wallet_type}를 귀하의 지갑으로 전송하는 방법:</b>\n\n"
-            "1️⃣ 귀하의 {wallet_type} 지갑 앱이나 호환되는 지갑 앱을 엽니다.\n"
-            "2️⃣ 지갑의 <b>보내기</b> 또는 <b>전송</b> 섹션으로 이동합니다.\n"
-            "3️⃣ 받는 사람 주소 필드에 <b>공개 키</b>를 붙여넣으세요. 귀하의 공개 키는 다음과 같습니다:\n"
-            "<code>{public_key}</code>\n\n"
-            "4️⃣ 전송할 {wallet_type} 금액을 입력합니다.\n"
-            "5️⃣ 거래 내용을 검토하고 전송을 확정합니다.\n\n"
-            "전송이 성공하면 {wallet_type}이(가) 지갑 잔액에 표시됩니다."
-        ),
+     
     },
     "km": {
         # Existing Constants
@@ -433,7 +387,7 @@ CASE_CONSTANT = {
         "enter_valid_weight": "សូមបញ្ចូលទម្ងន់ដែលមានសុពលភាព (kg)។",
         "distinctive_features": "តើមានលក្ខណៈពិសេសអ្វីខ្លះនៃរាងកាយរបស់បុគ្គលនោះ? (ឧទាហរណ៍: សាក់រូបឥន្ទ្រី)",
         "reason_for_finding": "ហេតុអ្វីបានជាអ្នកកំពុងស្វែងរកបុគ្គលនោះ?",
-        "enter_reward_amount_sol": "សូមបញ្ចូលចំនួនរង្វាន់ជា SOL:",
+        "enter_reward_amount": "សូមបញ្ចូលចំនួនរង្វាន់ជា SOL:",
         "enter_reward_amount_usdt": "សូមបញ្ចូលចំនួនរង្វាន់ជា USDT:",
         "enter_reward_amount_unknown": "សូមបញ្ចូលចំនួនរង្វាន់ (ប្រភេទកាបូបមិនស្គាល់):",
         "insufficient_balance": "ចំនួនប្រាក់មិនគ្រប់គ្រាន់។ អ្នកនៅសល់ {0}។",
@@ -472,16 +426,7 @@ CASE_CONSTANT = {
             "គន្លឹះសាធារណៈ: <code>{public_key}</code>\n"
             "ចំនួនប្រាក់: {balance} {wallet_type}\n\n"
         ),
-        "transfer_instructions": (
-            "\n\n<b>របៀបផ្ទេរ {wallet_type} ទៅកាន់កាបូបរបស់អ្នក:</b>\n\n"
-            "1️⃣ បើកកម្មវិធីកាបូប {wallet_type} របស់អ្នក ឬកាបូបណាមួយដែលគាំទ្របាន។\n"
-            "2️⃣ ទៅកាន់ផ្នែក <b>ផ្ញើ</b> ឬ <b>ផ្ទេរ</b> នៃកាបូប។\n"
-            "3️⃣ បិទភ្ជាប់ <b>គន្លឹះសាធារណៈ</b> របស់អ្នកទៅក្នុងប្រអប់អាសយដ្ឋានអ្នកទទួល។ គន្លឹះសាធារណៈរបស់អ្នកគឺ:\n"
-            "<code>{public_key}</code>\n\n"
-            "4️⃣ បញ្ចូលចំនួន {wallet_type} ដែលអ្នកចង់ផ្ទេរ។\n"
-            "5️⃣ ពិនិត្យមើលព័ត៌មានប្រតិបត្តិការ និងបញ្ជាក់ការផ្ទេរ។\n\n"
-            "នៅពេលផ្ទេរដោយជោគជ័យ {wallet_type} នឹងបង្ហាញក្នុងចំនួនប្រាក់កាបូបរបស់អ្នក។"
-        ),
+      
     },
   "ms": {
     "create_case_title": "Cipta Kes Baru",
@@ -514,7 +459,7 @@ CASE_CONSTANT = {
     "enter_valid_weight": "Sila masukkan berat yang sah (kg).",
     "distinctive_features": "🧷 Adakah ciri fizikal yang unik? (tatu, parut, dll.)",
     "reason_for_finding": "❓ Mengapa anda mencari orang ini?",
-    "enter_reward_amount_sol": "Sila masukkan jumlah ganjaran dalam SOL.",
+    "enter_reward_amount": "Sila masukkan jumlah ganjaran dalam SOL.",
     "enter_reward_amount_usdt": "Sila masukkan jumlah ganjaran dalam USDT.",
     "enter_reward_amount_unknown": "Sila masukkan jumlah ganjaran (jenis dompet tidak diketahui).",
     "insufficient_balance": "Baki anda tidak mencukupi. Anda mempunyai {0} tersedia.",
@@ -561,16 +506,7 @@ CASE_CONSTANT = {
       "🌐 Rangkaian: {network}\n"
       "💵 Baki: {balance} {wallet_type}\n"
     ),
-    "transfer_instructions": (
-      "\n\n<b>Cara Memindahkan {wallet_type} ke Dompet Anda:</b>\n\n"
-      "1️⃣ Buka aplikasi dompet {wallet_type} atau mana-mana dompet yang serasi.\n"
-      "2️⃣ Pergi ke bahagian <b>Hantar</b> atau <b>Pemindahan</b> dalam dompet.\n"
-      "3️⃣ Salin <b>Kunci Awam</b> anda ke ruangan alamat penerima. Kunci awam anda adalah:\n"
-      "<code>{public_key}</code>\n\n"
-      "4️⃣ Masukkan jumlah {wallet_type} yang ingin dipindahkan.\n"
-      "5️⃣ Semak butiran transaksi dan sahkan pemindahan.\n\n"
-      "Setelah pemindahan berjaya, {wallet_type} akan kelihatan dalam baki dompet anda."
-    ),
+   
     "understood_and_agree": "✅ Saya Faham dan Setuju"
   },
   "id": {
@@ -604,7 +540,7 @@ CASE_CONSTANT = {
     "enter_valid_weight": "Silakan masukkan berat badan yang valid (kg).",
     "distinctive_features": "🧷 Apakah ada ciri fisik khusus? (tato, bekas luka, dll.)",
     "reason_for_finding": "❓ Mengapa Anda mencari orang ini?",
-    "enter_reward_amount_sol": "Silakan masukkan jumlah hadiah dalam SOL.",
+    "enter_reward_amount": "Silakan masukkan jumlah hadiah dalam SOL.",
     "enter_reward_amount_usdt": "Silakan masukkan jumlah hadiah dalam USDT.",
     "enter_reward_amount_unknown": "Silakan masukkan jumlah hadiah (jenis dompet tidak diketahui).",
     "insufficient_balance": "Saldo Anda tidak mencukupi. Anda memiliki {0} tersisa.",
@@ -651,16 +587,7 @@ CASE_CONSTANT = {
       "🌐 Jaringan: {network}\n"
       "💵 Saldo: {balance} {wallet_type}\n"
     ),
-    "transfer_instructions": (
-      "\n\n<b>Cara Transfer {wallet_type} ke Dompet Anda:</b>\n\n"
-      "1️⃣ Buka aplikasi dompet {wallet_type} atau dompet kompatibel lainnya.\n"
-      "2️⃣ Masuk ke bagian <b>Kirim</b> atau <b>Transfer</b> di dompet.\n"
-      "3️⃣ Tempelkan <b>Kunci Publik</b> Anda ke kolom alamat penerima. Kunci publik Anda adalah:\n"
-      "<code>{public_key}</code>\n\n"
-      "4️⃣ Masukkan jumlah {wallet_type} yang ingin Anda transfer.\n"
-      "5️⃣ Periksa detail transaksi dan konfirmasi transfer.\n\n"
-      "Setelah transfer berhasil, {wallet_type} akan muncul di saldo dompet Anda."
-    ),
+  
     "understood_and_agree": "✅ Saya Mengerti dan Setuju"
   }
   ,
@@ -695,7 +622,7 @@ CASE_CONSTANT = {
     "enter_valid_weight": "กรุณาป้อนน้ำหนักที่ถูกต้อง (กก.).",
     "distinctive_features": "🧷 มีลักษณะเด่นทางกายภาพใดบ้าง? (รอยสัก, แผลเป็น ฯลฯ)",
     "reason_for_finding": "❓ ทำไมคุณถึงตามหาบุคคลนี้?",
-    "enter_reward_amount_sol": "กรุณาป้อนจำนวนเงินรางวัลในรูปแบบ SOL.",
+    "enter_reward_amount": "กรุณาป้อนจำนวนเงินรางวัลในรูปแบบ SOL.",
     "enter_reward_amount_usdt": "กรุณาป้อนจำนวนเงินรางวัลในรูปแบบ USDT.",
     "enter_reward_amount_unknown": "กรุณาป้อนจำนวนเงินรางวัล (ประเภทกระเป๋าเงินไม่ทราบ)",
     "insufficient_balance": "ยอดคงเหลือไม่เพียงพอ คุณมี {0} อยู่ในบัญชี",
@@ -742,16 +669,7 @@ CASE_CONSTANT = {
       "🌐 เครือข่าย: {network}\n"
       "💵 ยอดคงเหลือ: {balance} {wallet_type}\n"
     ),
-    "transfer_instructions": (
-      "\n\n<b>วิธีการโอน {wallet_type} เข้ากระเป๋าเงินของคุณ:</b>\n\n"
-      "1️⃣ เปิดแอปกระเป๋าเงิน {wallet_type} หรือกระเป๋าเงินที่รองรับได้\n"
-      "2️⃣ เข้าไปที่ส่วน <b>ส่ง</b> หรือ <b>โอน</b> ในกระเป๋าเงิน\n"
-      "3️⃣ วาง <b>กุญแจสาธารณะ</b> ของคุณในช่องที่อยู่ผู้รับ กุญแจสาธารณะของคุณคือ:\n"
-      "<code>{public_key}</code>\n\n"
-      "4️⃣ ป้อนจำนวน {wallet_type} ที่คุณต้องการโอน\n"
-      "5️⃣ ตรวจสอบรายละเอียดการทำธุรกรรมและยืนยันการโอน\n\n"
-      "เมื่อการโอนสำเร็จ {wallet_type} จะแสดงในยอดคงเหลือของกระเป๋าเงินคุณ"
-    ),
+ 
     "understood_and_agree": "✅ ฉันเข้าใจและยอมรับ"
   },
   "vi": {
@@ -785,7 +703,7 @@ CASE_CONSTANT = {
     "enter_valid_weight": "Vui lòng nhập cân nặng hợp lệ (kg).",
     "distinctive_features": "🧷 Có đặc điểm ngoại hình nào nổi bật không? (hình xăm, sẹo, v.v.)",
     "reason_for_finding": "❓ Tại sao bạn muốn tìm người này?",
-    "enter_reward_amount_sol": "Vui lòng nhập số tiền thưởng bằng SOL.",
+    "enter_reward_amount": "Vui lòng nhập số tiền thưởng bằng SOL.",
     "enter_reward_amount_usdt": "Vui lòng nhập số tiền thưởng bằng USDT.",
     "enter_reward_amount_unknown": "Vui lòng nhập số tiền thưởng (loại ví không xác định).",
     "insufficient_balance": "Số dư không đủ. Bạn còn lại {0}.",
@@ -832,16 +750,7 @@ CASE_CONSTANT = {
       "🌐 Mạng lưới: {network}\n"
       "💵 Số dư: {balance} {wallet_type}\n"
     ),
-    "transfer_instructions": (
-      "\n\n<b>Cách Chuyển {wallet_type} Vào Ví Của Bạn:</b>\n\n"
-      "1️⃣ Mở ứng dụng ví {wallet_type} hoặc bất kỳ ví tương thích nào.\n"
-      "2️⃣ Đi đến phần <b>Gửi</b> hoặc <b>Chuyển</b> trong ví.\n"
-      "3️⃣ Dán <b>Khóa Công Khai</b> vào ô địa chỉ người nhận. Khóa công khai của bạn là:\n"
-      "<code>{public_key}</code>\n\n"
-      "4️⃣ Nhập số lượng {wallet_type} mà bạn muốn chuyển.\n"
-      "5️⃣ Kiểm tra thông tin giao dịch và xác nhận chuyển tiền.\n\n"
-      "Khi giao dịch thành công, {wallet_type} sẽ xuất hiện trong số dư ví của bạn."
-    ),
+   
     "understood_and_agree": "✅ Tôi Hiểu Và Đồng Ý"
   }
    }

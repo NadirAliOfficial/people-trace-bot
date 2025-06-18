@@ -9,7 +9,6 @@ from handlers.case_handler import (
     handle_last_seen_location,
     handle_new_mobile,
     handle_select_mobile,
-    handle_name,
     handle_person_name,
     handle_photo,
     handle_reason_for_finding,
@@ -179,9 +178,6 @@ start_handler = ConversationHandler(
         State.HANDLE_REPLY: [CallbackQueryHandler( message_router, pattern="(create_case|find_people|settings|help)$")],
 
         # Create Case Flow:
-        State.CREATE_CASE_NAME: [
-            MessageHandler(filters.TEXT & ~filters.COMMAND, handle_name)
-        ],
         State.CREATE_CASE_MOBILE: [
             MessageHandler(filters.TEXT & ~filters.COMMAND, handle_new_mobile)
         ],

@@ -689,36 +689,57 @@ async def wallet_selection_callback(
             wallet_type=wallet_type,
             public_key=wallet_details["public_key"],
         )
-        msg += transfer_instructions
 
-        await query.edit_message_text(msg, parse_mode="HTML")
+        full_msg = msg + transfer_instructions + f"\n\n<b>💰 Current Balance:</b> {total_sol} {wallet_type}\n<b>🔗 Wallet Address (TRC20):</b> <code>{wallet_details["public_key"]}</code>"
 
-
-        # Use constants for button labels and messages
-        create_case_btn = get_text(user_id, "create_case_btn")  
-        find_people_btn = get_text(user_id, "find_btn")       
-        settings_btn = get_text(user_id, "btn_language")      
-        help_btn = get_text(user_id, "help_command")          
-
-        # Define the keyboard using constants
-        keyboard = [
-            [InlineKeyboardButton(f"✅ {create_case_btn}", callback_data="create_case")],
+        buttons = [
             [
-                InlineKeyboardButton(f"🕵️ {find_people_btn}", callback_data="find_people"),
-                InlineKeyboardButton(f"⚙️ {settings_btn}", callback_data="settings"),
-            ],
-            [InlineKeyboardButton(f"❓ {help_btn}", url="https://t.me/peopletrace")],
+                InlineKeyboardButton("🔄 Refresh Wallet", callback_data="refresh_wallet"),
+                InlineKeyboardButton("➡️ Continue to Case Posting", callback_data="create_case"),
+            ]
         ]
 
-
-
-
-      
-
         await query.message.reply_text(
-            get_text(user_id, "main_menu"),
-            reply_markup=InlineKeyboardMarkup(keyboard)
+            full_msg,
+            parse_mode="HTML",
+            reply_markup=InlineKeyboardMarkup(buttons)
         )
+        
+
+        # msg = get_text(user_id, "wallet_create_details_with_balance").format(
+      
+        # )
+
+        # transfer_instructions = get_text(user_id, "transfer_instructions").format(
+        
+        # )
+        # msg += transfer_instructions
+
+        # await query.edit_message_text(msg, parse_mode="HTML")
+
+        
+
+
+        # # Use constants for button labels and messages
+        # create_case_btn = get_text(user_id, "create_case_btn")  
+        # find_people_btn = get_text(user_id, "find_btn")       
+        # settings_btn = get_text(user_id, "btn_language")      
+        # help_btn = get_text(user_id, "help_command")          
+
+        # # Define the keyboard using constants
+        # keyboard = [
+        #     [InlineKeyboardButton(f"✅ {create_case_btn}", callback_data="create_case")],
+        #     [
+        #         InlineKeyboardButton(f"🕵️ {find_people_btn}", callback_data="find_people"),
+        #         InlineKeyboardButton(f"⚙️ {settings_btn}", callback_data="settings"),
+        #     ],
+        #     [InlineKeyboardButton(f"❓ {help_btn}", url="https://t.me/peopletrace")],
+        # ]
+
+        # await query.message.reply_text(
+        #     get_text(user_id, "main_menu"),
+        #     reply_markup=InlineKeyboardMarkup(keyboard)
+        # )
         return State.HANDLE_REPLY  # Use a custom state if needed
     else:
         await query.edit_message_text(
@@ -784,33 +805,44 @@ async def wallet_name_handler(
             wallet_type=wallet_type,
             public_key=wallet.public_key,
         )
-        msg += transfer_instructions
 
-        await update.message.reply_text(msg, parse_mode="HTML")
+        full_msg = msg + transfer_instructions + f"\n\n<b>💰 Current Balance:</b> {total_sol} {wallet_type}\n<b>🔗 Wallet Address (TRC20):</b> <code>{wallet.public_key}</code>"
 
-      
-       
-        # Use constants for button labels and messages
-        create_case_btn = get_text(user_id, "create_case_btn")  
-        find_people_btn = get_text(user_id, "find_btn")       
-        settings_btn = get_text(user_id, "btn_language")      
-        help_btn = get_text(user_id, "help_command")          
-
-        # Define the keyboard using constants
-        keyboard = [
-            [InlineKeyboardButton(f"✅ {create_case_btn}", callback_data="create_case")],
+        buttons = [
             [
-                InlineKeyboardButton(f"🕵️ {find_people_btn}", callback_data="find_people"),
-                InlineKeyboardButton(f"⚙️ {settings_btn}", callback_data="settings"),
-            ],
-            [InlineKeyboardButton(f"❓ {help_btn}", url="https://t.me/peopletrace")],
+                InlineKeyboardButton("🔄 Refresh Wallet", callback_data="refresh_wallet"),
+                InlineKeyboardButton("➡️ Continue to Case Posting", callback_data="create_case"),
+            ]
         ]
-     
 
         await update.message.reply_text(
-            get_text(user_id, "main_menu"),
-            reply_markup=InlineKeyboardMarkup(keyboard)
+            full_msg,
+            parse_mode="HTML",
+            reply_markup=InlineKeyboardMarkup(buttons)
         )
+      
+       
+        # # Use constants for button labels and messages
+        # create_case_btn = get_text(user_id, "create_case_btn")  
+        # find_people_btn = get_text(user_id, "find_btn")       
+        # settings_btn = get_text(user_id, "btn_language")      
+        # help_btn = get_text(user_id, "help_command")          
+
+        # # Define the keyboard using constants
+        # keyboard = [
+        #     [InlineKeyboardButton(f"✅ {create_case_btn}", callback_data="create_case")],
+        #     [
+        #         InlineKeyboardButton(f"🕵️ {find_people_btn}", callback_data="find_people"),
+        #         InlineKeyboardButton(f"⚙️ {settings_btn}", callback_data="settings"),
+        #     ],
+        #     [InlineKeyboardButton(f"❓ {help_btn}", url="https://t.me/peopletrace")],
+        # ]
+     
+
+        # await update.message.reply_text(
+        #     get_text(user_id, "main_menu"),
+        #     reply_markup=InlineKeyboardMarkup(keyboard)
+        # )
 
         return State.HANDLE_REPLY  # Use a custom state if needed
     else:
@@ -830,9 +862,9 @@ async def message_router(update: Update, context: ContextTypes.DEFAULT_TYPE):
     city = context.user_data.get("city", None)
 
     if choice == "create_case":
-        await query.edit_message_text(get_text(user_id, "create_case_title"))
-        await query.message.reply_text(get_text(user_id, "enter_name"))
-        return State.CREATE_CASE_NAME
+        await query.edit_message_text(get_text(user_id, "create_case_title"), parse_mode="HTML")
+        await query.message.reply_text(get_text(user_id, "enter_person_name"))
+        return State.CREATE_CASE_PERSON_NAME
 
     elif choice == "find_people":
          # Clearing the province
