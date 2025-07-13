@@ -41,12 +41,17 @@ START_LANG_DATA = {
         "btn_language": "Change Language",
         "create_new_wallet": "➕ Create New Wallet",
         "btn_mobile_number": "Mobile Number",
-        "btn_close_menu": "Close Menu",
         "enter_mobile": (
             "📢 *Ready to Help Find Someone? Let’s Verify You First*\n\n"
             "To maintain safety and trust in the community, we need to verify your contact number.\n\n"
             "We'll send you a TAC (one-time code) for confirmation.🔢 Enter the TAC sent to your phone via WhatsApp:\n"
             "e.g., 123456\n\n"
+            "📞 Please enter your mobile number (with country code):"
+        ),
+         "enter_mobile_post_case": (
+            "📢 *Ready to Post a Case? Let’s Verify You First*\n\n"
+            "To ensure legitimacy and protect the community, please verify your contact number first. \n"
+            "We'll send you a TAC (one-time code) for confirmation. \n\n"
             "📞 Please enter your mobile number (with country code):"
         ),
         "invalid_choice": "Invalid choice. Conversation ended.",
@@ -140,7 +145,6 @@ START_LANG_DATA = {
         "btn_language": "更改语言",
         "create_new_wallet": "➕ 创建新钱包",
         "btn_mobile_number": "手机号码",
-        "btn_close_menu": "关闭菜单",
         "enter_mobile": (
             "📢 *准备帮助寻找某人？请先验证您的身份*\n\n"
             "为了维护社区的安全与信任，我们需要验证您的联系方式。\n\n"
@@ -239,7 +243,6 @@ START_LANG_DATA = {
         "btn_language": "Tukar Bahasa",
         "create_new_wallet": "➕ Cipta Dompet Baru",
         "btn_mobile_number": "Nombor Telefon",
-        "btn_close_menu": "Tutup Menu",
         "enter_mobile": (
             "📢 *Sedia Untuk Membantu Cari Seseorang? Mari Sahkan Nombor Anda Dulu*\n\n"
             "Untuk mengekalkan keselamatan dan kepercayaan dalam komuniti, kami perlu sahkan nombor hubungan anda.\n\n"
@@ -340,7 +343,6 @@ START_LANG_DATA = {
         "btn_language": "เปลี่ยนภาษา",
         "create_new_wallet": "➕ สร้างกระเป๋าเงินใหม่",
         "btn_mobile_number": "หมายเลขโทรศัพท์",
-        "btn_close_menu": "ปิดเมนู",
         "enter_mobile": (
             "📢 *พร้อมจะช่วยค้นหาใครสักคนไหม? มาตรวจสอบเบอร์โทรของคุณก่อน*\n\n"
             "เพื่อรักษาความปลอดภัยและความน่าเชื่อถือในชุมชน เราจำเป็นต้องตรวจสอบเบอร์ติดต่อของคุณ\n\n"
@@ -441,7 +443,6 @@ START_LANG_DATA = {
         "btn_language": "Thay Đổi Ngôn Ngữ",
         "create_new_wallet": "➕ Tạo Ví Mới",
         "btn_mobile_number": "Số Điện Thoại",
-        "btn_close_menu": "Đóng Menu",
         "enter_mobile": (
             "📢 *Sẵn sàng giúp tìm người? Hãy xác minh số điện thoại của bạn trước*\n\n"
             "Để đảm bảo an toàn và uy tín trong cộng đồng, chúng tôi cần xác minh số liên lạc của bạn.\n\n"
@@ -542,7 +543,6 @@ START_LANG_DATA = {
         "btn_language": "زبان تبدیل کریں",
         "create_new_wallet": "➕ نیا والیٹ بنائیں",
         "btn_mobile_number": "موبائل نمبر",
-        "btn_close_menu": "مینو بند کریں",
         "enter_mobile": (
             "📢 *کسی کو تلاش کرنے کے لیے آپ کی تصدیق کرنی ہو گی*\n\n"
             "برادری کی حفاظت اور اعتماد کے لیے ہمیں آپ کے رابطے کی تصدیق کرنے کی ضرورت ہے۔\n\n"
@@ -643,7 +643,6 @@ START_LANG_DATA = {
         "btn_language": "言語を変更",
         "create_new_wallet": "➕ 新しいウォレットを作成",
         "btn_mobile_number": "電話番号",
-        "btn_close_menu": "メニューを閉じる",
         "enter_mobile": (
             "📢 *誰かを見つける準備ができましたか？最初に電話番号を確認しましょう*\n\n"
             "コミュニティの安全と信頼を守るために、連絡先の確認が必要です。\n\n"
@@ -744,7 +743,6 @@ START_LANG_DATA = {
         "btn_language": "ផ្លាស់ប្ដូរភាសា",
         "create_new_wallet": "➕ បង្កើតកាបូបថ្មី",
         "btn_mobile_number": "លេខទូរសព្ទ",
-        "btn_close_menu": "បិទម៉ឺនុយ",
         "enter_mobile": (
             "📢 *ត្រៀមជួយស្វែងរកនរណាម្នាក់ទេ? សូមផ្ទៀងផ្ទាត់លេខរបស់អ្នកមុនសិន*\n\n"
             "ដើម្បីរក្សាសុវត្ថិភាពនិងទំនុកចិត្តក្នុងសហគមន៍ យើងខ្ញុំត្រូវការផ្ទៀងផ្ទាត់លេខទំនាក់ទំនងរបស់អ្នក។\n\n"
@@ -845,7 +843,6 @@ START_LANG_DATA = {
         "btn_language": "Ganti Bahasa",
         "create_new_wallet": "➕ Buat Dompet Baru",
         "btn_mobile_number": "Nomor Ponsel",
-        "btn_close_menu": "Tutup Menu",
         "enter_mobile": (
             "📢 *Siap Membantu Menemukan Seseorang? Mari Verifikasi Nomor Anda Terlebih Dahulu*\n\n"
             "Untuk menjaga keamanan dan kepercayaan komunitas, kami perlu memverifikasi nomor kontak Anda.\n\n"
@@ -946,7 +943,6 @@ START_LANG_DATA = {
         "btn_language": "언어 변경",
         "create_new_wallet": "➕ 새 지갑 생성",
         "btn_mobile_number": "휴대전화 번호",
-        "btn_close_menu": "메뉴 닫기",
         "enter_mobile": (
             "📢 *누군가를 찾기 위해 먼저 본인 인증이 필요합니다*\n\n"
             "커뮤니티의 안전과 신뢰를 위해 연락처 확인이 필요합니다.\n\n"

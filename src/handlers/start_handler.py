@@ -529,7 +529,7 @@ async def action_callback(update: Update, context: ContextTypes.DEFAULT_TYPE) ->
             )
             return State.MOBILE_MANAGEMENT
         else:
-            await query.edit_message_text(get_text(user_id, "enter_mobile"), parse_mode="Markdown")
+            await query.edit_message_text(get_text(user_id, "enter_mobile_post_case"), parse_mode="Markdown")
             return State.CREATE_CASE_MOBILE
     elif choice == "find_people":
         # Clearing the province

@@ -128,9 +128,10 @@ async def settings_menu_callback(update: Update, context: ContextTypes.DEFAULT_T
             return State.SETTINGS_MOBILE_MANAGEMENT
 
     elif choice == "settings_close":
-        # Close the menu
         await query.edit_message_text(
-            get_text(user_id, "btn_close_menu"), parse_mode="HTML"
+            text=get_text(user_id, "menu_close"),
+            parse_mode="HTML",
+            reply_markup=None  
         )
         return State.END
 

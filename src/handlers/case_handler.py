@@ -63,11 +63,10 @@ async def handle_select_mobile(
 
     if query.data == "mobile_add":
         await query.edit_message_text(
-            get_text(user_id, "enter_mobile"), 
-                        parse_mode="Markdown"
-
+            get_text(user_id, "enter_mobile_post_case"), 
+            parse_mode="Markdown"
         )        
-        return State.CREATE_CASE_MOBILE  # Transition to state for mobile number input
+        return State.CREATE_CASE_MOBILE  
     else:
         selected_mobile = query.data.replace("select_mobile_", "")
 
@@ -79,7 +78,7 @@ async def handle_select_mobile(
 
         context.user_data["mobile"] = selected_mobile
         context.user_data["selected_number"] = (
-            selected_mobile  # Save the MobileNumber reference
+            selected_mobile  
         )
 
         if NODE_ENV == "production":
@@ -108,15 +107,13 @@ async def handle_new_mobile(update: Update, context: ContextTypes.DEFAULT_TYPE) 
         context.user_data["case"] = {}
 
     print("Mobile Number is:", mobile_number)
-    if re.match(r"^\+?\d{10,15}$", mobile_number):  # Basic validation for mobile number
+    if re.match(r"^\+?\d{10,15}$", mobile_number):  
         context.user_data["mobile"] = mobile_number
 
         context.user_data["selected_number"] = mobile_number
-        # Update or create the case with the new mobile number
-        print(f"Mobile number: {mobile_number}")
 
         if NODE_ENV == "production":
-            tac = generate_tac()  # Generate TAC for the new mobile number
+            tac = generate_tac() 
             context.user_data["tac"] = tac
             print(f"Tac are: {tac}")
 
@@ -135,11 +132,9 @@ async def handle_new_mobile(update: Update, context: ContextTypes.DEFAULT_TYPE) 
             print(f"Skipping OTP sending in {NODE_ENV} mode.")
             
 
-        # Proceed to the next step: Enter the TAC
         await update.message.reply_text(get_text(user_id, "enter_tac"))
         return State.CREATE_CASE_TAC
     else:
-        # If invalid, prompt the user to enter a valid mobile number format
         await update.message.reply_text(get_text(user_id, "enter_valid_mobile"))
         return State.CREATE_CASE_MOBILE
 
