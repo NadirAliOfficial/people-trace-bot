@@ -643,7 +643,7 @@ async def confirm_delete_wallet(update: Update, context: ContextTypes.DEFAULT_TY
             InlineKeyboardButton(
                 get_text(user_id,"yes_delete" ), callback_data=f"delete_wallet_{wallet_id}"
             ),
-            InlineKeyboardButton("Cancel", callback_data="wallet_menu"),
+            InlineKeyboardButton("Cancel", callback_data="cancel_delete_wallet"),
         ]
     ]
 
@@ -653,12 +653,34 @@ async def confirm_delete_wallet(update: Update, context: ContextTypes.DEFAULT_TY
     await query.message.edit_text(message, reply_markup=InlineKeyboardMarkup(kb))
     return State.DELETE_WALLET
 
+@catch_async
+async def cancel_delete_wallet(update: Update, context: ContextTypes.DEFAULT_TYPE):
+    """Process the deletion of a wallet."""
+    query = update.callback_query
+    user_id = update.effective_user.id
+    message = get_text(user_id, "delete_wallet_confirm_reject")
+    await query.message.edit_text(message)
+    return State.END
+
+  
+
+
 
 @catch_async
 async def process_delete_wallet(update: Update, context: ContextTypes.DEFAULT_TYPE):
     """Process the deletion of a wallet."""
     query = update.callback_query
-    wallet_id = query.data.split("_")[-1]
+
+    print("Getting the query data", query.data)
+
+    wallet_id = query.data.split("_")[2]
+
+    
+    
+    if not wallet_id:
+        message = get_text(user_id, "delete_wallet_confirm_reject")
+        await query.message.edit_text(message)
+        return State.END
     user_id = update.effective_user.id
 
     success = await WalletService.soft_delete_wallet(wallet_id)
@@ -677,7 +699,8 @@ async def back_to_wallet_menu(update: Update, context: ContextTypes.DEFAULT_TYPE
 
     user_id = update.effective_user.id
     message = get_text(user_id, "wallet_menu_message")  # Load the wallet menu message
-
+    
+    
     kb = [
         [
             InlineKeyboardButton(

@@ -73,6 +73,7 @@ WALLET_LANG_DATA = {
         "wallet_deleted": "Wallet deleted successfully.",
         "failed_to_delete_wallet": "Failed to delete wallet.",
         "delete_wallet_header": "Select a wallet to delete:",
+        "delete_wallet_confirm_reject": "You didn't confirm to delete the wallet"
     },
     "zh": {
         "choose_wallet": "请选择钱包类型：",

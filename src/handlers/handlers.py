@@ -65,6 +65,7 @@ from handlers.listing_handler import (
 from handlers.stats_handler import back_to_stats, handle_local_province_city, invalid_selection, my_case_detail_callback, stats_command, stats_menu_callback, unsolved_country_callback, view_my_cases_callback
 from handlers.wallet_handler import (
     back_to_wallet_menu,
+    cancel_delete_wallet,
     confirm_delete_wallet,
     create_wallet,
     delete_wallet,
@@ -378,6 +379,9 @@ wallet_handler = ConversationHandler(
         ],
         State.DELETE_WALLET: [
             CallbackQueryHandler(process_delete_wallet, pattern="^delete_wallet_"),
+            CallbackQueryHandler(cancel_delete_wallet, pattern="^cancel_delete_wallet"),
+
+                
         ],
 
         
