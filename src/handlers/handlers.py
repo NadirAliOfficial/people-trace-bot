@@ -358,7 +358,7 @@ wallet_handler = ConversationHandler(
             CallbackQueryHandler(view_history, pattern="^view_history$"),
             CallbackQueryHandler(create_wallet, pattern="^create_wallet$"),
             CallbackQueryHandler(delete_wallet, pattern="^delete_wallet$"),
-            CallbackQueryHandler(back_to_wallet_menu, pattern="^back_to_wallet_menu$"),
+            CallbackQueryHandler(back_to_wallet_menu, pattern="^back_to_wallet_menu$"), # TESTED
         ],
         State.SOL_WALLET_DETAIL: [
             CallbackQueryHandler(show_sol_wallet_detail, pattern="^sol_detail_"),
@@ -377,13 +377,16 @@ wallet_handler = ConversationHandler(
             CallbackQueryHandler(back_to_wallet_menu, pattern="^back_to_wallet_menu$"),
         ],
         State.CONFIRM_PRIVATE_KEY: [
-            CallbackQueryHandler(show_private_key, pattern="^(confirm_pk|cancel_pk)$")
+            CallbackQueryHandler(show_private_key, pattern="^(confirm_pk|cancel_pk)$"),
+            CallbackQueryHandler(back_to_wallet_menu, pattern="^back_to_wallet_menu$"),
         ],
         State.SHOW_ADDRESS: [
             CallbackQueryHandler(show_specific_address, pattern="^show_address_"),
+            CallbackQueryHandler(back_to_wallet_menu, pattern="^back_to_wallet_menu$"),
         ],
         State.VIEW_HISTORY: [
             CallbackQueryHandler(view_specific_history, pattern="^view_history_"),
+            CallbackQueryHandler(back_to_wallet_menu, pattern="^back_to_wallet_menu$"),
         ],
         State.SELECT_WALLET_TYPE: [
             CallbackQueryHandler(

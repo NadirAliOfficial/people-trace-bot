@@ -38,6 +38,12 @@ WALLET_LANG_DATA = {
         "refresh_btn": "🔄 Refresh",
         "wallet_not_found": "Wallet not found.",
         "show_balance": "\n\n🔷 {name}\n\n💰 Balance: {balance}\n🔑 Public Key: {public_key}\n\nSelect an action:",
+        "wallet_security_warning": (
+          "⚠️ Security Warning\n\n"
+        "Private keys give full access to your wallet. "
+        "Never share them with anyone!\n\n"
+        "Are you sure you want to view the private key?"
+        ),
         "show_private_key": "🔐 Show Private Key",
         "back_to_wallet": "⬅️ Back to Wallets",
         "your_usdt_wallet": "📋 Your USDT Wallets:",

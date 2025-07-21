@@ -15,6 +15,38 @@ def escape_markdown_v2(text: str) -> str:
     return re.sub(f"([{re.escape(escape_chars)}])", r"\\\1", text)
 
 
+def back_to_wallet_menu_keyboard(user_id: int) -> list:
+    kb = [
+        [
+            InlineKeyboardButton(
+                get_text(user_id, "refresh_btn"), callback_data="refresh_wallets"
+            )
+        ],
+        [
+            InlineKeyboardButton(
+                get_text(user_id, "sol_btn"), callback_data="sol_wallets"
+            ),
+            InlineKeyboardButton(
+                get_text(user_id, "usdt_btn"), callback_data="usdt_wallets"
+            ),
+        ],
+        [
+            InlineKeyboardButton(
+                get_text(user_id, "address_btn"), callback_data="show_address"
+            )
+        ],
+        [
+            InlineKeyboardButton(
+                get_text(user_id, "create_wallet_btn"), callback_data="create_wallet"
+            ),
+            InlineKeyboardButton(
+                get_text(user_id, "delete_wallet_btn"), callback_data="delete_wallet"
+            ),
+        ],
+    ]
+    return kb
+
+
 
 # ====================== Wallet Implementation ======================
 @catch_async
@@ -46,11 +78,6 @@ async def wallet_command(update: Update, context: ContextTypes.DEFAULT_TYPE):
         [
             InlineKeyboardButton(
                 get_text(user_id, "address_btn"), callback_data="show_address"
-            )
-        ],
-        [
-            InlineKeyboardButton(
-                get_text(user_id, "history_btn"), callback_data="view_history"
             )
         ],
         [
@@ -101,11 +128,6 @@ async def refresh_wallets(update: Update, context: ContextTypes.DEFAULT_TYPE):
         [
             InlineKeyboardButton(
                 get_text(user_id, "address_btn"), callback_data="show_address"
-            )
-        ],
-        [
-            InlineKeyboardButton(
-                get_text(user_id, "history_btn"), callback_data="view_history"
             )
         ],
         [
@@ -168,7 +190,7 @@ async def sol_wallets(update: Update, context: ContextTypes.DEFAULT_TYPE):
     # Add navigation buttons
     kb.append([
         InlineKeyboardButton(get_text(user_id, "refresh_btn"), callback_data="sol_wallets"),
-        InlineKeyboardButton(get_text(user_id, "back_button"), callback_data="back_to_wallet_menu")
+        InlineKeyboardButton(get_text(user_id, "back_to_wallet"), callback_data="back_to_wallet_menu")
     ])
 
     await query.edit_message_text(
@@ -251,7 +273,7 @@ async def usdt_wallets(update: Update, context: ContextTypes.DEFAULT_TYPE):
     # Add navigation buttons
     kb.append([
         InlineKeyboardButton(get_text(user_id, "refresh_btn"), callback_data="usdt_wallets"),
-        InlineKeyboardButton(get_text(user_id, "back_button"), callback_data="back_to_wallet_menu")
+        InlineKeyboardButton(get_text(user_id, "back_to_wallet"), callback_data="back_to_wallet_menu")
     ])
 
     await query.edit_message_text(
@@ -291,7 +313,7 @@ async def usdt_wallets(update: Update, context: ContextTypes.DEFAULT_TYPE):
     # Add navigation buttons
     kb.append([
         InlineKeyboardButton(get_text(user_id, "refresh_btn"), callback_data="usdt_wallets"),
-        InlineKeyboardButton(get_text(user_id, "back_button"), callback_data="back_to_wallet_menu")
+        InlineKeyboardButton(get_text(user_id, "back_to_wallet"), callback_data="back_to_wallet_menu")
     ])
 
     await query.edit_message_text(
@@ -332,7 +354,7 @@ async def show_usdt_wallet_detail(update: Update, context: ContextTypes.DEFAULT_
     # Create action buttons
     kb = [
              [InlineKeyboardButton(get_text(user_id, "show_private_key"), callback_data=f"req_pk_{wallet['id']}")],
-        [InlineKeyboardButton(get_text(user_id, "back_to_wallet"), callback_data="usdt_wallets")]
+        [InlineKeyboardButton(get_text(user_id, "back_to_wallet"), callback_data="back_to_wallet_menu")]
     ]
 
     await query.message.edit_text(
@@ -355,14 +377,11 @@ async def request_private_key(update: Update, context: ContextTypes.DEFAULT_TYPE
 
     kb = [
         [InlineKeyboardButton(get_text(user_id, "show_it_btn"), callback_data="confirm_pk")],
-        [InlineKeyboardButton(get_text(user_id, "cancel_btn"), callback_data="cancel_pk")]
+        [InlineKeyboardButton(get_text(user_id, "back_to_wallet"), callback_data="back_to_wallet_menu")]
     ]
 
     warning_text = escape_markdown_v2(
-        "⚠️ Security Warning\n\n"
-        "Private keys give full access to your wallet. "
-        "Never share them with anyone!\n\n"
-        "Are you sure you want to view the private key?"
+        get_text(user_id, "wallet_security_warning")
     )
 
     await query.message.edit_text(
@@ -396,7 +415,7 @@ async def show_private_key(update: Update, context: ContextTypes.DEFAULT_TYPE):
     )
 
     # Create back button
-    kb = [[InlineKeyboardButton(get_text(user_id, "back_to_wallet"), callback_data=f"usdt_detail_{wallet['id']}")]]
+    kb = [[InlineKeyboardButton(get_text(user_id, "back_to_wallet"), callback_data="back_to_wallet_menu")]]
 
     await query.message.edit_text(
         warning_message,
@@ -459,7 +478,7 @@ async def show_specific_address(update: Update, context: ContextTypes.DEFAULT_TY
         kb = [
             [
                 InlineKeyboardButton(
-                    get_text(user_id, "back_button"),
+                    get_text(user_id, "back_to_wallet"),
                     callback_data="back_to_wallet_menu",
                 )
             ]
@@ -694,54 +713,24 @@ async def process_delete_wallet(update: Update, context: ContextTypes.DEFAULT_TY
 async def back_to_wallet_menu(update: Update, context: ContextTypes.DEFAULT_TYPE):
     """Handles going back to the wallet menu."""
     query = update.callback_query
-    await query.answer()
+    if query:
+        await query.answer()
 
     user_id = update.effective_user.id
-    message = get_text(user_id, "wallet_menu_message")  # Load the wallet menu message
-    
-    
-    kb = [
-        [
-            InlineKeyboardButton(
-                get_text(user_id, "refresh_btn"), callback_data="refresh_wallets"
-            )
-        ],
-        [
-            InlineKeyboardButton(
-                get_text(user_id, "sol_btn"), callback_data="sol_wallets"
-            ),
-            InlineKeyboardButton(
-                get_text(user_id, "usdt_btn"), callback_data="usdt_wallets"
-            ),
-        ],
-        [
-            InlineKeyboardButton(
-                get_text(user_id, "address_btn"), callback_data="show_address"
-            )
-        ],
-        [
-            InlineKeyboardButton(
-                get_text(user_id, "history_btn"), callback_data="view_history"
-            )
-        ],
-        [
-            InlineKeyboardButton(
-                get_text(user_id, "create_wallet_btn"), callback_data="create_wallet"
-            ),
-            InlineKeyboardButton(
-                get_text(user_id, "delete_wallet_btn"), callback_data="delete_wallet"
-            ),
-        ],
-    ]
-
     welcome_text = get_text(user_id, "welcome_text")
+    keyboard = InlineKeyboardMarkup(back_to_wallet_menu_keyboard(user_id))
 
-    if update.message:
-        await update.message.reply_text(
-            get_text(user_id, "welcome_text"), reply_markup=InlineKeyboardMarkup(kb)
+    # Determine whether to edit the existing message or send a new one
+    if update.callback_query:
+        # Update the existing message (callback query)
+        await query.edit_message_text(
+            text=welcome_text,
+            reply_markup=keyboard
         )
-    elif update.callback_query:
-        await update.callback_query.message.reply_text(
-            get_text(user_id, "welcome_text"), reply_markup=InlineKeyboardMarkup(kb)
+    elif update.message:
+        # Send a new message (regular message)
+        await update.message.reply_text(
+            text=welcome_text,
+            reply_markup=keyboard
         )
     return State.WALLET_MENU
