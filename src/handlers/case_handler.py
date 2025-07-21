@@ -45,11 +45,6 @@ logger = logging.getLogger(__name__)
 # --- Create Case Handlers (with separate states for each person detail) ---
 
 # ---------------------------- Case Mobile Number  Start ---------------------------
-
-  
-
-
-
 async def handle_select_mobile(
     update: Update, context: ContextTypes.DEFAULT_TYPE
 ) -> int:
@@ -59,42 +54,37 @@ async def handle_select_mobile(
     user_id = query.from_user.id
 
     print("Getting the query data which is ", query.data)
-    
 
     if query.data == "mobile_add":
         await query.edit_message_text(
-            get_text(user_id, "enter_mobile_post_case"), 
-            parse_mode="Markdown"
-        )        
-        return State.CREATE_CASE_MOBILE  
+            get_text(user_id, "enter_mobile_post_case"), parse_mode="Markdown"
+        )
+        return State.CREATE_CASE_MOBILE
     else:
         selected_mobile = query.data.replace("select_mobile_", "")
 
         mobile_number = await MobileNumber.find_one({"number": selected_mobile})
 
         if not mobile_number:
-            await query.edit_message_text(get_text(user_id, "mobile_number_doesnt_exist"))
+            await query.edit_message_text(
+                get_text(user_id, "mobile_number_doesnt_exist")
+            )
             return State.CREATE_CASE_MOBILE
 
         context.user_data["mobile"] = selected_mobile
-        context.user_data["selected_number"] = (
-            selected_mobile  
-        )
+        context.user_data["selected_number"] = selected_mobile
 
         if NODE_ENV == "production":
             res = await send_otp(selected_mobile)
             print(f"Response would be :{res}")
             context.user_data["case"]["otp_id"] = res["otp_id"]
-        else: 
+        else:
+            if "case" not in context.user_data:
+                context.user_data["case"] = {}
             context.user_data["case"]["otp_id"] = "dummy_otp_id"
             print(f"Skipping OTP sending in {NODE_ENV} mode.")
-        
-        await query.edit_message_text(
-            get_text(user_id, "mobile_selected_with_tac").format(mobile_number=selected_mobile)
-        )
 
-        # Proceed to the next step
-        await query.message.reply_text(get_text(user_id, "enter_tac"))
+        await query.edit_message_text(get_text(user_id, "enter_tac"))
         return State.CREATE_CASE_TAC
 
 
@@ -107,31 +97,24 @@ async def handle_new_mobile(update: Update, context: ContextTypes.DEFAULT_TYPE) 
         context.user_data["case"] = {}
 
     print("Mobile Number is:", mobile_number)
-    if re.match(r"^\+?\d{10,15}$", mobile_number):  
+    if re.match(r"^\+?\d{10,15}$", mobile_number):
         context.user_data["mobile"] = mobile_number
-
         context.user_data["selected_number"] = mobile_number
-
         if NODE_ENV == "production":
-            tac = generate_tac() 
+            tac = generate_tac()
             context.user_data["tac"] = tac
-            print(f"Tac are: {tac}")
-
-
             res = await send_otp(mobile_number)
-
-            print(f"Getting the otp: ${res}")
-
             context.user_data["case"]["otp_id"] = res["otp_id"]
-
             await update.message.reply_text(
-                get_text(user_id, "mobile_selected_with_tac").format(mobile_number=mobile_number)
+                get_text(user_id, "mobile_selected_with_tac").format(
+                    mobile_number=mobile_number
+                )
             )
-        else: 
-            context.user_data["case"]["otp_id"] = "dummy_otp_id"
+        else:
+            if "case" not in context.user_data:
+                context.user_data["case"] = {}
+            context.user_data["case"]["otp_id"] = "dummy_otp_id" 
             print(f"Skipping OTP sending in {NODE_ENV} mode.")
-            
-
         await update.message.reply_text(get_text(user_id, "enter_tac"))
         return State.CREATE_CASE_TAC
     else:
@@ -151,75 +134,58 @@ async def handle_tac(update: Update, context: ContextTypes.DEFAULT_TYPE) -> int:
         if otp_verify["success"]:
             await update.message.reply_text(get_text(user_id, "tac_verified"))
 
-            # After TAC verification, update the case with the mobile reference
+            # Update case with selected mobile number
             await update_or_create_case(user_id, mobile=selected_number)
-            kb =[]
 
-            kb.append([
-                InlineKeyboardButton("💵 USDT (TRC20 - Tron Network)", callback_data="USDT"),
-                InlineKeyboardButton("⚡ Solana (SOL)", callback_data="SOL"),
-            ])
+            # Show disclaimer before proceeding
+            disclaimer_text = get_text(user_id, "case_poster_disclaimer")
+            buttons = [
+                [
+                    InlineKeyboardButton(get_text(user_id, "understood_and_agree"), callback_data="agree"),
+                    InlineKeyboardButton(get_text(user_id, "cancel_button"), callback_data="disagree"),
+                ]
+            ]
+            markup = InlineKeyboardMarkup(buttons)
 
-            markup = InlineKeyboardMarkup(kb)
-            
             await update.message.reply_text(
-                "💼 Before posting your case, you’ll need a crypto wallet for the reward bounty. Please choose a wallet type to proceed:",
-                        reply_markup=markup,
-                        parse_mode="HTML",
-                    )
-            return State.CHOOSE_WALLET_TYPE
-            # # Proceed to the next step
-            # await show_disclaimer_2(update, context)
-            
-            # return State.CREATE_CASE_DISCLAIMER
+                disclaimer_text,
+                reply_markup=markup,
+                parse_mode="Markdown"
+            )
+            return State.CREATE_CASE_DISCLAIMER
+
         else:
             await update.message.reply_text(get_text(user_id, "tac_invalid"))
             return State.CREATE_CASE_TAC
-    else: 
+
+    else:
         print(f"Skipping OTP verification in {NODE_ENV} mode.")
         await update.message.reply_text(get_text(user_id, "tac_verified"))
-        kb =[]
+        await update_or_create_case(user_id, mobile=selected_number)
 
-        kb.append([
-            InlineKeyboardButton("💵 USDT (TRC20 - Tron Network)", callback_data="USDT"),
-            InlineKeyboardButton("⚡ Solana (SOL)", callback_data="SOL"),
-        ])
-        markup = InlineKeyboardMarkup(kb)
-        
+        # Show disclaimer before proceeding
+        disclaimer_text = get_text(user_id, "case_poster_disclaimer")
+        buttons = [
+            [
+                InlineKeyboardButton(get_text(user_id, "understood_and_agree"), callback_data="agree"),
+                InlineKeyboardButton(get_text(user_id, "cancel_button"), callback_data="disagree"),
+            ]
+        ]
+        markup = InlineKeyboardMarkup(buttons)
+
         await update.message.reply_text(
-            "💼 Before posting your case, you’ll need a crypto wallet for the reward bounty. Please choose a wallet type to proceed:",
-                    reply_markup=markup,
-                    parse_mode="HTML",
-                )
-        return State.CHOOSE_WALLET_TYPE
-        # await show_disclaimer_2(update, context)
+            disclaimer_text,
+            reply_markup=markup,
+            parse_mode="Markdown"
+        )
+        print("This block runs")
+        return State.CREATE_CASE_DISCLAIMER
 
 
 # ---------------------- Case Mobile Number End ----------------------
 
 
-async def show_disclaimer_2(update: Update, context: ContextTypes.DEFAULT_TYPE) -> int:
-    """Show Disclaimer 2."""
-    user_id = update.effective_user.id
-    kb = InlineKeyboardMarkup(
-        [
-            [
-                InlineKeyboardButton(
-                    get_text(user_id, "understood_and_agree"), callback_data="agree"
-                )
-            ],
-            [
-                InlineKeyboardButton(
-                    get_text(user_id, "cancel_button"), callback_data="disagree"
-                )
-            ],
-        ]
-    )
-    await update.message.reply_text(get_text(user_id, "disclaimer_2"), reply_markup=kb, parse_mode="Markdown")
-    return State.CREATE_CASE_DISCLAIMER
-
-
-async def disclaimer_2_callback(
+async def create_case_disclaimer_2_callback(
     update: Update, context: ContextTypes.DEFAULT_TYPE
 ) -> int:
     """Handle Disclaimer 2 agreement."""
@@ -227,19 +193,33 @@ async def disclaimer_2_callback(
     await query.answer()
     user_id = query.from_user.id
 
+    print(f"User {user_id} entered disclaimer 2")
     if query.data == "agree":
+        kb = [
+            [
+                InlineKeyboardButton("💵 USDT (TRC20 - Tron Network)", callback_data="USDT"),
+                InlineKeyboardButton("⚡ Solana (SOL)", callback_data="SOL"),
+            ]
+        ]
+        markup = InlineKeyboardMarkup(kb)
 
-        await query.edit_message_text(get_text(user_id, "enter_person_name"))
-        return State.CREATE_CASE_PERSON_NAME
+        await query.edit_message_text(
+            "💼 Before posting your case, you’ll need a crypto wallet for the reward bounty.\n"
+            "Please choose a wallet type to proceed:",
+            reply_markup=markup,
+            parse_mode="HTML"
+        )
+        return State.CHOOSE_OR_CREATE_WALLET
+
     else:
         await query.edit_message_text(get_text(user_id, "disagree_end"))
         return State.END
 
 
-#__________________________ COMPLAINT DETAILS__________________________
+# __________________________ COMPLAINT DETAILS__________________________
 
 
-# _________ PERSON   
+# _________ PERSON
 async def handle_person_name(update: Update, context: ContextTypes.DEFAULT_TYPE) -> int:
     """Handle input for the person's name (the case target)."""
     user_id = update.effective_user.id
@@ -247,12 +227,23 @@ async def handle_person_name(update: Update, context: ContextTypes.DEFAULT_TYPE)
     await update_or_create_case(user_id, person_name=person_name)
     context.user_data["case"]["person_name"] = person_name
     logger.info(f"User {user_id} entered person name: {person_name}")
-    kb = InlineKeyboardMarkup([[InlineKeyboardButton(get_text(user_id, "male_option"), callback_data="male"), InlineKeyboardButton(get_text(user_id, "female_option"), callback_data="female")]])
+    kb = InlineKeyboardMarkup(
+        [
+            [
+                InlineKeyboardButton(
+                    get_text(user_id, "male_option"), callback_data="male"
+                ),
+                InlineKeyboardButton(
+                    get_text(user_id, "female_option"), callback_data="female"
+                ),
+            ]
+        ]
+    )
     await update.message.reply_text(get_text(user_id, "sex"), reply_markup=kb)
     return State.CREATE_CASE_SEX
 
 
-# _________ WHAT IS THE GENDER OF HIS 
+# _________ WHAT IS THE GENDER OF HIS
 async def handle_sex(update: Update, context: ContextTypes.DEFAULT_TYPE) -> int:
     """Handle input for sex."""
     query = update.callback_query
@@ -266,7 +257,7 @@ async def handle_sex(update: Update, context: ContextTypes.DEFAULT_TYPE) -> int:
     return State.CREATE_CASE_AGE
 
 
-# _________ AGE OF THE PERSON 
+# _________ AGE OF THE PERSON
 async def handle_age(update: Update, context: ContextTypes.DEFAULT_TYPE) -> int:
     """Handle input for age."""
     user_id = update.effective_user.id
@@ -325,8 +316,7 @@ async def handle_photo(update: Update, context: ContextTypes.DEFAULT_TYPE) -> in
     return State.CREATE_CASE_HAIR_COLOR
 
 
-
-# _________ HAIR COLOR OF THE PERSON 
+# _________ HAIR COLOR OF THE PERSON
 async def handle_hair_color(update: Update, context: ContextTypes.DEFAULT_TYPE) -> int:
     """Handle input for hair color."""
     user_id = update.effective_user.id
@@ -337,7 +327,8 @@ async def handle_hair_color(update: Update, context: ContextTypes.DEFAULT_TYPE) 
     await update.message.reply_text(get_text(user_id, "eye_color"))
     return State.CREATE_CASE_EYE_COLOR
 
-# _________ EYE COLOR OF THE PERSON 
+
+# _________ EYE COLOR OF THE PERSON
 async def handle_eye_color(update: Update, context: ContextTypes.DEFAULT_TYPE) -> int:
     """Handle input for eye color."""
     user_id = update.effective_user.id
@@ -347,6 +338,7 @@ async def handle_eye_color(update: Update, context: ContextTypes.DEFAULT_TYPE) -
     logger.info(f"User {user_id} entered eye color: {eye_color}")
     await update.message.reply_text(get_text(user_id, "last_seen_location"))
     return State.CREATE_CASE_LAST_SEEN_LOCATION
+
 
 # _________ LOCATION OF THE PERSON WHERE IT CAN BE SEEN
 async def handle_last_seen_location(
@@ -361,9 +353,9 @@ async def handle_last_seen_location(
 
     await update.message.reply_text(get_text(user_id, "height"))
     return State.CREATE_CASE_HEIGHT
-    
 
-# _________ HEIGHT OF THE PERSON 
+
+# _________ HEIGHT OF THE PERSON
 async def handle_height(update: Update, context: ContextTypes.DEFAULT_TYPE) -> int:
     """Handle input for height."""
     user_id = update.effective_user.id
@@ -379,6 +371,7 @@ async def handle_height(update: Update, context: ContextTypes.DEFAULT_TYPE) -> i
     print("Step 2")
     await update.message.reply_text(get_text(user_id, "weight"))
     return State.CREATE_CASE_WEIGHT
+
 
 # _________ WEIGHT OF THE PERSON
 async def handle_weight(update: Update, context: ContextTypes.DEFAULT_TYPE) -> int:
@@ -397,7 +390,7 @@ async def handle_weight(update: Update, context: ContextTypes.DEFAULT_TYPE) -> i
     return State.CREATE_CASE_DISTINCTIVE_FEATURES
 
 
-# _________ DISTINCTIVE FEATURE  
+# _________ DISTINCTIVE FEATURE
 async def handle_distinctive_features(
     update: Update, context: ContextTypes.DEFAULT_TYPE
 ) -> int:
@@ -412,7 +405,7 @@ async def handle_distinctive_features(
     return State.CREATE_CASE_ASK_REASON
 
 
-# _________ REASON OF FINDING 
+# _________ REASON OF FINDING (TODO: Add a check to see if the user has already been notified)
 async def handle_reason_for_finding(
     update: Update, context: ContextTypes.DEFAULT_TYPE
 ) -> int:
@@ -433,9 +426,13 @@ async def handle_reason_for_finding(
     wallet = case.wallet
     print("Getting the sol", wallet.wallet_type)
     if wallet.wallet_type == "SOL":
-        await update.message.reply_text(get_text(user_id, "enter_reward_amount").format(type =  wallet.wallet_type))
+        await update.message.reply_text(
+            get_text(user_id, "enter_reward_amount").format(type=wallet.wallet_type)
+        )
     elif wallet.wallet_type == "USDT":
-        await update.message.reply_text(get_text(user_id, "enter_reward_amount").format(type =  wallet.wallet_type))
+        await update.message.reply_text(
+            get_text(user_id, "enter_reward_amount").format(type=wallet.wallet_type)
+        )
     else:
         await update.message.reply_text(
             get_text(user_id, "enter_reward_amount_unknown")
@@ -444,29 +441,38 @@ async def handle_reason_for_finding(
     return State.CREATE_CASE_ASK_REWARD
 
 
-# _________ REWARD AMOUNT OF THE CASE 
+# _________ REWARD AMOUNT OF THE CASE
+@catch_async
 async def handle_ask_reward_amount(
     update: Update, context: ContextTypes.DEFAULT_TYPE
 ) -> int:
     """Handle asking for reward amount and check wallet balance."""
     user_id = update.effective_user.id
-    print(f"I am calling from the ask reward amount handler")
-    reward_amount = float(update.message.text.strip()) 
+    text = update.message.text.strip()
 
-    case = await Case.find_one({"user_id": user_id, "status": CaseStatus.DRAFT})
-    wallet = await case.wallet.fetch()
+    print(f"[ASK_REWARD] User input: {text}")
 
-    wallet_balance = (
-        await WalletService.get_sol_balance(wallet.public_key)
-        if wallet.wallet_type == "SOL"
-        else await TronWallet.get_usdt_balance(wallet.public_key)
-    )
+    try:
+        reward_amount = float(text)
+    except ValueError:
+        await update.message.reply_text(get_text(user_id, "reward_amount_invalid"))
+        return State.CREATE_CASE_ASK_REWARD
 
     if reward_amount <= 0:
         await update.message.reply_text(
             get_text(user_id, "reward_amount_negative").format(reward_amount)
         )
         return State.CREATE_CASE_ASK_REWARD
+
+    case = await Case.find_one({"user_id": user_id, "status": CaseStatus.DRAFT})
+    wallet = await case.wallet.fetch()
+
+    wallet_type = wallet.wallet_type
+    wallet_balance = (
+        await WalletService.get_sol_balance(wallet.public_key)
+        if wallet_type == "SOL"
+        else await TronWallet.get_usdt_balance(wallet.public_key)
+    )
 
     if wallet_balance < reward_amount:
         await update.message.reply_text(
@@ -478,22 +484,48 @@ async def handle_ask_reward_amount(
     case.reward = reward_amount
     await case.save()
 
+    if reward_amount < 1000:
+        # 🧠 Motivational tip if reward is under 1000
+        msg = (
+            f"💸 <b>Reward set to {reward_amount} {wallet_type}</b>\n\n"
+            "💡 <b>Tip:</b> The higher the reward, the more eyes you attract!\n"
+            "Offering a generous reward motivates more people to join the search — "
+            "increasing your chances of finding the person faster. 🕵️‍♂️💬\n"
+            "A little extra can go a long way in rallying a powerful crowd behind your case."
+        )
+
+        buttons = [
+            [
+                InlineKeyboardButton("💰 Increase Reward", callback_data="increase_reward"),
+                InlineKeyboardButton("🔙 Back", callback_data="back_to_reason"),
+            ]
+        ]
+
+        await update.message.reply_text(
+            msg, parse_mode="HTML", reply_markup=InlineKeyboardMarkup(buttons)
+        )
+        return State.CREATE_CASE_ASK_REWARD  # Stay in same state for retry
+
+    # ✅ Reward OK, go to confirmation
     await update.message.reply_text(
         get_text(user_id, "reward_amount_confirmed").format(reward_amount),
         reply_markup=InlineKeyboardMarkup(
             [
                 [
-                    InlineKeyboardButton(get_text(user_id, "confirm_button"), callback_data="confirm_transfer"),
-                    InlineKeyboardButton(get_text(user_id, "cancel_edit_button"), callback_data="cancel_transfer"),
+                    InlineKeyboardButton(
+                        get_text(user_id, "confirm_button"), callback_data="confirm_transfer"
+                    ),
+                    InlineKeyboardButton(
+                        get_text(user_id, "cancel_edit_button"), callback_data="cancel_transfer"
+                    ),
                 ]
             ]
         ),
+        parse_mode="HTML"
     )
-
     return State.CREATE_CASE_CONFIRM_TRANSFER
 
-
-# _________ COFIRMATION FO THE REWARD BY ASKING YES OR NO & IF YES THEN TRANSFER THE COIN TO THE STAKE WALLET 
+# _________ COFIRMATION FO THE REWARD BY ASKING YES OR NO & IF YES THEN TRANSFER THE COIN TO THE STAKE WALLET
 async def handle_transfer_confirmation(
     update: Update, context: ContextTypes.DEFAULT_TYPE
 ) -> int:
@@ -545,13 +577,15 @@ async def handle_transfer_confirmation(
                 platform_fee = round(reward_amount * 0.05, 2)
                 net_escrow = round(reward_amount - platform_fee, 2)
 
-                advertiser_message = get_text(user_id, "congratulates_advertiser").format(
+                advertiser_message = get_text(
+                    user_id, "congratulates_advertiser"
+                ).format(
                     reward_amount=reward_amount,
                     wallet_type=wallet_type,
                     case_name=case.person_name or "Unknown",
                     location=case.city or "Unknown",
                     platform_fee=platform_fee,
-                    net_amount=net_escrow
+                    net_amount=net_escrow,
                 )
 
                 # Notify the bot owner

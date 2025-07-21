@@ -1,5 +1,5 @@
 from handlers.case_handler import (
-    disclaimer_2_callback,
+    create_case_disclaimer_2_callback,
     handle_age,
     handle_ask_reward_amount,
     handle_distinctive_features,
@@ -109,6 +109,7 @@ from handlers.start_handler import (
     city_callback,
     interrupt_current_flow,
     message_router,
+    show_existing_wallets_handler,
     start,
     select_lang_callback,
     choose_country,
@@ -118,6 +119,7 @@ from handlers.start_handler import (
     start_choose_province,
     start_province_callback,
     wallet_name_handler,
+    wallet_pagination_handler,
     wallet_selection_callback,
     wallet_type_callback,
 )
@@ -147,14 +149,13 @@ start_handler = ConversationHandler(
         State.SHOW_DISCLAIMER: [
             CallbackQueryHandler(disclaimer_callback, pattern="^(agree|disagree)$")
         ],
-          State.START_CHOOSE_PROVINCE: [
+        State.START_CHOOSE_PROVINCE: [
             CallbackQueryHandler(
-                start_province_callback, pattern="^(start_province_select_|start_province_page_)"
+                start_province_callback,
+                pattern="^(start_province_select_|start_province_page_)",
             ),
-            
             MessageHandler(filters.TEXT & ~filters.COMMAND, start_choose_province),
         ],
-        
         #  Select City
         State.CHOOSE_CITY: [
             CallbackQueryHandler(city_callback, pattern="^(city_select_|city_page_)"),
@@ -165,19 +166,37 @@ start_handler = ConversationHandler(
             CallbackQueryHandler(action_callback, pattern="^(advertise|find_people)$")
         ],
         # Choose Wallet Type
-        State.CHOOSE_WALLET_TYPE: [
-            CallbackQueryHandler(wallet_type_callback, pattern="^(SOL|USDT)$"),
-            CallbackQueryHandler(wallet_selection_callback, pattern="^wallet_"),
+        # State.CHOOSE_OR_CREATE_WALLET: [
+        #     CallbackQueryHandler(wallet_type_callback, pattern="^(SOL|USDT)$"),
+        #     CallbackQueryHandler(wallet_selection_callback, pattern="^wallet_"),
+        #     CallbackQueryHandler(wallet_name_handler, pattern="^create_new_wallet$"),
+        State.CHOOSE_OR_CREATE_WALLET: [
+            # Step 1: Choose USDT or SOL
+            CallbackQueryHandler(wallet_type_callback, pattern="^(USDT|SOL)$"),
+            # Step 2: Choose Create or Use Existing
             CallbackQueryHandler(
                 wallet_name_handler, pattern="^create_new_wallet$"
-            ),  # Handle create_new_wallet
+            ),
+            CallbackQueryHandler(
+                show_existing_wallets_handler, pattern="^use_existing_wallet$"
+            ),
+            # Step 3: Select from list
+            CallbackQueryHandler(wallet_selection_callback, pattern="^wallet_"),
+            # Step 4: Pagination buttons
+            CallbackQueryHandler(
+                wallet_pagination_handler, pattern="^wallet_page_(next|prev)$"
+            ),
         ],
+        # ],
         State.NAME_WALLET: [
             MessageHandler(filters.TEXT & ~filters.COMMAND, wallet_name_handler),
         ],
         # Handle all of the button like create case , find people , settings , help
-        State.HANDLE_REPLY: [CallbackQueryHandler( message_router, pattern="(create_case|find_people|settings|help)$")],
-
+        State.HANDLE_REPLY: [
+            CallbackQueryHandler(
+                message_router, pattern="(create_case|find_people|settings|help)$"
+            )
+        ],
         # Create Case Flow:
         State.CREATE_CASE_MOBILE: [
             MessageHandler(filters.TEXT & ~filters.COMMAND, handle_new_mobile)
@@ -191,7 +210,9 @@ start_handler = ConversationHandler(
             MessageHandler(filters.TEXT & ~filters.COMMAND, handle_tac)
         ],
         State.CREATE_CASE_DISCLAIMER: [
-            CallbackQueryHandler(disclaimer_2_callback, pattern="^(agree|disagree)$")
+            CallbackQueryHandler(
+                create_case_disclaimer_2_callback, pattern="^(agree|disagree)$"
+            )
         ],
         State.CREATE_CASE_PERSON_NAME: [
             MessageHandler(filters.TEXT & ~filters.COMMAND, handle_person_name)
@@ -291,7 +312,6 @@ start_handler = ConversationHandler(
                 handle_advertiser_response, pattern="^(accept_extend|reject_extend)$"
             )
         ],
-
         # ---------------------- Settings Start ---------------------
         State.SETTINGS_MENU: [
             CallbackQueryHandler(
@@ -314,13 +334,14 @@ start_handler = ConversationHandler(
             MessageHandler(filters.TEXT & ~filters.COMMAND, handle_setting_tac),
         ],
         # ---------------------- Settings End ---------------------
-        
         State.END: [CommandHandler("start", start)],
     },
-    fallbacks=[CommandHandler("cancel", cancel), CommandHandler("settings", settings_command)],
+    fallbacks=[
+        CommandHandler("cancel", cancel),
+        CommandHandler("settings", settings_command),
+    ],
     allow_reentry=True,
     name="wallet",
-    
 )
 
 
@@ -335,23 +356,25 @@ wallet_handler = ConversationHandler(
             CallbackQueryHandler(usdt_wallets, pattern="^usdt_wallets$"),
             CallbackQueryHandler(show_address, pattern="^show_address$"),
             CallbackQueryHandler(view_history, pattern="^view_history$"),
-            CallbackQueryHandler(
-                create_wallet, pattern="^create_wallet$"
-            ),  # Entry point for wallet creation
+            CallbackQueryHandler(create_wallet, pattern="^create_wallet$"),
             CallbackQueryHandler(delete_wallet, pattern="^delete_wallet$"),
             CallbackQueryHandler(back_to_wallet_menu, pattern="^back_to_wallet_menu$"),
         ],
-          State.SOL_WALLET_DETAIL: [
-            CallbackQueryHandler(show_sol_wallet_detail, pattern="^sol_detail_")
+        State.SOL_WALLET_DETAIL: [
+            CallbackQueryHandler(show_sol_wallet_detail, pattern="^sol_detail_"),
+            CallbackQueryHandler(back_to_wallet_menu, pattern="^back_to_wallet_menu$"),
         ],
         State.SOL_WALLET_ACTIONS: [
-            CallbackQueryHandler(request_private_key, pattern="^req_pk_")
+            CallbackQueryHandler(request_private_key, pattern="^req_pk_"),
+            CallbackQueryHandler(back_to_wallet_menu, pattern="^back_to_wallet_menu$"),
         ],
-          State.USDT_WALLET_DETAIL: [
-            CallbackQueryHandler(show_usdt_wallet_detail, pattern="^usdt_detail_")
+        State.USDT_WALLET_DETAIL: [
+            CallbackQueryHandler(show_usdt_wallet_detail, pattern="^usdt_detail_"),
+            CallbackQueryHandler(back_to_wallet_menu, pattern="^back_to_wallet_menu$"),
         ],
         State.USDT_WALLET_ACTIONS: [
-            CallbackQueryHandler(request_private_key, pattern="^req_pk_")
+            CallbackQueryHandler(request_private_key, pattern="^req_pk_"),
+            CallbackQueryHandler(back_to_wallet_menu, pattern="^back_to_wallet_menu$"),
         ],
         State.CONFIRM_PRIVATE_KEY: [
             CallbackQueryHandler(show_private_key, pattern="^(confirm_pk|cancel_pk)$")
@@ -380,19 +403,13 @@ wallet_handler = ConversationHandler(
         State.DELETE_WALLET: [
             CallbackQueryHandler(process_delete_wallet, pattern="^delete_wallet_"),
             CallbackQueryHandler(cancel_delete_wallet, pattern="^cancel_delete_wallet"),
-
-                
         ],
-
-        
-        
         State.END: [CommandHandler("wallet", wallet_command)],
     },
-   fallbacks=[
+    fallbacks=[
         CommandHandler("cancel", cancel),
     ],
     allow_reentry=True,
-    
 )
 # ---------------------- Wallet Conversation Handler End  ---------------------
 
@@ -489,7 +506,6 @@ listing_handler = ConversationHandler(
     allow_reentry=True,
 )
 # ---------------------- Settings Conversation Handler End  ---------------------
-
 
 
 # ---------------------- Settings Conversation Handler Start  ---------------------

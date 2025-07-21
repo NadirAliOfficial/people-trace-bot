@@ -198,9 +198,6 @@ async def country_callback(update: Update, context: ContextTypes.DEFAULT_TYPE) -
         return State.END
 
 
-
-
-
 #  ----------------------- Disclaimer LOGIC ------------------------
 @catch_async
 async def show_disclaimer(update: Update, context: ContextTypes.DEFAULT_TYPE) -> int:
@@ -512,7 +509,6 @@ async def action_callback(update: Update, context: ContextTypes.DEFAULT_TYPE) ->
     city = context.user_data.get("city", None)
     
     if choice == "advertise":
-        # From the original code, it goes to CHOOSE_WALLET_TYPE
         existing_mobiles = await get_user_mobiles(user_id)
 
         print(f"Mobile numbers: {existing_mobiles}")
@@ -523,7 +519,8 @@ async def action_callback(update: Update, context: ContextTypes.DEFAULT_TYPE) ->
                 for mobile in existing_mobiles
             ]
             kb.append([InlineKeyboardButton("➕ Add New", callback_data="mobile_add")])
-            await update.message.reply_text(
+            
+            await query.edit_message_text(
                 get_text(user_id, "choose_existing_mobile"),
                 reply_markup=InlineKeyboardMarkup(kb),
             )
@@ -587,7 +584,6 @@ async def action_callback(update: Update, context: ContextTypes.DEFAULT_TYPE) ->
 
         reply_markup = InlineKeyboardMarkup(keyboard)
 
-        # TODO: would be replace later
         await query.edit_message_text(
             f"📍 **Cases from {province}:**",
             reply_markup=reply_markup,
@@ -601,54 +597,108 @@ async def action_callback(update: Update, context: ContextTypes.DEFAULT_TYPE) ->
         return State.END
 
 
-# DEBUGGING FROM START
+#  ----------------------- Wallet Type LOGIC (SOL/USDT) (File Complaint) --------------------
 @catch_async
 async def wallet_type_callback(
     update: Update, context: ContextTypes.DEFAULT_TYPE
 ) -> int:
+    """Step 1: Ask user to create or use an existing wallet after choosing type."""
     query = update.callback_query
     await query.answer()
     user_id = query.from_user.id
 
-    # Determine wallet type (SOL or USDT) from callback data
-    wallet_type = query.data
-
+    wallet_type = query.data  # "USDT" or "SOL"
     context.user_data["wallet_type"] = wallet_type
 
-
-    existing_wallets = await WalletService.get_wallet_by_type(user_id, wallet_type)
-
-    if existing_wallets:
-        kb = [
-            [
-                InlineKeyboardButton(
-                    wallet.name, callback_data=f"wallet_{str(wallet.id)}"
-                )
-            ]
-            for wallet in existing_wallets
+    buttons = [
+        [
+            InlineKeyboardButton("➕ Create Wallet", callback_data="create_new_wallet"),
+            InlineKeyboardButton("📂 Use Existing Wallet", callback_data="use_existing_wallet")
         ]
-        kb.append(
-            [
-                InlineKeyboardButton(
-                    get_text(user_id, "create_new_wallet"),
-                    callback_data="create_new_wallet",
-                )
-            ]
-        )
-        await query.edit_message_text(
-            get_text(user_id, "choose_existing_or_new_wallet"),
-            reply_markup=InlineKeyboardMarkup(kb),
-            parse_mode="HTML",
-        )
-        return State.CHOOSE_WALLET_TYPE
-    else:
-        msg = get_text(user_id, "wallet_name_prompt").format(wallet_type=wallet_type)
-        if update.message:
-            await update.message.reply_text(msg, parse_mode="HTML")
-        elif update.callback_query:
-            await update.callback_query.message.reply_text(msg, parse_mode="HTML")
+    ]
 
-        return State.NAME_WALLET
+    await query.edit_message_text(
+        get_text(user_id, "choose_existing_or_new_wallet"),
+        reply_markup=InlineKeyboardMarkup(buttons),
+        parse_mode="HTML"
+    )
+    return State.CHOOSE_OR_CREATE_WALLET
+
+@catch_async
+async def show_existing_wallets_handler(
+    update: Update, context: ContextTypes.DEFAULT_TYPE
+) -> int:
+    """Show paginated list of user's existing wallets by type (with limit & offset)."""
+    query = update.callback_query
+    await query.answer()
+    user_id = query.from_user.id
+    wallet_type = context.user_data.get("wallet_type")
+
+    page = int(context.user_data.get("wallet_page", 0))
+    page_size = 5
+    offset = page * page_size
+
+    # Fetch only the wallets for current page
+    paginated_wallets = await WalletService.get_wallet_by_type(
+        user_id=user_id,
+        wallet_type=wallet_type,
+        limit=page_size,
+        offset=offset
+    )
+
+    # If no wallets on this page, and it's the first page, show fallback
+    if not paginated_wallets and page == 0:
+        await query.edit_message_text(
+            get_text(user_id, "no_wallets_found").format(wallet_type=wallet_type),
+            parse_mode="HTML"
+        )
+        return State.END
+
+    # If no wallets on this page, but there were on previous ones (e.g. user hit "Next" too far)
+    if not paginated_wallets:
+        context.user_data["wallet_page"] = 0  # Reset to first page
+        return await show_existing_wallets_handler(update, context)
+
+    # Build inline keyboard for this page
+    kb = [
+        [InlineKeyboardButton(wallet.name, callback_data=f"wallet_{wallet.id}")]
+        for wallet in paginated_wallets
+    ]
+
+    # Add pagination controls
+    nav_buttons = []
+    if page > 0:
+        nav_buttons.append(InlineKeyboardButton("⬅️ Previous", callback_data="wallet_page_prev"))
+    if len(paginated_wallets) == page_size:  # Possibly more pages
+        nav_buttons.append(InlineKeyboardButton("➡️ Next", callback_data="wallet_page_next"))
+    if nav_buttons:
+        kb.append(nav_buttons)
+
+    await query.edit_message_text(
+        get_text(user_id, "choose_existing_wallet"),
+        reply_markup=InlineKeyboardMarkup(kb),
+        parse_mode="HTML"
+    )
+    return State.CHOOSE_OR_CREATE_WALLET
+
+
+@catch_async
+async def wallet_pagination_handler(
+    update: Update, context: ContextTypes.DEFAULT_TYPE
+) -> int:
+    query = update.callback_query
+    await query.answer()
+
+    direction = query.data  # "wallet_page_next" or "wallet_page_prev"
+    current_page = int(context.user_data.get("wallet_page", 0))
+
+    if direction == "wallet_page_next":
+        context.user_data["wallet_page"] = current_page + 1
+    elif direction == "wallet_page_prev" and current_page > 0:
+        context.user_data["wallet_page"] = current_page - 1
+
+    return await show_existing_wallets_handler(update, context)
+
 
 
 @catch_async
@@ -704,42 +754,6 @@ async def wallet_selection_callback(
             parse_mode="HTML",
             reply_markup=InlineKeyboardMarkup(buttons)
         )
-        
-
-        # msg = get_text(user_id, "wallet_create_details_with_balance").format(
-      
-        # )
-
-        # transfer_instructions = get_text(user_id, "transfer_instructions").format(
-        
-        # )
-        # msg += transfer_instructions
-
-        # await query.edit_message_text(msg, parse_mode="HTML")
-
-        
-
-
-        # # Use constants for button labels and messages
-        # create_case_btn = get_text(user_id, "create_case_btn")  
-        # find_people_btn = get_text(user_id, "find_btn")       
-        # settings_btn = get_text(user_id, "btn_language")      
-        # help_btn = get_text(user_id, "help_command")          
-
-        # # Define the keyboard using constants
-        # keyboard = [
-        #     [InlineKeyboardButton(f"✅ {create_case_btn}", callback_data="create_case")],
-        #     [
-        #         InlineKeyboardButton(f"🕵️ {find_people_btn}", callback_data="find_people"),
-        #         InlineKeyboardButton(f"⚙️ {settings_btn}", callback_data="settings"),
-        #     ],
-        #     [InlineKeyboardButton(f"❓ {help_btn}", url="https://t.me/peopletrace")],
-        # ]
-
-        # await query.message.reply_text(
-        #     get_text(user_id, "main_menu"),
-        #     reply_markup=InlineKeyboardMarkup(keyboard)
-        # )
         return State.HANDLE_REPLY  # Use a custom state if needed
     else:
         await query.edit_message_text(
@@ -820,30 +834,6 @@ async def wallet_name_handler(
             parse_mode="HTML",
             reply_markup=InlineKeyboardMarkup(buttons)
         )
-      
-       
-        # # Use constants for button labels and messages
-        # create_case_btn = get_text(user_id, "create_case_btn")  
-        # find_people_btn = get_text(user_id, "find_btn")       
-        # settings_btn = get_text(user_id, "btn_language")      
-        # help_btn = get_text(user_id, "help_command")          
-
-        # # Define the keyboard using constants
-        # keyboard = [
-        #     [InlineKeyboardButton(f"✅ {create_case_btn}", callback_data="create_case")],
-        #     [
-        #         InlineKeyboardButton(f"🕵️ {find_people_btn}", callback_data="find_people"),
-        #         InlineKeyboardButton(f"⚙️ {settings_btn}", callback_data="settings"),
-        #     ],
-        #     [InlineKeyboardButton(f"❓ {help_btn}", url="https://t.me/peopletrace")],
-        # ]
-     
-
-        # await update.message.reply_text(
-        #     get_text(user_id, "main_menu"),
-        #     reply_markup=InlineKeyboardMarkup(keyboard)
-        # )
-
         return State.HANDLE_REPLY  # Use a custom state if needed
     else:
         await update.message.reply_text(
@@ -962,6 +952,7 @@ async def message_router(update: Update, context: ContextTypes.DEFAULT_TYPE):
 async def cancel(update: Update, context: ContextTypes.DEFAULT_TYPE) -> int:
     user_id = update.effective_user.id
     return ConversationHandler.END
+    
 
 @catch_async
 async def error_handler(update: object, context: ContextTypes.DEFAULT_TYPE) -> None:
@@ -982,16 +973,12 @@ async def interrupt_current_flow(update: Update, context: ContextTypes.DEFAULT_T
     return ConversationHandler.END
 
 
-
 async def jump_to_command(update, context, command_text: str):
     await context.bot.send_message(
         chat_id=update.effective_chat.id,
         text=command_text
     )
     return ConversationHandler.END
-
-
-
 
 
 @catch_async

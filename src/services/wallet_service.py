@@ -144,11 +144,21 @@ class WalletService:
         return await Wallet.find({"user_id": user_id, "wallet_type": "USDT"}).to_list()
 
     @staticmethod
-    async def get_wallet_by_type(user_id: int, wallet_type: str) -> List[Wallet]:
-        print(f"Getting wallets by type: {wallet_type}")
-        return await Wallet.find(
-            {"user_id": user_id, "wallet_type": wallet_type, "deleted": False}
-        ).to_list()
+    async def get_wallet_by_type(
+        user_id: int,
+        wallet_type: str,
+        limit: int = 5,
+        offset: int = 0
+    ) -> List[Wallet]:
+        print(f"Getting wallets by type: {wallet_type}, page offset: {offset}, limit: {limit}")
+        
+        query = {
+            "user_id": user_id,
+            "wallet_type": wallet_type,
+            "deleted": False
+        }
+
+        return await Wallet.find(query).skip(offset).limit(limit).to_list()
 
     @staticmethod
     async def get_usdt_balance(address):

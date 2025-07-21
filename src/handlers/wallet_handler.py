@@ -593,7 +593,6 @@ async def process_create_wallet(update: Update, context: ContextTypes.DEFAULT_TY
         wallet_type=wallet.wallet_type,
         public_key=wallet.public_key,
         network=get_network(wallet.wallet_type),
-        # secret_key=wallet.private_key,
     )
 
     await update.message.reply_text(

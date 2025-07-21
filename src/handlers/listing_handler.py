@@ -1026,6 +1026,7 @@ async def ask_reward_amount(update: Update, context: ContextTypes.DEFAULT_TYPE) 
         context.user_data["reward_finder_id"] = finder.id
 
         await query.message.edit_text(
+            # --- (TODO: Would be check here)
             get_text(user_id, "enter_reward_amount").format(max_amount=case.reward),
             parse_mode="Markdown",
         )

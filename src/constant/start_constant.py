@@ -34,6 +34,7 @@ START_LANG_DATA = {
         "city_multi": "Multiple cities found (Page {page} of {total}):",
         "city_selected": "City recorded:",
         "choose_action": "You're all set! What would you like to do? ",
+        "no_wallets_found": "No wallets  found. ",
         "advertise_btn": "📢 Post a Case",
         "find_btn": "🔍 Find People ",
         "change_location": "Change Location 📍",
