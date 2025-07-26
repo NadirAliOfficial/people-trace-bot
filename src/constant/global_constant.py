@@ -2,7 +2,8 @@ GLOBAL_CONSTANT = {
     "english": {
         "invalid_choice": "❌ Invalid choice. Please try again.",
         "invalid_choice_conversation_ended": "Invalid choice. Conversation ended.",
-
+        "prev": "⬅️ Previous",
+        "next": "➡️ Next",
         "lang_button": "🇬🇧 English",
         "sol_btn": "⚡ Solana (SOL)",
         "usdt_btn": "💵 USDT (TRC20 - Tron Network)",

@@ -62,7 +62,16 @@ from handlers.listing_handler import (
     update_case_field,
     update_choose_country,
 )
-from handlers.stats_handler import back_to_stats, handle_local_province_city, invalid_selection, my_case_detail_callback, stats_command, stats_menu_callback, unsolved_country_callback, view_my_cases_callback
+from handlers.stats_handler import (
+    back_to_stats,
+    handle_local_province_city,
+    invalid_selection,
+    my_case_detail_callback,
+    stats_command,
+    stats_menu_callback,
+    unsolved_country_callback,
+    view_my_cases_callback,
+)
 from handlers.wallet_handler import (
     back_to_wallet_menu,
     cancel_delete_wallet,
@@ -109,7 +118,6 @@ from handlers.start_handler import (
     city_callback,
     interrupt_current_flow,
     message_router,
-    show_existing_wallets_handler,
     start,
     select_lang_callback,
     choose_country,
@@ -118,10 +126,13 @@ from handlers.start_handler import (
     cancel,
     start_choose_province,
     start_province_callback,
+)
+from handlers.start_wallet_handler import (
     wallet_name_handler,
     wallet_pagination_handler,
     wallet_selection_callback,
     wallet_type_callback,
+    show_existing_wallets_handler,
 )
 
 # Setup logging
@@ -145,10 +156,6 @@ start_handler = ConversationHandler(
         State.SHOW_DISCLAIMER: [
             CallbackQueryHandler(disclaimer_callback, pattern="^(agree|disagree)$")
         ],
-        
-        
-        
-        
         State.START_CHOOSE_PROVINCE: [
             CallbackQueryHandler(
                 start_province_callback,
@@ -165,29 +172,17 @@ start_handler = ConversationHandler(
         State.CHOOSE_ACTION: [
             CallbackQueryHandler(action_callback, pattern="^(advertise|find_people)$")
         ],
-        # Choose Wallet Type
-        # State.CHOOSE_OR_CREATE_WALLET: [
-        #     CallbackQueryHandler(wallet_type_callback, pattern="^(SOL|USDT)$"),
-        #     CallbackQueryHandler(wallet_selection_callback, pattern="^wallet_"),
-        #     CallbackQueryHandler(wallet_name_handler, pattern="^create_new_wallet$"),
         State.CHOOSE_OR_CREATE_WALLET: [
-            # Step 1: Choose USDT or SOL
             CallbackQueryHandler(wallet_type_callback, pattern="^(USDT|SOL)$"),
-            # Step 2: Choose Create or Use Existing
-            CallbackQueryHandler(
-                wallet_name_handler, pattern="^create_new_wallet$"
-            ),
+            CallbackQueryHandler(wallet_name_handler, pattern="^create_new_wallet$"),
             CallbackQueryHandler(
                 show_existing_wallets_handler, pattern="^use_existing_wallet$"
             ),
-            # Step 3: Select from list
             CallbackQueryHandler(wallet_selection_callback, pattern="^wallet_"),
-            # Step 4: Pagination buttons
             CallbackQueryHandler(
                 wallet_pagination_handler, pattern="^wallet_page_(next|prev)$"
             ),
         ],
-        # ],
         State.NAME_WALLET: [
             MessageHandler(filters.TEXT & ~filters.COMMAND, wallet_name_handler),
         ],
@@ -358,7 +353,9 @@ wallet_handler = ConversationHandler(
             CallbackQueryHandler(view_history, pattern="^view_history$"),
             CallbackQueryHandler(create_wallet, pattern="^create_wallet$"),
             CallbackQueryHandler(delete_wallet, pattern="^delete_wallet$"),
-            CallbackQueryHandler(back_to_wallet_menu, pattern="^back_to_wallet_menu$"), # TESTED
+            CallbackQueryHandler(
+                back_to_wallet_menu, pattern="^back_to_wallet_menu$"
+            ),  # TESTED
         ],
         State.SOL_WALLET_DETAIL: [
             CallbackQueryHandler(show_sol_wallet_detail, pattern="^sol_detail_"),
@@ -537,11 +534,10 @@ settings_handler = ConversationHandler(
         ],
         State.END: [CommandHandler("settings", settings_command)],
     },
-     fallbacks=[
+    fallbacks=[
         CommandHandler("cancel", cancel),
     ],
     allow_reentry=True,
-    
 )
 
 # # ---------------------- Settings Conversation Handler End  ---------------------
