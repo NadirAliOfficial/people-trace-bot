@@ -33,28 +33,70 @@ async def start(update: Update, context: ContextTypes.DEFAULT_TYPE) -> int:
     BANNER_URL = "https://ibb.co/SDj7ycyZ"  # Replace with your actual image URL
     # Language buttons
     btns = [
-        [InlineKeyboardButton(LANG_DATA['en']['lang_button'], callback_data="lang_en"),
-         InlineKeyboardButton(LANG_DATA['zh']['lang_button'], callback_data="lang_zh")],
-        [InlineKeyboardButton(LANG_DATA['ms']['lang_button'], callback_data="lang_ms"),
-         InlineKeyboardButton(LANG_DATA['th']['lang_button'], callback_data="lang_th")],
-        [InlineKeyboardButton(LANG_DATA['vi']['lang_button'], callback_data="lang_vi"),
-         InlineKeyboardButton(LANG_DATA['ur']['lang_button'], callback_data="lang_ur")],
-        [InlineKeyboardButton(LANG_DATA['ja']['lang_button'], callback_data="lang_ja"),
-         InlineKeyboardButton(LANG_DATA['ko']['lang_button'], callback_data="lang_ko")],
-        [InlineKeyboardButton(LANG_DATA['km']['lang_button'], callback_data="lang_km"),
-         InlineKeyboardButton(LANG_DATA['id']['lang_button'], callback_data="lang_id")]
-    ]
+            [
+                InlineKeyboardButton(
+                    f"{LANG_DATA["globals"]['english']['lang_button']}",
+                    callback_data="lang_english",
+                ),
+                InlineKeyboardButton(
+                    f"{LANG_DATA["globals"]['chinese']['lang_button']}",
+                    callback_data="lang_chinese",
+                ),
+            ],
+            [
+                InlineKeyboardButton(
+                    f"{LANG_DATA["globals"]['malay']['lang_button']}",
+                    callback_data="lang_malay",
+                ),
+                InlineKeyboardButton(
+                    f"{LANG_DATA["globals"]['thai']['lang_button']}",
+                    callback_data="lang_thai",
+                ),
+            ],
+            [
+                InlineKeyboardButton(
+                    f"{LANG_DATA["globals"]['vietnamese']['lang_button']}",
+                    callback_data="lang_vietnamese",
+                ),
+                InlineKeyboardButton(
+                    f"{LANG_DATA["globals"]['urdu']['lang_button']}",
+                    callback_data="lang_urdu",
+                ),
+            ],
+            [
+                InlineKeyboardButton(
+                    f"{LANG_DATA["globals"]['japanese']['lang_button']}",
+                    callback_data="lang_japanese",
+                ),
+                InlineKeyboardButton(
+                    f"{LANG_DATA["globals"]['korean']['lang_button']}",
+                    callback_data="lang_korean",
+                ),
+            ],
+            [
+                InlineKeyboardButton(
+                    f"{LANG_DATA["globals"]['khmer']['lang_button']}",
+                    callback_data="lang_khmer",
+                ),
+                InlineKeyboardButton(
+                    f"{LANG_DATA["globals"]['indonesian']['lang_button']}",
+                    callback_data="lang_indonesian",
+                ),
+            ],
+        ]
     reply_markup = InlineKeyboardMarkup(btns)
     # Step 2: Send image + caption asking to choose language
     await update.message.reply_photo(
         photo=BANNER_URL,
         caption="<b>👋 Welcome to PeopleTrace</b>\n\n🌐 Please select your language:",
         reply_markup=reply_markup,
-        parse_mode="HTML"
+        parse_mode="HTML",
     )
-    return State.SELECT_LANG
 
-#  ----------------------- Language LOGIC ------------------------
+    return State.LANGUAGE_SELECTED
+
+
+
 @catch_async
 async def select_lang_callback(
     update: Update, context: ContextTypes.DEFAULT_TYPE
@@ -64,20 +106,12 @@ async def select_lang_callback(
     await query.answer()
     data = query.data
     user_id = query.from_user.id
-
     lang = data.replace("lang_", "")
     await save_user_lang(user_id, lang)
-
     user_data_store[user_id] = {"lang": lang}
     context.user_data["lang"] = lang
-
-    print("Inside the language seelction")
-
-    # Delete the original message (photo with language buttons)
     await query.message.delete()
-
-    # Send a new message with the "choose_country" text
-    await query.message.reply_text(get_text(user_id, "choose_country"))
+    await query.message.reply_text(get_text(user_id, "choose_country", "start-complaints"))
 
     return State.CHOOSE_COUNTRY
 
@@ -87,20 +121,19 @@ async def select_lang_callback(
 async def choose_country(update: Update, context: ContextTypes.DEFAULT_TYPE) -> int:
     user_id = update.effective_user.id
     txt = update.message.text.strip()
-   
+
     matches = get_country_matches(txt)
     if not matches:
         await update.message.reply_text(
-            get_text(user_id, "country_not_found"), parse_mode="HTML"
+            get_text(user_id, "country_not_found", "start-complaints"), parse_mode="HTML"
         )
         return State.CHOOSE_COUNTRY
     if len(matches) == 1:
         context.user_data["country"] = matches[0]
         await update_or_create_case(user_id, country=matches[0])
-        message = update.message 
-        await message.reply_text(  
-            f"{get_text(user_id, 'country_selected')} {matches[0]}",
-            parse_mode="HTML"
+        message = update.message
+        await message.reply_text(
+            f"{get_text(user_id, 'country_selected', "start-complaints")} {matches[0]}", parse_mode="HTML"
         )
 
         await show_disclaimer(update, context)
@@ -124,7 +157,7 @@ async def choose_country(update: Update, context: ContextTypes.DEFAULT_TYPE) -> 
             )
         markup = InlineKeyboardMarkup(kb)
         await update.message.reply_text(
-            get_text(user_id, "country_multi").format(page=1, total=total),
+            get_text(user_id, "country_multi", "start-complaints").format(page=1, total=total),
             reply_markup=markup,
             parse_mode="HTML",
         )
@@ -146,16 +179,15 @@ async def country_callback(update: Update, context: ContextTypes.DEFAULT_TYPE) -
         message = update.message or query.message
         if update.message:
             await update.message.edit_message_text(
-                f"{get_text(user_id, 'country_selected')} {country}",
+                f"{get_text(user_id, 'country_selected', "start-complaints")} {country}",
                 parse_mode="HTML",
             )
-        else: 
+        else:
             await query.message.edit_text(
-                f"{get_text(user_id, 'country_selected')} {country}",
+                f"{get_text(user_id, 'country_selected', "start-complaints")} {country}",
                 parse_mode="HTML",
             )
 
-        
         await show_disclaimer(update, context)
         return State.SHOW_DISCLAIMER
     elif data.startswith("country_page_"):
@@ -184,7 +216,7 @@ async def country_callback(update: Update, context: ContextTypes.DEFAULT_TYPE) -
             kb.append(nav_row)
         markup = InlineKeyboardMarkup(kb)
         await query.edit_message_text(
-            get_text(user_id, "country_multi").format(page=page_num, total=total),
+            get_text(user_id, "country_multi", "start-complaints").format(page=page_num, total=total),
             reply_markup=markup,
             parse_mode="HTML",
         )
@@ -193,7 +225,7 @@ async def country_callback(update: Update, context: ContextTypes.DEFAULT_TYPE) -
         return State.CHOOSE_COUNTRY
     else:
         await query.edit_message_text(
-            get_text(user_id, "invalid_choice"), parse_mode="HTML"
+            get_text(user_id, "invalid_choice", "globals"), parse_mode="HTML"
         )
         return State.END
 
@@ -206,13 +238,19 @@ async def show_disclaimer(update: Update, context: ContextTypes.DEFAULT_TYPE) ->
         if update.message
         else update.callback_query.from_user.id
     )
-    text = (
-        f"{get_text(user_id, 'disclaimer_text')}"
-    )
+    text = f"{get_text(user_id, 'disclaimer_text', "start-complaints")}"
     kb = InlineKeyboardMarkup(
         [
-            [InlineKeyboardButton(get_text(user_id, "agree_btn"), callback_data="agree")],
-            [InlineKeyboardButton(get_text(user_id, "disagree_btn"), callback_data="disagree")]
+            [
+                InlineKeyboardButton(
+                    get_text(user_id, "agree_btn", 'globals'), callback_data="agree"
+                )
+            ],
+            [
+                InlineKeyboardButton(
+                    get_text(user_id, "disagree_btn", "globals"), callback_data="disagree"
+                )
+            ],
         ]
     )
     if update.callback_query:
@@ -220,9 +258,7 @@ async def show_disclaimer(update: Update, context: ContextTypes.DEFAULT_TYPE) ->
             text, parse_mode="Markdown", reply_markup=kb
         )
     else:
-        await update.message.reply_text(
-            text, parse_mode="Markdown", reply_markup=kb
-        )
+        await update.message.reply_text(text, parse_mode="Markdown", reply_markup=kb)
     return State.SHOW_DISCLAIMER
 
 
@@ -235,7 +271,7 @@ async def disclaimer_callback(
     user_id = query.from_user.id
     if query.data == "agree":
         # Clearing the province
-        await query.edit_message_text(get_text(user_id, "enter_province"))
+        await query.edit_message_text(get_text(user_id, "enter_province", "start-complaints"))
         return State.START_CHOOSE_PROVINCE
     else:
         await query.edit_message_text(
@@ -246,7 +282,10 @@ async def disclaimer_callback(
 
 # ----------------------- Province LOGIC ------------------------
 
-async def start_choose_province(update: Update, context: ContextTypes.DEFAULT_TYPE) -> int:
+
+async def start_choose_province(
+    update: Update, context: ContextTypes.DEFAULT_TYPE
+) -> int:
     """Handles province selection and shows cases for that province."""
     user_id = update.effective_user.id
     txt = update.message.text.strip()
@@ -255,7 +294,7 @@ async def start_choose_province(update: Update, context: ContextTypes.DEFAULT_TY
     country = context.user_data.get("country")
     if not country:
         await update.message.reply_text(
-            get_text(user_id, "country_not_found"), parse_mode="HTML"
+            get_text(user_id, "country_not_found", "start-complaints"), parse_mode="HTML"
         )
         return State.CHOOSE_COUNTRY
 
@@ -269,17 +308,17 @@ async def start_choose_province(update: Update, context: ContextTypes.DEFAULT_TY
         await update_or_create_case(user_id, province=matches[0])
 
         await update.message.reply_text(
-            f"{get_text(user_id, 'province_selected')} {matches[0]}.",
+            f"{get_text(user_id, 'selected', "globals")} {matches[0]}.",
             parse_mode="HTML",
         )
         await update.message.reply_text(
-            get_text(user_id, "enter_city"), parse_mode="HTML"
+            get_text(user_id, "enter_city", "start-complaints"), parse_mode="HTML"
         )
         return State.CHOOSE_CITY
 
     elif len(matches) == 0:
         await update.message.reply_text(
-            get_text(user_id, "province_not_exist"),
+            get_text(user_id, "province_not_exist", "start-complaints"),
             parse_mode="HTML",  # Ensure consistency in parse_mode
         )
         return State.START_CHOOSE_PROVINCE
@@ -290,13 +329,18 @@ async def start_choose_province(update: Update, context: ContextTypes.DEFAULT_TY
         context.user_data["province_page"] = 1
         paginated, total = paginate_list(matches, 1)
 
-        kb = [[InlineKeyboardButton(p, callback_data=f"start_province_select_{p}")] for p in paginated]
+        kb = [
+            [InlineKeyboardButton(p, callback_data=f"start_province_select_{p}")]
+            for p in paginated
+        ]
 
         if total > 1:
-            kb.append([
-                InlineKeyboardButton("⬅️", callback_data="start_province_page_0"),
-                InlineKeyboardButton("➡️", callback_data="start_province_page_2"),
-            ])
+            kb.append(
+                [
+                    InlineKeyboardButton("⬅️", callback_data="start_province_page_0"),
+                    InlineKeyboardButton("➡️", callback_data="start_province_page_2"),
+                ]
+            )
 
         markup = InlineKeyboardMarkup(kb)
         await update.message.reply_text(
@@ -307,7 +351,9 @@ async def start_choose_province(update: Update, context: ContextTypes.DEFAULT_TY
         return State.START_CHOOSE_PROVINCE
 
 
-async def start_province_callback(update: Update, context: ContextTypes.DEFAULT_TYPE) -> int:
+async def start_province_callback(
+    update: Update, context: ContextTypes.DEFAULT_TYPE
+) -> int:
     query = update.callback_query
     await query.answer()
     data = query.data
@@ -317,11 +363,11 @@ async def start_province_callback(update: Update, context: ContextTypes.DEFAULT_
         province = data.replace("start_province_select_", "")
         context.user_data["province"] = province
         await query.edit_message_text(
-            f"{get_text(user_id, 'province_selected')} {province}.",
+            f"{get_text(user_id, 'selected', "globals")} {province}",
             parse_mode="HTML",
         )
         await query.message.reply_text(
-            get_text(user_id, "enter_city"), parse_mode="HTML"
+            get_text(user_id, "enter_city", "start-complaints"), parse_mode="HTML"
         )
         return State.CHOOSE_CITY
 
@@ -334,13 +380,24 @@ async def start_province_callback(update: Update, context: ContextTypes.DEFAULT_
         matches = context.user_data.get("province_matches", [])
         paginated, total = paginate_list(matches, page_num)
 
-        kb = [[InlineKeyboardButton(p, callback_data=f"start_province_select_{p}")] for p in paginated]
+        kb = [
+            [InlineKeyboardButton(p, callback_data=f"start_province_select_{p}")]
+            for p in paginated
+        ]
 
         nav_row = []
         if page_num > 1:
-            nav_row.append(InlineKeyboardButton("⬅️", callback_data=f"start_province_page_{page_num - 1}"))
+            nav_row.append(
+                InlineKeyboardButton(
+                    "⬅️", callback_data=f"start_province_page_{page_num - 1}"
+                )
+            )
         if page_num < total:
-            nav_row.append(InlineKeyboardButton("➡️", callback_data=f"start_province_page_{page_num + 1}"))
+            nav_row.append(
+                InlineKeyboardButton(
+                    "➡️", callback_data=f"start_province_page_{page_num + 1}"
+                )
+            )
         if nav_row:
             kb.append(nav_row)
 
@@ -356,11 +413,9 @@ async def start_province_callback(update: Update, context: ContextTypes.DEFAULT_
 
     else:
         await query.edit_message_text(
-            get_text(user_id, "invalid_choice"), parse_mode="HTML"
+            get_text(user_id, "invalid_choice", "globals"), parse_mode="HTML"
         )
         return State.END
-
-
 
 
 @catch_async
@@ -370,13 +425,13 @@ async def choose_city(update: Update, context: ContextTypes.DEFAULT_TYPE) -> int
     country = context.user_data.get("country")
     if not country:
         await update.message.reply_text(
-            get_text(user_id, "invalid_choice"), parse_mode="HTML"
+            get_text(user_id, "invalid_choice", "globals"), parse_mode="HTML"
         )
         return State.END
     matches = get_city_matches(country, city_input)
     if not matches:
         await update.message.reply_text(
-            get_text(user_id, "city_not_found"), parse_mode="HTML"
+            get_text(user_id, "city_not_found", "start-complaints"), parse_mode="HTML"
         )
         return State.CHOOSE_CITY
     if len(matches) == 1:
@@ -384,7 +439,7 @@ async def choose_city(update: Update, context: ContextTypes.DEFAULT_TYPE) -> int
         await update_or_create_case(user_id, city=matches[0])
 
         await update.message.reply_text(
-            f"{get_text(user_id, 'city_selected')} {matches[0]}",
+            f"{get_text(user_id, 'city_selected', "start-complaints")} {matches[0]}",
             parse_mode="HTML",
         )
         await choose_action(update, context)
@@ -425,7 +480,7 @@ async def city_callback(update: Update, context: ContextTypes.DEFAULT_TYPE) -> i
         await update_or_create_case(user_id, city=city)
 
         await query.edit_message_text(
-            f"{get_text(user_id, 'city_selected')} {city}", parse_mode="HTML"
+            f"{get_text(user_id, 'city_selected', "start-complaints")} {city}", parse_mode="HTML"
         )
         await choose_action(update, context)
         return State.CHOOSE_ACTION
@@ -455,7 +510,7 @@ async def city_callback(update: Update, context: ContextTypes.DEFAULT_TYPE) -> i
             kb.append(nav_row)
         markup = InlineKeyboardMarkup(kb)
         await query.edit_message_text(
-            get_text(user_id, "city_multi").format(page=page_num, total=total),
+            get_text(user_id, "city_multi", "start-complaints").format(page=page_num, total=total),
             reply_markup=markup,
             parse_mode="HTML",
         )
@@ -463,7 +518,7 @@ async def city_callback(update: Update, context: ContextTypes.DEFAULT_TYPE) -> i
         return State.CHOOSE_CITY
     else:
         await query.edit_message_text(
-            get_text(user_id, "invalid_choice"), parse_mode="HTML"
+            get_text(user_id, "invalid_choice", "globals"), parse_mode="HTML"
         )
         return State.END
 
@@ -479,23 +534,26 @@ async def choose_action(update: Update, context: ContextTypes.DEFAULT_TYPE) -> i
         [
             [
                 InlineKeyboardButton(
-                    get_text(user_id, "advertise_btn"), callback_data="advertise"
+                    get_text(user_id, "advertise_btn", "start-complaints"), callback_data="advertise"
                 ),
                 InlineKeyboardButton(
-                    get_text(user_id, "find_btn"), callback_data="find_people"
+                    get_text(user_id, "find_btn", "start-complaints"), callback_data="find_people"
                 ),
             ]
         ]
     )
     if update.callback_query:
         await update.callback_query.message.reply_text(
-            get_text(user_id, "choose_action"), reply_markup=kb
+            get_text(user_id, "choose_action", "start-complaints"), reply_markup=kb
         )
     else:
         await update.message.reply_text(
-            get_text(user_id, "choose_action"), reply_markup=kb
+            get_text(user_id, "choose_action", "start-complaints"), reply_markup=kb
         )
     return State.CHOOSE_ACTION
+
+
+#  Ended  Start Command
 
 
 @catch_async
@@ -507,7 +565,7 @@ async def action_callback(update: Update, context: ContextTypes.DEFAULT_TYPE) ->
     province = context.user_data.get("province", None)
     country = context.user_data.get("country", None)
     city = context.user_data.get("city", None)
-    
+
     if choice == "advertise":
         existing_mobiles = await get_user_mobiles(user_id)
 
@@ -519,14 +577,16 @@ async def action_callback(update: Update, context: ContextTypes.DEFAULT_TYPE) ->
                 for mobile in existing_mobiles
             ]
             kb.append([InlineKeyboardButton("➕ Add New", callback_data="mobile_add")])
-            
+
             await query.edit_message_text(
                 get_text(user_id, "choose_existing_mobile"),
                 reply_markup=InlineKeyboardMarkup(kb),
             )
             return State.MOBILE_MANAGEMENT
         else:
-            await query.edit_message_text(get_text(user_id, "enter_mobile_post_case"), parse_mode="Markdown")
+            await query.edit_message_text(
+                get_text(user_id, "enter_mobile_post_case"), parse_mode="Markdown"
+            )
             return State.CREATE_CASE_MOBILE
     elif choice == "find_people":
         # Clearing the province
@@ -613,16 +673,19 @@ async def wallet_type_callback(
     buttons = [
         [
             InlineKeyboardButton("➕ Create Wallet", callback_data="create_new_wallet"),
-            InlineKeyboardButton("📂 Use Existing Wallet", callback_data="use_existing_wallet")
+            InlineKeyboardButton(
+                "📂 Use Existing Wallet", callback_data="use_existing_wallet"
+            ),
         ]
     ]
 
     await query.edit_message_text(
         get_text(user_id, "choose_existing_or_new_wallet"),
         reply_markup=InlineKeyboardMarkup(buttons),
-        parse_mode="HTML"
+        parse_mode="HTML",
     )
     return State.CHOOSE_OR_CREATE_WALLET
+
 
 @catch_async
 async def show_existing_wallets_handler(
@@ -640,17 +703,14 @@ async def show_existing_wallets_handler(
 
     # Fetch only the wallets for current page
     paginated_wallets = await WalletService.get_wallet_by_type(
-        user_id=user_id,
-        wallet_type=wallet_type,
-        limit=page_size,
-        offset=offset
+        user_id=user_id, wallet_type=wallet_type, limit=page_size, offset=offset
     )
 
     # If no wallets on this page, and it's the first page, show fallback
     if not paginated_wallets and page == 0:
         await query.edit_message_text(
             get_text(user_id, "no_wallets_found").format(wallet_type=wallet_type),
-            parse_mode="HTML"
+            parse_mode="HTML",
         )
         return State.END
 
@@ -668,16 +728,20 @@ async def show_existing_wallets_handler(
     # Add pagination controls
     nav_buttons = []
     if page > 0:
-        nav_buttons.append(InlineKeyboardButton("⬅️ Previous", callback_data="wallet_page_prev"))
+        nav_buttons.append(
+            InlineKeyboardButton("⬅️ Previous", callback_data="wallet_page_prev")
+        )
     if len(paginated_wallets) == page_size:  # Possibly more pages
-        nav_buttons.append(InlineKeyboardButton("➡️ Next", callback_data="wallet_page_next"))
+        nav_buttons.append(
+            InlineKeyboardButton("➡️ Next", callback_data="wallet_page_next")
+        )
     if nav_buttons:
         kb.append(nav_buttons)
 
     await query.edit_message_text(
         get_text(user_id, "choose_existing_wallet"),
         reply_markup=InlineKeyboardMarkup(kb),
-        parse_mode="HTML"
+        parse_mode="HTML",
     )
     return State.CHOOSE_OR_CREATE_WALLET
 
@@ -700,7 +764,6 @@ async def wallet_pagination_handler(
     return await show_existing_wallets_handler(update, context)
 
 
-
 @catch_async
 async def wallet_selection_callback(
     update: Update, context: ContextTypes.DEFAULT_TYPE
@@ -713,7 +776,6 @@ async def wallet_selection_callback(
     wallet_type = context.user_data.get("wallet_type")  # 'sol' or 'usdt'
 
     wallet_details = await WalletService.get_wallet_by_id(wallet_id)
-
 
     if wallet_details:
         total_sol = (
@@ -730,9 +792,9 @@ async def wallet_selection_callback(
         msg = get_text(user_id, "wallet_create_details_with_balance").format(
             name=wallet_details["name"],
             public_key=wallet_details["public_key"],
-            balance=total_sol, 
+            balance=total_sol,
             wallet_type=wallet_type,
-            network = get_network(wallet_type),
+            network=get_network(wallet_type),
         )
 
         transfer_instructions = get_text(user_id, "transfer_instructions").format(
@@ -740,19 +802,25 @@ async def wallet_selection_callback(
             public_key=wallet_details["public_key"],
         )
 
-        full_msg = msg + transfer_instructions + f"\n\n<b>💰 Current Balance:</b> {total_sol} {wallet_type}\n<b>🔗 Wallet Address (TRC20):</b> <code>{wallet_details["public_key"]}</code>"
+        full_msg = (
+            msg
+            + transfer_instructions
+            + f"\n\n<b>💰 Current Balance:</b> {total_sol} {wallet_type}\n<b>🔗 Wallet Address (TRC20):</b> <code>{wallet_details["public_key"]}</code>"
+        )
 
         buttons = [
             [
-                InlineKeyboardButton("🔄 Refresh Wallet", callback_data="refresh_wallet"),
-                InlineKeyboardButton("➡️ Continue to Case Posting", callback_data="create_case"),
+                InlineKeyboardButton(
+                    "🔄 Refresh Wallet", callback_data="refresh_wallet"
+                ),
+                InlineKeyboardButton(
+                    "➡️ Continue to Case Posting", callback_data="create_case"
+                ),
             ]
         ]
 
         await query.message.reply_text(
-            full_msg,
-            parse_mode="HTML",
-            reply_markup=InlineKeyboardMarkup(buttons)
+            full_msg, parse_mode="HTML", reply_markup=InlineKeyboardMarkup(buttons)
         )
         return State.HANDLE_REPLY  # Use a custom state if needed
     else:
@@ -793,7 +861,7 @@ async def wallet_name_handler(
     if await WalletService.check_wallet_name_used_with_type(
         user_id, wallet_name, wallet_type
     ):
-     
+
         await update.message.reply_text(get_text(user_id, "wallet_name_exists"))
         return State.NAME_WALLET
 
@@ -804,13 +872,12 @@ async def wallet_name_handler(
         elif wallet_type == "USDT":
             total_sol = await TronWallet.get_usdt_balance(wallet.public_key)
 
-
         context.user_data["wallet"] = wallet
         await update_or_create_case(user_id, wallet=str(wallet.id))
         msg = get_text(user_id, "wallet_create_details_with_balance").format(
             name=wallet.name,
             public_key=wallet.public_key,
-            network = get_network(wallet_type),
+            network=get_network(wallet_type),
             balance=total_sol,  # For USDT, the balance logic will vary
             wallet_type=wallet_type,
         )
@@ -820,19 +887,25 @@ async def wallet_name_handler(
             public_key=wallet.public_key,
         )
 
-        full_msg = msg + transfer_instructions + f"\n\n<b>💰 Current Balance:</b> {total_sol} {wallet_type}\n<b>🔗 Wallet Address (TRC20):</b> <code>{wallet.public_key}</code>"
+        full_msg = (
+            msg
+            + transfer_instructions
+            + f"\n\n<b>💰 Current Balance:</b> {total_sol} {wallet_type}\n<b>🔗 Wallet Address (TRC20):</b> <code>{wallet.public_key}</code>"
+        )
 
         buttons = [
             [
-                InlineKeyboardButton("🔄 Refresh Wallet", callback_data="refresh_wallet"),
-                InlineKeyboardButton("➡️ Continue to Case Posting", callback_data="create_case"),
+                InlineKeyboardButton(
+                    "🔄 Refresh Wallet", callback_data="refresh_wallet"
+                ),
+                InlineKeyboardButton(
+                    "➡️ Continue to Case Posting", callback_data="create_case"
+                ),
             ]
         ]
 
         await update.message.reply_text(
-            full_msg,
-            parse_mode="HTML",
-            reply_markup=InlineKeyboardMarkup(buttons)
+            full_msg, parse_mode="HTML", reply_markup=InlineKeyboardMarkup(buttons)
         )
         return State.HANDLE_REPLY  # Use a custom state if needed
     else:
@@ -840,6 +913,7 @@ async def wallet_name_handler(
             get_text(user_id, "wallet_create_err"), parse_mode="HTML"
         )
         return State.END
+
 
 @catch_async
 async def message_router(update: Update, context: ContextTypes.DEFAULT_TYPE):
@@ -852,12 +926,14 @@ async def message_router(update: Update, context: ContextTypes.DEFAULT_TYPE):
     city = context.user_data.get("city", None)
 
     if choice == "create_case":
-        await query.edit_message_text(get_text(user_id, "create_case_title"), parse_mode="HTML")
+        await query.edit_message_text(
+            get_text(user_id, "create_case_title"), parse_mode="HTML"
+        )
         await query.message.reply_text(get_text(user_id, "enter_person_name"))
         return State.CREATE_CASE_PERSON_NAME
 
     elif choice == "find_people":
-         # Clearing the province
+        # Clearing the province
         await FinderService.update_or_create_finder(
             user_id=user_id,
             province=province,
@@ -934,7 +1010,7 @@ async def message_router(update: Update, context: ContextTypes.DEFAULT_TYPE):
     elif choice == "help":
         await query.edit_message_text(
             "Need help? Visit: https://t.me/your_other_bot_or_help_page",
-            disable_web_page_preview=True
+            disable_web_page_preview=True,
         )
         return State.HANDLE_REPLY
 
@@ -945,14 +1021,13 @@ async def message_router(update: Update, context: ContextTypes.DEFAULT_TYPE):
         await query.edit_message_text("❗ Please choose an option using the buttons.")
         return State.HANDLE_REPLY
 
-        
 
 # handlers/shared.py
 @catch_async
 async def cancel(update: Update, context: ContextTypes.DEFAULT_TYPE) -> int:
     user_id = update.effective_user.id
     return ConversationHandler.END
-    
+
 
 @catch_async
 async def error_handler(update: object, context: ContextTypes.DEFAULT_TYPE) -> None:
@@ -962,10 +1037,9 @@ async def error_handler(update: object, context: ContextTypes.DEFAULT_TYPE) -> N
         user_id = update.effective_user.id if update.effective_user else None
         if user_id:
             await update.effective_message.reply_text(
-                get_text(user_id, "invalid_choice")
+                get_text(user_id, "invalid_choice", "globals")
             )
 
-            
 
 async def interrupt_current_flow(update: Update, context: ContextTypes.DEFAULT_TYPE):
     # End any current conversation
@@ -974,10 +1048,7 @@ async def interrupt_current_flow(update: Update, context: ContextTypes.DEFAULT_T
 
 
 async def jump_to_command(update, context, command_text: str):
-    await context.bot.send_message(
-        chat_id=update.effective_chat.id,
-        text=command_text
-    )
+    await context.bot.send_message(chat_id=update.effective_chat.id, text=command_text)
     return ConversationHandler.END
 
 
@@ -985,10 +1056,10 @@ async def jump_to_command(update, context, command_text: str):
 async def main_menu(update: Update, context: ContextTypes.DEFAULT_TYPE) -> int:
     user_id = update.effective_user.id
 
-    create_case_btn = get_text(user_id, "create_case_btn")  
-    find_people_btn = get_text(user_id, "find_btn")       
-    settings_btn = get_text(user_id, "btn_language")      
-    help_btn = get_text(user_id, "help_command")          
+    create_case_btn = get_text(user_id, "create_case_btn")
+    find_people_btn = get_text(user_id, "find_btn")
+    settings_btn = get_text(user_id, "btn_language")
+    help_btn = get_text(user_id, "help_command")
 
     keyboard = [
         [InlineKeyboardButton(f"✅ {create_case_btn}", callback_data="create_case")],
@@ -1002,7 +1073,7 @@ async def main_menu(update: Update, context: ContextTypes.DEFAULT_TYPE) -> int:
     await context.bot.send_message(
         chat_id=update.effective_chat.id,
         text="Choose an option below to continue:",
-        reply_markup=InlineKeyboardMarkup(keyboard)
+        reply_markup=InlineKeyboardMarkup(keyboard),
     )
 
     return State.HANDLE_REPLY

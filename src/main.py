@@ -19,11 +19,9 @@ from telegram.ext import ApplicationBuilder
 
 from config.config_manager import MONGODB_NAME, MONGODB_URI, NODE_ENV
 from handlers.handlers import (
-    start_handler,
     settings_handler,
     wallet_handler,
-    listing_handler,
-    stats_handler
+    start_handler
 )
 from handlers.start_handler import error_handler
 from models.case_model import Case
@@ -40,8 +38,8 @@ async def main_setup():
     application.add_handler(start_handler)
     application.add_handler(wallet_handler)
     application.add_handler(settings_handler)
-    application.add_handler(listing_handler)
-    application.add_handler(stats_handler)
+    # application.add_handler(listing_handler)
+    # application.add_handler(stats_handler)
 
     application.add_error_handler(error_handler)
 

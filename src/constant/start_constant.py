@@ -1,14 +1,10 @@
 START_LANG_DATA = {
-    "en": {  # English
-        "lang_choice": "English",
-        "lang_button": " 🇬🇧 English",
-        "start_msg": "*👋 Welcome to PeopleTrace. \n \n🌐 Please select your language:",
+    "english": {  # English
         "choose_country": "🌏 What country are you in? (You can type part of the name, for example, Swed for Sweden)",
         "country_not_found": "No matching countries found. Please try again:",
-        "country_multi": "Multiple countries found (Page {page} of {total}):",
         "country_selected": "Got it! You’re in ",
-        "disclaimer_title": "Disclaimer\n\n",
-        "welcome": "👋 Welcome to our bot!\nPlease choose your language below 👇",
+        "country_multi": "Multiple countries found (Page {page} of {total}):",
+        "invalid_choice": "Invalid choice. Conversation ended.",
         "disclaimer_text": (
             "📜 *Terms & Conditions*\n"
             "• All rewards are held in escrow until the case is resolved\n"
@@ -22,87 +18,89 @@ START_LANG_DATA = {
             "  – Case submissions\n"
             "  – Successful findings"
         ),
-        "fee_details": "Fees:\n• A 5% platform fee applies to both:\n– Case submissions\n– Successful findings \n",
-        "agree_btn": "✅ I Agree",
-        "disagree_btn": "❌ I Disagree",
-        "disagree_end": "You did not agree. Conversation ended.",
         "enter_province": "📍Now, let’s narrow it down. What’s your province/state or region? (Parial name is okay.)",
+        "enter_city": "Please enter your city name (partial name allowed):",
         "province_not_exist": "No matching provinces found. Please try again.",
         "province_multi": "Multiple provinces found (Page {page} of {total}):",
-        "enter_city": "Please enter your city name (partial name allowed):",
         "city_not_found": "No matching cities found. Please try again:",
-        "city_multi": "Multiple cities found (Page {page} of {total}):",
         "city_selected": "City recorded:",
+        "city_multi": "Multiple cities found (Page {page} of {total}):",
         "choose_action": "You're all set! What would you like to do? ",
-        "no_wallets_found": "No wallets  found. ",
         "advertise_btn": "📢 Post a Case",
         "find_btn": "🔍 Find People ",
-        "change_location": "Change Location 📍",
-        "find_dev": "Find People is under development.",
-        "btn_language": "Change Language",
-        "create_new_wallet": "➕ Create New Wallet",
-        "btn_mobile_number": "Mobile Number",
-        "enter_mobile": (
-            "📢 *Ready to Help Find Someone? Let’s Verify You First*\n\n"
-            "To maintain safety and trust in the community, we need to verify your contact number.\n\n"
-            "We'll send you a TAC (one-time code) for confirmation.🔢 Enter the TAC sent to your phone via WhatsApp:\n"
-            "e.g., 123456\n\n"
-            "📞 Please enter your mobile number (with country code):"
-        ),
-         "enter_mobile_post_case": (
-            "📢 *Ready to Post a Case? Let’s Verify You First*\n\n"
-            "To ensure legitimacy and protect the community, please verify your contact number first. \n"
-            "We'll send you a TAC (one-time code) for confirmation. \n\n"
-            "📞 Please enter your mobile number (with country code):"
-        ),
-        "invalid_choice": "Invalid choice. Conversation ended.",
-        "invalid_mobile_number": "❌ Invalid mobile number. Please enter a valid 10-digit number.",
-        "menu_settings_title": "Settings Menu",
-        "enter_tac": "Please enter the verification code (TAC) sent to your mobile number:",
-        "verify_tac": "Verifying your code... Please wait a moment.",
-        "tac_verified": "✅ TAC verified successfully.",
-        "tac_invalid": "❌ Invalid TAC. Please try again.",
-        "choose_existing_mobile": "Please select an existing number or add a new one.",
-        "transfer_instructions": (
-            "\n\n<b>💡 How to Transfer {wallet_type} to Your Wallet:</b>\n\n"
-            "1️⃣ Open your {wallet_type}-compatible wallet app.\n"
-            "2️⃣ Tap <b>Send</b> or <b>Transfer</b>.\n"
-            "3️⃣ Paste your <b>Public Key</b> as the recipient:\n<code>{public_key}</code>\n"
-            "4️⃣ Select the correct network: <b>TRC20 (Tron Network)</b>\n"
-            "5️⃣ Enter the amount and confirm the transfer.\n"
-        ),
-        "no_case_found_in_province": "No cases found in {province} right now. Try another province or check back later!",
-        "wallet_name_prompt": "Please enter a name for your {wallet_type} wallet:",
-        "wallet_name_empty": "Wallet name cannot be empty. Please try again.",
-        "wallet_create_err": "An error occurred while creating the wallet. Please try again.",
-        "usdt_wallet": " 💵 USDT (TRC20 - Tron Network)",
-        "sol_wallet": "⚡ Solana (SOL)",
-        "choose_wallet": "Please choose a wallet type:",
-        "choose_existing_or_new_wallet": "Choose an existing wallet or create a new one:",
-        "main_menu": "Choose an option below to continue:",
-        "help_command": "Need help? Visit our support channel: @YourSupportChannel",
-        "settings_command": "⚙️ Settings Menu",
-        "private_key_warning": (
-            "⚠️ <b>Important Note:</b>\n\n"
-            "Your private key is extremely sensitive information. It provides full access to your wallet and funds.\n\n"
-            "🚨 <b>DO NOT SHARE YOUR PRIVATE KEY WITH ANYONE.</b>\n\n"
-            "Here is your private key: <code>{private_key}</code>\n\n"
-            "Save it in a secure location, such as a password manager or offline storage. If someone gains access to your private key, they can steal your funds.\n\n"
-            "For your safety:\n"
-            "1. Do not take screenshots of your private key.\n"
-            "2. Do not store it in cloud services or email.\n"
-            "3. Keep it offline and encrypted if possible.\n\n"
-            "Remember: Once shared or lost, it cannot be recovered."
-        ),
-        "private_key_message": (
-            "🔑 <b>Your Private Key:</b>\n<code>{private_key}</code>\n\n"
-        ),
-        "create_case_btn": "Create Case",
-        "find_people_btn": "Find People",
-        "settings_btn": "Settings",
-        "help_btn": "Help",
-        "main_menu": "Choose an option below to continue:",
-        "wallet_name_exists": "❌ A wallet with this name already exists. Please choose a different name.",
+
+
+        # "lang_button": " 🇬🇧 English",
+        # "start_msg": "*👋 Welcome to PeopleTrace. \n \n🌐 Please select your language:",
+        # "disclaimer_title": "Disclaimer\n\n",
+        # "welcome": "👋 Welcome to our bot!\nPlease choose your language below 👇",
+        # "fee_details": "Fees:\n• A 5% platform fee applies to both:\n– Case submissions\n– Successful findings \n",
+        # "no_wallets_found": "No wallets  found. ",
+        # "change_location": "Change Location 📍",
+        # "find_dev": "Find People is under development.",
+        # "btn_language": "Change Language",
+        # "create_new_wallet": "➕ Create New Wallet",
+        # "btn_mobile_number": "Mobile Number",
+        # "enter_mobile": (
+        #     "📢 *Ready to Help Find Someone? Let’s Verify You First*\n\n"
+        #     "To maintain safety and trust in the community, we need to verify your contact number.\n\n"
+        #     "We'll send you a TAC (one-time code) for confirmation.🔢 Enter the TAC sent to your phone via WhatsApp:\n"
+        #     "e.g., 123456\n\n"
+        #     "📞 Please enter your mobile number (with country code):"
+        # ),
+        # "enter_mobile_post_case": (
+        #     "📢 *Ready to Post a Case? Let’s Verify You First*\n\n"
+        #     "To ensure legitimacy and protect the community, please verify your contact number first. \n"
+        #     "We'll send you a TAC (one-time code) for confirmation. \n\n"
+        #     "📞 Please enter your mobile number (with country code):"
+        # ),
+        # "invalid_mobile_number": "❌ Invalid mobile number. Please enter a valid 10-digit number.",
+        # "menu_settings_title": "Settings Menu",
+        # "enter_tac": "Please enter the verification code (TAC) sent to your mobile number:",
+        # "verify_tac": "Verifying your code... Please wait a moment.",
+        # "tac_verified": "✅ TAC verified successfully.",
+        # "tac_invalid": "❌ Invalid TAC. Please try again.",
+        # "choose_existing_mobile": "Please select an existing number or add a new one.",
+        # "transfer_instructions": (
+        #     "\n\n<b>💡 How to Transfer {wallet_type} to Your Wallet:</b>\n\n"
+        #     "1️⃣ Open your {wallet_type}-compatible wallet app.\n"
+        #     "2️⃣ Tap <b>Send</b> or <b>Transfer</b>.\n"
+        #     "3️⃣ Paste your <b>Public Key</b> as the recipient:\n<code>{public_key}</code>\n"
+        #     "4️⃣ Select the correct network: <b>TRC20 (Tron Network)</b>\n"
+        #     "5️⃣ Enter the amount and confirm the transfer.\n"
+        # ),
+        # "no_case_found_in_province": "No cases found in {province} right now. Try another province or check back later!",
+        # "wallet_name_prompt": "Please enter a name for your {wallet_type} wallet:",
+        # "wallet_name_empty": "Wallet name cannot be empty. Please try again.",
+        # "wallet_create_err": "An error occurred while creating the wallet. Please try again.",
+        # "usdt_wallet": " 💵 USDT (TRC20 - Tron Network)",
+        # "sol_wallet": "⚡ Solana (SOL)",
+        # "choose_wallet": "Please choose a wallet type:",
+        # "choose_existing_or_new_wallet": "Choose an existing wallet or create a new one:",
+        # "main_menu": "Choose an option below to continue:",
+        # "help_command": "Need help? Visit our support channel: @YourSupportChannel",
+        # "settings_command": "⚙️ Settings Menu",
+        # "private_key_warning": (
+        #     "⚠️ <b>Important Note:</b>\n\n"
+        #     "Your private key is extremely sensitive information. It provides full access to your wallet and funds.\n\n"
+        #     "🚨 <b>DO NOT SHARE YOUR PRIVATE KEY WITH ANYONE.</b>\n\n"
+        #     "Here is your private key: <code>{private_key}</code>\n\n"
+        #     "Save it in a secure location, such as a password manager or offline storage. If someone gains access to your private key, they can steal your funds.\n\n"
+        #     "For your safety:\n"
+        #     "1. Do not take screenshots of your private key.\n"
+        #     "2. Do not store it in cloud services or email.\n"
+        #     "3. Keep it offline and encrypted if possible.\n\n"
+        #     "Remember: Once shared or lost, it cannot be recovered."
+        # ),
+        # "private_key_message": (
+        #     "🔑 <b>Your Private Key:</b>\n<code>{private_key}</code>\n\n"
+        # ),
+        # "create_case_btn": "Create Case",
+        # "find_people_btn": "Find People",
+        # "settings_btn": "Settings",
+        # "help_btn": "Help",
+        # "main_menu": "Choose an option below to continue:",
+        # "wallet_name_exists": "❌ A wallet with this name already exists. Please choose a different name.",
     },
     "zh": {
         "lang_choice": "简体中文",
@@ -116,14 +114,14 @@ START_LANG_DATA = {
         "welcome": "👋 欢迎使用我们的机器人！\n请在下方选择您的语言 👇",
         "disclaimer_text": (
             "📜 *条款与条件*\n"
-            "• 所有奖金将在案件解决后释放\n"
-            "• 滥用AI生成或虚假内容将导致永久封禁\n"
-            "• 发布案件前请先向当地执法部门报案\n"
-            "• 我们不对任何纠纷或滥用行为负责\n"
-            "• 平台收取5%手续费，适用于发帖和成功寻人\n"
-            "• 提交的所有信息将公开可见\n"
+            "• 所有奖金将在案件解决后托管并释放\n"
+            "• 滥用 AI 生成内容或提交虚假信息将导致永久封禁\n"
+            "• 发布案件前，请先向当地执法机关报案\n"
+            "• 我们不对任何纠纷或滥用行为承担责任\n"
+            "• 平台收取 5% 的手续费，适用于案件发布和成功寻人\n"
+            "• 所有提交的信息将公开展示\n"
             "💼 *费用说明：*\n"
-            "• 平台收取5%手续费，适用于：\n"
+            "• 平台收取 5% 手续费，适用于：\n"
             "  – 案件发布\n"
             "  – 成功寻人"
         ),
@@ -213,17 +211,17 @@ START_LANG_DATA = {
         "disclaimer_title": "Penafian\n\n",
         "welcome": "👋 Selamat datang ke bot kami!\nSila pilih bahasa di bawah 👇",
         "disclaimer_text": (
-            "📜 *Terma dan Syarat*\n"
-            "• Semua ganjaran disimpan dalam tahanan sehingga kes selesai\n"
-            "• Penyalahgunaan kandungan palsu atau dijana oleh AI akan mengakibatkan pengharaman kekal\n"
-            "• Laporkan kepada pihak berkuasa tempatan sebelum memuat naik kes\n"
-            "• Kami tidak bertanggungjawab atas pertelingkahan atau penyalahgunaan\n"
-            "• Caj platform sebanyak 5% dikenakan untuk kedua-dua aktiviti:\n"
-            "• Semua maklumat yang dimasukkan adalah *boleh dilihat umum*\n"
-            "💼 *Bayaran:* \n"
-            "• Caj 5% platform dikenakan pada:\n"
+            "📜 *Terma & Syarat*\n"
+            "• Semua ganjaran disimpan dalam akaun escrow sehingga kes diselesaikan\n"
+            "• Penyalahgunaan kandungan yang dihasilkan AI atau kandungan palsu akan mengakibatkan larangan kekal\n"
+            "• Laporkan kepada pihak berkuasa tempatan sebelum menghantar kes\n"
+            "• Kami tidak bertanggungjawab terhadap pertikaian atau penyalahgunaan\n"
+            "• Yuran platform 5% dikenakan ke atas kedua-dua penghantaran kes dan penemuan yang berjaya\n"
+            "• Semua maklumat yang dihantar adalah *boleh dilihat oleh umum*\n"
+            "💼 *Yuran:*\n"
+            "• Yuran platform 5% dikenakan ke atas kedua-dua:\n"
             "  – Penghantaran kes\n"
-            "  – Kejayaan dalam mencari individu"
+            "  – Penemuan yang berjaya"
         ),
         "fee_details": "Bayaran:\n• Caj platform sebanyak 5% dikenakan pada:\n– Penghantaran kes\n– Kejayaan pencarian\n",
         "agree_btn": "✅ Saya Setuju",
@@ -1003,6 +1001,3 @@ START_LANG_DATA = {
         "wallet_name_exists": "❌ 동일한 이름의 지갑이 이미 존재합니다. 다른 이름을 선택해 주세요.",
     },
 }
-
-
-# 5
