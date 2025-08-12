@@ -31,15 +31,19 @@ async def wallet_type_callback(
 
     buttons = [
         [
-            InlineKeyboardButton("➕ Create Wallet", callback_data="create_new_wallet"),
             InlineKeyboardButton(
-                "📂 Use Existing Wallet", callback_data="use_existing_wallet"
+                get_text(user_id, "create_wallet", "globals"),
+                callback_data="create_new_wallet",
+            ),
+            InlineKeyboardButton(
+                get_text(user_id, "use_existing_wallet", "globals"),
+                callback_data="use_existing_wallet",
             ),
         ]
     ]
 
     await query.edit_message_text(
-        get_text(user_id, "choose_existing_or_new_wallet"),
+        get_text(user_id, "choose_existing_or_new_wallet", "start-wallet"),
         reply_markup=InlineKeyboardMarkup(buttons),
         parse_mode="HTML",
     )
@@ -68,7 +72,9 @@ async def show_existing_wallets_handler(
     # If no wallets on this page, and it's the first page, show fallback
     if not paginated_wallets and page == 0:
         await query.edit_message_text(
-            get_text(user_id, "no_wallets_found").format(wallet_type=wallet_type),
+            get_text(user_id, "no_wallets_found", "start-wallet").format(
+                wallet_type=wallet_type
+            ),
             parse_mode="HTML",
         )
         return State.END
@@ -88,17 +94,21 @@ async def show_existing_wallets_handler(
     nav_buttons = []
     if page > 0:
         nav_buttons.append(
-            InlineKeyboardButton("⬅️ Previous", callback_data="wallet_page_prev")
+            InlineKeyboardButton(
+                get_text(user_id, "prev", "globals"), callback_data="wallet_page_prev"
+            )
         )
     if len(paginated_wallets) == page_size:  # Possibly more pages
         nav_buttons.append(
-            InlineKeyboardButton("➡️ Next", callback_data="wallet_page_next")
+            InlineKeyboardButton(
+                get_text(user_id, "next", "globals"), callback_data="wallet_page_next"
+            )
         )
     if nav_buttons:
         kb.append(nav_buttons)
 
     await query.edit_message_text(
-        get_text(user_id, "choose_existing_wallet"),
+        get_text(user_id, "choose_existing_wallet", "start-wallet"),
         reply_markup=InlineKeyboardMarkup(kb),
         parse_mode="HTML",
     )
@@ -148,7 +158,9 @@ async def wallet_selection_callback(
         context.user_data["wallet"] = wallet_details  # Store in memory
         await update_or_create_case(user_id, wallet=str(wallet_details["id"]))
 
-        msg = get_text(user_id, "wallet_create_details_with_balance").format(
+        msg = get_text(
+            user_id, "wallet_create_details_with_balance", "start-wallet"
+        ).format(
             name=wallet_details["name"],
             public_key=wallet_details["public_key"],
             balance=total_sol,
@@ -156,7 +168,9 @@ async def wallet_selection_callback(
             network=get_network(wallet_type),
         )
 
-        transfer_instructions = get_text(user_id, "transfer_instructions").format(
+        transfer_instructions = get_text(
+            user_id, "transfer_instructions", "start-wallet"
+        ).format(
             wallet_type=wallet_type,
             public_key=wallet_details["public_key"],
         )
@@ -164,16 +178,22 @@ async def wallet_selection_callback(
         full_msg = (
             msg
             + transfer_instructions
-            + f"\n\n<b>💰 Current Balance:</b> {total_sol} {wallet_type}\n<b>🔗 Wallet Address (TRC20):</b> <code>{wallet_details["public_key"]}</code>"
+            + get_text(user_id, "wallet_summary", "start-wallet").format(
+                total_sol=total_sol,
+                public_key=wallet_details["public_key"],
+                wallet_type=wallet_type,
+            )
         )
 
         buttons = [
             [
                 InlineKeyboardButton(
-                    "🔄 Refresh Wallet", callback_data="refresh_wallet"
+                    get_text(user_id, "refresh_wallet", "globals"),
+                    callback_data="refresh_wallet",
                 ),
                 InlineKeyboardButton(
-                    "➡️ Continue to Case Posting", callback_data="create_case"
+                    get_text(user_id, "continue_case", "globals"),
+                    callback_data="create_case",
                 ),
             ]
         ]
@@ -184,7 +204,7 @@ async def wallet_selection_callback(
         return State.HANDLE_REPLY  # Use a custom state if needed
     else:
         await query.edit_message_text(
-            get_text(user_id, "wallet_not_found"), parse_mode="HTML"
+            get_text(user_id, "wallet_not_found", "start-wallet"), parse_mode="HTML"
         )
         return State.END
 
@@ -200,7 +220,7 @@ async def wallet_name_handler(
         # If it's a callback query, prompt the user to enter a wallet name
         await update.callback_query.answer()
         await update.callback_query.edit_message_text(
-            get_text(user_id, "wallet_name_prompt").format(wallet_type=wallet_type),
+            get_text(user_id, "wallet_name_prompt", "start-wallet").format(wallet_type=wallet_type),
             parse_mode="HTML",
         )
         return State.NAME_WALLET
@@ -211,7 +231,7 @@ async def wallet_name_handler(
 
     if not wallet_name:
         await update.message.reply_text(
-            get_text(user_id, "wallet_name_empty"), parse_mode="HTML"
+            get_text(user_id, "wallet_name_empty", "start-wallet"), parse_mode="HTML"
         )
         return State.NAME_WALLET
 
@@ -221,7 +241,7 @@ async def wallet_name_handler(
         user_id, wallet_name, wallet_type
     ):
 
-        await update.message.reply_text(get_text(user_id, "wallet_name_exists"))
+        await update.message.reply_text(get_text(user_id, "wallet_name_exists", "start-wallet"))
         return State.NAME_WALLET
 
     wallet = await WalletService.create_wallet(user_id, wallet_type, wallet_name)
@@ -233,7 +253,7 @@ async def wallet_name_handler(
 
         context.user_data["wallet"] = wallet
         await update_or_create_case(user_id, wallet=str(wallet.id))
-        msg = get_text(user_id, "wallet_create_details_with_balance").format(
+        msg = get_text(user_id, "wallet_create_details_with_balance", "start-wallet").format(
             name=wallet.name,
             public_key=wallet.public_key,
             network=get_network(wallet_type),
@@ -241,7 +261,7 @@ async def wallet_name_handler(
             wallet_type=wallet_type,
         )
 
-        transfer_instructions = get_text(user_id, "transfer_instructions").format(
+        transfer_instructions = get_text(user_id, "transfer_instructions", "start-wallet").format(
             wallet_type=wallet_type,
             public_key=wallet.public_key,
         )
@@ -255,10 +275,10 @@ async def wallet_name_handler(
         buttons = [
             [
                 InlineKeyboardButton(
-                    "🔄 Refresh Wallet", callback_data="refresh_wallet"
+                    get_text(user_id, "refresh_wallet", "globals"), callback_data="refresh_wallet"
                 ),
                 InlineKeyboardButton(
-                    "➡️ Continue to Case Posting", callback_data="create_case"
+                    get_text(user_id, "continue_case", "globals"), callback_data="create_case"
                 ),
             ]
         ]
@@ -269,6 +289,6 @@ async def wallet_name_handler(
         return State.HANDLE_REPLY  # Use a custom state if needed
     else:
         await update.message.reply_text(
-            get_text(user_id, "wallet_create_err"), parse_mode="HTML"
+            get_text(user_id, "wallet_create_err", "start-wallet"), parse_mode="HTML"
         )
         return State.END

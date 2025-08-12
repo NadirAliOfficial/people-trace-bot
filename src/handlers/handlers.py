@@ -7,16 +7,18 @@ from handlers.case_handler import (
     handle_hair_color,
     handle_height,
     handle_last_seen_location,
-    handle_new_mobile,
-    handle_select_mobile,
     handle_person_name,
     handle_photo,
     handle_reason_for_finding,
     handle_relationship,
     handle_sex,
-    handle_tac,
     handle_transfer_confirmation,
     handle_weight,
+)
+from handlers.start_number_handler import (
+    handle_new_mobile,
+    handle_select_mobile,
+    handle_tac,
 )
 from handlers.finder_handler import (
     finder_handle_transaction_confirmation,
@@ -144,6 +146,7 @@ logger = logging.getLogger(__name__)
 start_handler = ConversationHandler(
     entry_points=[CommandHandler("start", start)],
     states={
+        #  ------------------ START HANDLER ------------------------------
         State.LANGUAGE_SELECTED: [
             CallbackQueryHandler(select_lang_callback, pattern="^lang_")
         ],
@@ -163,15 +166,29 @@ start_handler = ConversationHandler(
             ),
             MessageHandler(filters.TEXT & ~filters.COMMAND, start_choose_province),
         ],
-        #  Select City
         State.CHOOSE_CITY: [
             CallbackQueryHandler(city_callback, pattern="^(city_select_|city_page_)"),
             MessageHandler(filters.TEXT & ~filters.COMMAND, choose_city),
         ],
-        # Action Perform Like to Advertise or Find People
         State.CHOOSE_ACTION: [
             CallbackQueryHandler(action_callback, pattern="^(advertise|find_people)$")
         ],
+
+        # ------------------ START MOBILE NUMBER HANDLER ------------------------------
+        State.CREATE_CASE_MOBILE: [
+            MessageHandler(filters.TEXT & ~filters.COMMAND, handle_new_mobile)
+        ],
+        State.MOBILE_MANAGEMENT: [
+            CallbackQueryHandler(
+                handle_select_mobile, pattern="^(select_mobile_.*|mobile_add)$"
+            ),
+        ],
+        State.CREATE_CASE_TAC: [
+            MessageHandler(filters.TEXT & ~filters.COMMAND, handle_tac)
+        ],
+
+
+        
         State.CHOOSE_OR_CREATE_WALLET: [
             CallbackQueryHandler(wallet_type_callback, pattern="^(USDT|SOL)$"),
             CallbackQueryHandler(wallet_name_handler, pattern="^create_new_wallet$"),
@@ -192,18 +209,7 @@ start_handler = ConversationHandler(
                 message_router, pattern="(create_case|find_people|settings|help)$"
             )
         ],
-        # Create Case Flow:
-        State.CREATE_CASE_MOBILE: [
-            MessageHandler(filters.TEXT & ~filters.COMMAND, handle_new_mobile)
-        ],
-        State.MOBILE_MANAGEMENT: [
-            CallbackQueryHandler(
-                handle_select_mobile, pattern="^(select_mobile_.*|mobile_add)$"
-            ),
-        ],
-        State.CREATE_CASE_TAC: [
-            MessageHandler(filters.TEXT & ~filters.COMMAND, handle_tac)
-        ],
+        
         State.CREATE_CASE_DISCLAIMER: [
             CallbackQueryHandler(
                 create_case_disclaimer_2_callback, pattern="^(agree|disagree)$"

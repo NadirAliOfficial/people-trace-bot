@@ -1,40 +1,23 @@
-START_LANG_DATA = {
+START_MOBILE_NUMBER_CONSTANT = {
     "english": {  # English
-        "choose_country": "🌏 What country are you in? (You can type part of the name, for example, Swed for Sweden)",
-        "country_not_found": "No matching countries found. Please try again:",
-        "country_selected": "Got it! You’re in ",
-        "country_multi": "Multiple countries found (Page {page} of {total}):",
-        "invalid_choice": "Invalid choice. Conversation ended.",
-        "disclaimer_text": (
-            "📜 *Terms & Conditions*\n"
-            "• All rewards are held in escrow until the case is resolved\n"
-            "• Misuse of AI-generated or false content results in a permanent ban\n"
-            "• Report to *local authorities* before posting a case\n"
-            "• We are not responsible for disputes or misuse\n"
-            "• 5% platform fee applies to both posting and successful findings\n"
-            "• All info submitted is *publicly visible*\n"
-            "💼 *Fees:*\n"
-            "• A *5% platform* fee applies to both:\n"
-            "  – Case submissions\n"
-            "  – Successful findings"
+        "choose_existing_mobile": "Please select an existing number or add a new one.",
+        "enter_mobile_post_case": (
+            "📢 *Ready to Post a Case? Let’s Verify You First*\n\n"
+            "To ensure legitimacy and protect the community, please verify your contact number first. \n"
+            "We'll send you a TAC (one-time code) for confirmation. \n\n"
+            "📞 Please enter your mobile number (with country code):"
         ),
-        "enter_province": "📍Now, let’s narrow it down. What’s your province/state or region? (Parial name is okay.)",
-        "enter_city": "Please enter your city name (partial name allowed):",
-        "province_not_exist": "No matching provinces found. Please try again.",
-        "province_multi": "Multiple provinces found (Page {page} of {total}):",
-        "city_not_found": "No matching cities found. Please try again:",
-        "city_selected": "City recorded:",
-        "city_multi": "Multiple cities found (Page {page} of {total}):",
-        "choose_action": "You're all set! What would you like to do? ",
-        "advertise_btn": "📢 Post a Case",
-        "find_btn": "🔍 Find People ",
-    
+        "mobile_number_doesnt_exist": "The mobile number you entered does not exist. Please try again.",
+        "enter_tac": "Please enter the verification code (TAC) sent to your mobile number:",
+        "mobile_selected_with_tac": "The mobile number you entered has been verified. Please enter the verification code:",
+        "enter_valid_mobile": "❌ Invalid mobile number. Please enter a valid 10-digit number.",
+        "tac_invalid": "❌ Invalid TAC. Please try again.",
+        "tac_verified": "✅ TAC verified successfully.",
         # "lang_button": " 🇬🇧 English",
         # "start_msg": "*👋 Welcome to PeopleTrace. \n \n🌐 Please select your language:",
         # "disclaimer_title": "Disclaimer\n\n",
         # "welcome": "👋 Welcome to our bot!\nPlease choose your language below 👇",
         # "fee_details": "Fees:\n• A 5% platform fee applies to both:\n– Case submissions\n– Successful findings \n",
-        # "no_wallets_found": "No wallets  found. ",
         # "change_location": "Change Location 📍",
         # "find_dev": "Find People is under development.",
         # "btn_language": "Change Language",
@@ -49,10 +32,16 @@ START_LANG_DATA = {
         # ),
         # "invalid_mobile_number": "❌ Invalid mobile number. Please enter a valid 10-digit number.",
         # "menu_settings_title": "Settings Menu",
+        # "enter_tac": "Please enter the verification code (TAC) sent to your mobile number:",
         # "verify_tac": "Verifying your code... Please wait a moment.",
-        # "tac_verified": "✅ TAC verified successfully.",
-        # "tac_invalid": "❌ Invalid TAC. Please try again.",
-        # "choose_existing_mobile": "Please select an existing number or add a new one.",
+        # "transfer_instructions": (
+        #     "\n\n<b>💡 How to Transfer {wallet_type} to Your Wallet:</b>\n\n"
+        #     "1️⃣ Open your {wallet_type}-compatible wallet app.\n"
+        #     "2️⃣ Tap <b>Send</b> or <b>Transfer</b>.\n"
+        #     "3️⃣ Paste your <b>Public Key</b> as the recipient:\n<code>{public_key}</code>\n"
+        #     "4️⃣ Select the correct network: <b>TRC20 (Tron Network)</b>\n"
+        #     "5️⃣ Enter the amount and confirm the transfer.\n"
+        # ),
         # "no_case_found_in_province": "No cases found in {province} right now. Try another province or check back later!",
         # "wallet_name_prompt": "Please enter a name for your {wallet_type} wallet:",
         # "wallet_name_empty": "Wallet name cannot be empty. Please try again.",
@@ -60,7 +49,6 @@ START_LANG_DATA = {
         # "usdt_wallet": " 💵 USDT (TRC20 - Tron Network)",
         # "sol_wallet": "⚡ Solana (SOL)",
         # "choose_wallet": "Please choose a wallet type:",
-        # "choose_existing_or_new_wallet": "Choose an existing wallet or create a new one:",
         # "main_menu": "Choose an option below to continue:",
         # "help_command": "Need help? Visit our support channel: @YourSupportChannel",
         # "settings_command": "⚙️ Settings Menu",

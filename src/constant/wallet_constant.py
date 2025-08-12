@@ -41,6 +41,9 @@ WALLET_LANG_DATA = {
         "yes_delete": "Yes, delete",
         "delete_wallet_confirm_reject": "You didn't confirm to delete the wallet",
         "wallet_deleted": "✅ Wallet deleted successfully.",
+        #  For Start Command
+        "choose_wallet_header": "💼 Before posting your case, you’ll need a crypto wallet for the reward bounty.\n"
+        "Please choose a wallet type to proceed:",
     },
     "chinese": {
         "choose_wallet": "请选择钱包类型：",

@@ -595,7 +595,7 @@ async def action_callback(update: Update, context: ContextTypes.DEFAULT_TYPE) ->
             kb.append([InlineKeyboardButton("➕ Add New", callback_data="mobile_add")])
 
             await query.edit_message_text(
-                get_text(user_id, "choose_existing_mobile", "start-complaints"),
+                get_text(user_id, "choose_existing_mobile", "start-mobile"),
                 reply_markup=InlineKeyboardMarkup(kb),
             )
             return State.MOBILE_MANAGEMENT
@@ -693,9 +693,9 @@ async def message_router(update: Update, context: ContextTypes.DEFAULT_TYPE):
 
     if choice == "create_case":
         await query.edit_message_text(
-            get_text(user_id, "create_case_title"), parse_mode="HTML"
+            get_text(user_id, "create_case_title", "cases"), parse_mode="HTML"
         )
-        await query.message.reply_text(get_text(user_id, "enter_person_name"))
+        await query.message.reply_text(get_text(user_id, "enter_person_name", "cases"))
         return State.CREATE_CASE_PERSON_NAME
 
     elif choice == "find_people":
