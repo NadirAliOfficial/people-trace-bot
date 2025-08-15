@@ -108,7 +108,7 @@ async def wallet_command(update: Update, context: ContextTypes.DEFAULT_TYPE):
             reply_markup=InlineKeyboardMarkup(kb),
         )
 
-    return State.WALLET_MENU
+    return State.WALLETS.WALLET_MENU
 
 
 @catch_async
@@ -169,7 +169,7 @@ async def refresh_wallets(update: Update, context: ContextTypes.DEFAULT_TYPE):
             get_text(user_id, "wallets_already_updated", "wallets"), show_alert=True
         )
 
-    return State.WALLET_MENU
+    return State.WALLETS.WALLET_MENU
 
 
 # ====================== SOL Wallets Implementation ======================
@@ -188,7 +188,7 @@ async def sol_wallets(update: Update, context: ContextTypes.DEFAULT_TYPE):
     if not sol_wallets:
         message = get_text(user_id, "no_sol_wallets", "wallets")
         await query.edit_message_text(message)
-        return State.WALLET_MENU
+        return State.WALLETS.WALLET_MENU
 
     # Create buttons with balances for each SOL wallet
     kb = []
@@ -219,7 +219,7 @@ async def sol_wallets(update: Update, context: ContextTypes.DEFAULT_TYPE):
     await query.edit_message_text(
         "📋 Your SOL Wallets:", reply_markup=InlineKeyboardMarkup(kb)
     )
-    return State.SOL_WALLET_DETAIL
+    return State.WALLETS.SOL_WALLET_DETAIL
 
 
 @catch_async
@@ -233,7 +233,7 @@ async def show_sol_wallet_detail(update: Update, context: ContextTypes.DEFAULT_T
     wallet = await WalletService.get_wallet_by_id(wallet_id)
     if not wallet:
         await query.message.edit_text(get_text(user_id, "wallet_not_found", "wallets"))
-        return State.WALLET_MENU
+        return State.WALLETS.WALLET_MENU
 
     # Get balance
     try:
@@ -268,7 +268,7 @@ async def show_sol_wallet_detail(update: Update, context: ContextTypes.DEFAULT_T
     await query.message.edit_text(
         message, parse_mode="MarkdownV2", reply_markup=InlineKeyboardMarkup(kb)
     )
-    return State.SOL_WALLET_ACTIONS
+    return State.WALLETS.SOL_WALLET_ACTIONS
 
 
 # ====================== USDT Wallets Implementation ======================
@@ -285,7 +285,7 @@ async def usdt_wallets(update: Update, context: ContextTypes.DEFAULT_TYPE):
     if not usdt_wallets:
         message = get_text(user_id, "no_usdt_wallets", "wallets")
         await query.edit_message_text(message)
-        return State.WALLET_MENU
+        return State.WALLETS.WALLET_MENU
 
     # Create buttons with balances for each USDT wallet
     kb = []
@@ -322,7 +322,7 @@ async def usdt_wallets(update: Update, context: ContextTypes.DEFAULT_TYPE):
         get_text(user_id, "your_usdt_wallet", "wallets"),
         reply_markup=InlineKeyboardMarkup(kb),
     )
-    return State.USDT_WALLET_DETAIL
+    return State.WALLETS.USDT_WALLET_DETAIL
 
 
 @catch_async
@@ -338,7 +338,7 @@ async def usdt_wallets(update: Update, context: ContextTypes.DEFAULT_TYPE):
     if not usdt_wallets:
         message = get_text(user_id, "no_usdt_wallets", "wallets")
         await query.edit_message_text(message)
-        return State.WALLET_MENU
+        return State.WALLETS.WALLET_MENU
 
     # Create buttons with balances for each USDT wallet
     kb = []
@@ -371,7 +371,7 @@ async def usdt_wallets(update: Update, context: ContextTypes.DEFAULT_TYPE):
         get_text(user_id, "your_usdt_wallet", "wallets"),
         reply_markup=InlineKeyboardMarkup(kb),
     )
-    return State.USDT_WALLET_DETAIL
+    return State.WALLETS.USDT_WALLET_DETAIL
 
 
 @catch_async
@@ -385,7 +385,7 @@ async def show_usdt_wallet_detail(update: Update, context: ContextTypes.DEFAULT_
     wallet = await WalletService.get_wallet_by_id(wallet_id)
     if not wallet:
         await query.message.edit_text(get_text(user_id, "wallet_not_found", "wallets"))
-        return State.WALLET_MENU
+        return State.WALLETS.WALLET_MENU
 
     # Get balance
     try:
@@ -420,7 +420,7 @@ async def show_usdt_wallet_detail(update: Update, context: ContextTypes.DEFAULT_
     await query.message.edit_text(
         message, parse_mode="MarkdownV2", reply_markup=InlineKeyboardMarkup(kb)
     )
-    return State.USDT_WALLET_ACTIONS
+    return State.WALLETS.USDT_WALLET_ACTIONS
 
 
 @catch_async
@@ -455,7 +455,7 @@ async def request_private_key(update: Update, context: ContextTypes.DEFAULT_TYPE
     await query.message.edit_text(
         warning_text, parse_mode="MarkdownV2", reply_markup=InlineKeyboardMarkup(kb)
     )
-    return State.CONFIRM_PRIVATE_KEY
+    return State.WALLETS.CONFIRM_PRIVATE_KEY
 
 
 @catch_async
@@ -474,7 +474,7 @@ async def show_private_key(update: Update, context: ContextTypes.DEFAULT_TYPE):
 
     if not wallet:
         await query.message.edit_text(get_text(user_id, "wallet_not_found", "wallets"))
-        return State.WALLET_MENU
+        return State.WALLETS.WALLET_MENU
 
     # Format and escape the private key message
     warning_message = escape_markdown_v2(
@@ -496,7 +496,7 @@ async def show_private_key(update: Update, context: ContextTypes.DEFAULT_TYPE):
     await query.message.edit_text(
         warning_message, parse_mode="MarkdownV2", reply_markup=InlineKeyboardMarkup(kb)
     )
-    return State.USDT_WALLET_ACTIONS
+    return State.WALLETS.USDT_WALLET_ACTIONS
 
 
 @catch_async
@@ -525,7 +525,7 @@ async def show_address(update: Update, context: ContextTypes.DEFAULT_TYPE):
     await update.callback_query.message.edit_text(
         message, reply_markup=InlineKeyboardMarkup(kb), parse_mode="HTML"
     )
-    return State.SHOW_ADDRESS
+    return State.WALLETS.SHOW_ADDRESS
 
 
 @catch_async
@@ -567,7 +567,7 @@ async def show_specific_address(update: Update, context: ContextTypes.DEFAULT_TY
     await update.callback_query.message.edit_text(
         message, parse_mode="Markdown", reply_markup=InlineKeyboardMarkup(kb)
     )
-    return State.WALLET_MENU
+    return State.WALLETS.WALLET_MENU
 
 
 @catch_async
@@ -604,7 +604,7 @@ async def view_history(update: Update, context: ContextTypes.DEFAULT_TYPE):
     await update.callback_query.message.edit_text(
         message, reply_markup=InlineKeyboardMarkup(kb)
     )
-    return State.VIEW_HISTORY
+    return State.WALLETS.VIEW_HISTORY
 
 
 @catch_async
@@ -628,7 +628,7 @@ async def view_specific_history(update: Update, context: ContextTypes.DEFAULT_TY
         message = get_text(user_id, "wallet_not_found", "wallets")
 
     await update.callback_query.message.edit_text(message)
-    return State.WALLET_MENU
+    return State.WALLETS.WALLET_MENU
 
 
 @catch_async
@@ -653,7 +653,7 @@ async def create_wallet(update: Update, context: ContextTypes.DEFAULT_TYPE):
 
     message = get_text(user_id, "select_wallet_type_header", "wallets")
     await query.edit_message_text(text=message, reply_markup=reply_markup)
-    return State.SELECT_WALLET_TYPE
+    return State.WALLETS.SELECT_WALLET_TYPE
 
 
 @catch_async
@@ -668,7 +668,7 @@ async def select_wallet_type(update: Update, context: ContextTypes.DEFAULT_TYPE)
 
     message = get_text(user_id, "enter_wallet_name", "wallets")
     await query.edit_message_text(text=message)
-    return State.ENTER_WALLET_NAME
+    return State.WALLETS.ENTER_WALLET_NAME
 
 
 @catch_async
@@ -682,7 +682,7 @@ async def process_create_wallet(update: Update, context: ContextTypes.DEFAULT_TY
     if await WalletService.check_wallet_name_used(user_id, wallet_name):
         message = get_text(user_id, "wallet_address_already_in_use", "wallets")
         await update.message.reply_text(message)
-        return State.ENTER_WALLET_NAME
+        return State.WALLETS.ENTER_WALLET_NAME
 
     # Create the wallet
     wallet = await WalletService.create_wallet(user_id, wallet_type, wallet_name)
@@ -698,7 +698,7 @@ async def process_create_wallet(update: Update, context: ContextTypes.DEFAULT_TY
         message,
         parse_mode="HTML",
     )
-    return State.WALLET_MENU
+    return State.WALLETS.WALLET_MENU
 
 
 @catch_async
@@ -713,7 +713,7 @@ async def delete_wallet(update: Update, context: ContextTypes.DEFAULT_TYPE):
     if not wallets:
         message = get_text(user_id, "dont_have_wallet_to_delete", "wallets")
         await query.message.edit_text(message)
-        return State.WALLET_MENU
+        return State.WALLETS.WALLET_MENU
 
     kb = [
         [
@@ -726,7 +726,7 @@ async def delete_wallet(update: Update, context: ContextTypes.DEFAULT_TYPE):
 
     message = "Select a wallet to delete:"
     await query.message.edit_text(message, reply_markup=InlineKeyboardMarkup(kb))
-    return State.CONFIRM_DELETE_WALLET
+    return State.WALLETS.CONFIRM_DELETE_WALLET
 
 
 @catch_async
@@ -750,7 +750,7 @@ async def confirm_delete_wallet(update: Update, context: ContextTypes.DEFAULT_TY
         "Are you sure you want to delete this wallet? This action cannot be undone."
     )
     await query.message.edit_text(message, reply_markup=InlineKeyboardMarkup(kb))
-    return State.DELETE_WALLET
+    return State.WALLETS.DELETE_WALLET
 
 
 @catch_async
@@ -760,7 +760,7 @@ async def cancel_delete_wallet(update: Update, context: ContextTypes.DEFAULT_TYP
     user_id = update.effective_user.id
     message = get_text(user_id, "delete_wallet_confirm_reject", "wallets")
     await query.message.edit_text(message)
-    return State.END
+    return State.WALLETS.END
 
 
 @catch_async
@@ -775,7 +775,7 @@ async def process_delete_wallet(update: Update, context: ContextTypes.DEFAULT_TY
     if not wallet_id:
         message = get_text(user_id, "delete_wallet_confirm_reject", "wallets")
         await query.message.edit_text(message)
-        return State.END
+        return State.WALLETS.END
     user_id = update.effective_user.id
 
     success = await WalletService.soft_delete_wallet(wallet_id)
@@ -786,7 +786,7 @@ async def process_delete_wallet(update: Update, context: ContextTypes.DEFAULT_TY
     )
 
     await query.message.edit_text(message)
-    return State.WALLET_MENU
+    return State.WALLETS.WALLET_MENU
 
 
 #  ----------------------- Back to the Wallet Menu ------------------------
@@ -808,4 +808,4 @@ async def back_to_wallet_menu(update: Update, context: ContextTypes.DEFAULT_TYPE
     elif update.message:
         # Send a new message (regular message)
         await update.message.reply_text(text=welcome_text, reply_markup=keyboard)
-    return State.WALLET_MENU
+    return State.WALLETS.WALLET_MENU

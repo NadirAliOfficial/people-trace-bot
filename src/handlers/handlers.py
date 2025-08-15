@@ -358,7 +358,7 @@ start_handler = ConversationHandler(
 wallet_handler = ConversationHandler(
     entry_points=[CommandHandler("wallets", wallet_command)],
     states={
-        State.WALLET_MENU: [
+        State.WALLETS.WALLET_MENU: [
             CallbackQueryHandler(refresh_wallets, pattern="^refresh_wallets$"),
             CallbackQueryHandler(sol_wallets, pattern="^sol_wallets$"),
             CallbackQueryHandler(usdt_wallets, pattern="^usdt_wallets$"),
@@ -370,54 +370,54 @@ wallet_handler = ConversationHandler(
                 back_to_wallet_menu, pattern="^back_to_wallet_menu$"
             ),  # TESTED
         ],
-        State.SOL_WALLET_DETAIL: [
+        State.WALLETS.SOL_WALLET_DETAIL: [
             CallbackQueryHandler(show_sol_wallet_detail, pattern="^sol_detail_"),
             CallbackQueryHandler(back_to_wallet_menu, pattern="^back_to_wallet_menu$"),
         ],
-        State.SOL_WALLET_ACTIONS: [
+        State.WALLETS.SOL_WALLET_ACTIONS: [
             CallbackQueryHandler(request_private_key, pattern="^req_pk_"),
             CallbackQueryHandler(back_to_wallet_menu, pattern="^back_to_wallet_menu$"),
         ],
-        State.USDT_WALLET_DETAIL: [
+        State.WALLETS.USDT_WALLET_DETAIL: [
             CallbackQueryHandler(show_usdt_wallet_detail, pattern="^usdt_detail_"),
             CallbackQueryHandler(back_to_wallet_menu, pattern="^back_to_wallet_menu$"),
         ],
-        State.USDT_WALLET_ACTIONS: [
+        State.WALLETS.USDT_WALLET_ACTIONS: [
             CallbackQueryHandler(request_private_key, pattern="^req_pk_"),
             CallbackQueryHandler(back_to_wallet_menu, pattern="^back_to_wallet_menu$"),
         ],
-        State.CONFIRM_PRIVATE_KEY: [
+        State.WALLETS.CONFIRM_PRIVATE_KEY: [
             CallbackQueryHandler(show_private_key, pattern="^(confirm_pk|cancel_pk)$"),
             CallbackQueryHandler(back_to_wallet_menu, pattern="^back_to_wallet_menu$"),
         ],
-        State.SHOW_ADDRESS: [
+        State.WALLETS.SHOW_ADDRESS: [
             CallbackQueryHandler(show_specific_address, pattern="^show_address_"),
             CallbackQueryHandler(back_to_wallet_menu, pattern="^back_to_wallet_menu$"),
         ],
-        State.VIEW_HISTORY: [
+        State.WALLETS.VIEW_HISTORY: [
             CallbackQueryHandler(view_specific_history, pattern="^view_history_"),
             CallbackQueryHandler(back_to_wallet_menu, pattern="^back_to_wallet_menu$"),
         ],
-        State.SELECT_WALLET_TYPE: [
+        State.WALLETS.SELECT_WALLET_TYPE: [
             CallbackQueryHandler(
                 select_wallet_type, pattern="^(USDT|SOL)$"
             ),  # Handle wallet type selection
         ],
-        State.ENTER_WALLET_NAME: [
+        State.WALLETS.ENTER_WALLET_NAME: [
             MessageHandler(
                 filters.TEXT & ~filters.COMMAND, process_create_wallet
             ),  # Handle wallet name input
         ],
-        State.CONFIRM_DELETE_WALLET: [
+        State.WALLETS.CONFIRM_DELETE_WALLET: [
             CallbackQueryHandler(
                 confirm_delete_wallet, pattern="^confirm_delete_wallet_"
             ),
         ],
-        State.DELETE_WALLET: [
+        State.WALLETS.DELETE_WALLET: [
             CallbackQueryHandler(process_delete_wallet, pattern="^delete_wallet_"),
             CallbackQueryHandler(cancel_delete_wallet, pattern="^cancel_delete_wallet"),
         ],
-        State.END: [CommandHandler("wallet", wallet_command)],
+        State.WALLETS.END: [CommandHandler("wallet", wallet_command)],
     },
     fallbacks=[
         CommandHandler("cancel", cancel),
