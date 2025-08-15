@@ -27,7 +27,7 @@ LANG_DATA = {
     "wallets": WALLET_LANG_DATA,
     "start-complaints": START_LANG_DATA,
     "start-mobile": START_MOBILE_NUMBER_CONSTANT,
-    "case": CASE_CONSTANT,
+    "cases": CASE_CONSTANT,
     "start-wallet": START_WALLET_CONSTANT,
 }
 

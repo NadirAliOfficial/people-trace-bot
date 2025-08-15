@@ -160,7 +160,7 @@ async def handle_tac(update: Update, context: ContextTypes.DEFAULT_TYPE) -> int:
         await update_or_create_case(user_id, mobile=selected_number)
 
         # Show disclaimer before proceeding
-        disclaimer_text = get_text(user_id, "case_poster_disclaimer", "case")
+        disclaimer_text = get_text(user_id, "case_poster_disclaimer", "cases")
         buttons = [
             [
                 InlineKeyboardButton(

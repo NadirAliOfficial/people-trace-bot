@@ -154,8 +154,14 @@ async def choose_country(update: Update, context: ContextTypes.DEFAULT_TYPE) -> 
         if total > 1:
             kb.append(
                 [
-                    InlineKeyboardButton(get_text(user_id, "prev", "globals"), callback_data="country_page_0"),
-                    InlineKeyboardButton(get_text(user_id, "next", "globals"), callback_data="country_page_2"),
+                    InlineKeyboardButton(
+                        get_text(user_id, "prev", "globals"),
+                        callback_data="country_page_0",
+                    ),
+                    InlineKeyboardButton(
+                        get_text(user_id, "next", "globals"),
+                        callback_data="country_page_2",
+                    ),
                 ]
             )
         markup = InlineKeyboardMarkup(kb)
@@ -211,11 +217,17 @@ async def country_callback(update: Update, context: ContextTypes.DEFAULT_TYPE) -
         nav_row = []
         if page_num > 1:
             nav_row.append(
-                InlineKeyboardButton(get_text(user_id, "prev", "globals"), callback_data=f"country_page_{page_num-1}")
+                InlineKeyboardButton(
+                    get_text(user_id, "prev", "globals"),
+                    callback_data=f"country_page_{page_num-1}",
+                )
             )
         if page_num < total:
             nav_row.append(
-                InlineKeyboardButton(get_text(user_id, "next", "globals"), callback_data=f"country_page_{page_num+1}")
+                InlineKeyboardButton(
+                    get_text(user_id, "next", "globals"),
+                    callback_data=f"country_page_{page_num+1}",
+                )
             )
         if nav_row:
             kb.append(nav_row)
@@ -348,14 +360,22 @@ async def start_choose_province(
         if total > 1:
             kb.append(
                 [
-                    InlineKeyboardButton(get_text(user_id, "prev", "globals"), callback_data="start_province_page_0"),
-                    InlineKeyboardButton(get_text(user_id, "next", "globals"), callback_data="start_province_page_2"),
+                    InlineKeyboardButton(
+                        get_text(user_id, "prev", "globals"),
+                        callback_data="start_province_page_0",
+                    ),
+                    InlineKeyboardButton(
+                        get_text(user_id, "next", "globals"),
+                        callback_data="start_province_page_2",
+                    ),
                 ]
             )
 
         markup = InlineKeyboardMarkup(kb)
         await update.message.reply_text(
-            get_text(user_id, "province_multi", "start-complaints").format(page=1, total=total),
+            get_text(user_id, "province_multi", "start-complaints").format(
+                page=1, total=total
+            ),
             reply_markup=markup,
             parse_mode="HTML",
         )
@@ -400,13 +420,15 @@ async def start_province_callback(
         if page_num > 1:
             nav_row.append(
                 InlineKeyboardButton(
-                    get_text(user_id, "prev", "globals"), callback_data=f"start_province_page_{page_num - 1}"
+                    get_text(user_id, "prev", "globals"),
+                    callback_data=f"start_province_page_{page_num - 1}",
                 )
             )
         if page_num < total:
             nav_row.append(
                 InlineKeyboardButton(
-                    get_text(user_id, "next", "globals"), callback_data=f"start_province_page_{page_num + 1}"
+                    get_text(user_id, "next", "globals"),
+                    callback_data=f"start_province_page_{page_num + 1}",
                 )
             )
         if nav_row:
@@ -414,7 +436,9 @@ async def start_province_callback(
 
         markup = InlineKeyboardMarkup(kb)
         await query.edit_message_text(
-            get_text(user_id, "province_multi", "start-complaints").format(page=page_num, total=total),
+            get_text(user_id, "province_multi", "start-complaints").format(
+                page=page_num, total=total
+            ),
             reply_markup=markup,
             parse_mode="HTML",
         )
@@ -466,13 +490,21 @@ async def choose_city(update: Update, context: ContextTypes.DEFAULT_TYPE) -> int
         if total > 1:
             kb.append(
                 [
-                    InlineKeyboardButton(get_text(user_id, "prev", "globals"), callback_data="city_page_0"),
-                    InlineKeyboardButton(get_text(user_id, "next", "globals"), callback_data="city_page_2"),
+                    InlineKeyboardButton(
+                        get_text(user_id, "prev", "globals"),
+                        callback_data="city_page_0",
+                    ),
+                    InlineKeyboardButton(
+                        get_text(user_id, "next", "globals"),
+                        callback_data="city_page_2",
+                    ),
                 ]
             )
         markup = InlineKeyboardMarkup(kb)
         await update.message.reply_text(
-            get_text(user_id, "city_multi", "start-complaints").format(page=1, total=total),
+            get_text(user_id, "city_multi", "start-complaints").format(
+                page=1, total=total
+            ),
             reply_markup=markup,
             parse_mode="HTML",
         )
@@ -512,11 +544,17 @@ async def city_callback(update: Update, context: ContextTypes.DEFAULT_TYPE) -> i
         nav_row = []
         if page_num > 1:
             nav_row.append(
-                InlineKeyboardButton(get_text(user_id, "prev", "globals"), callback_data=f"city_page_{page_num-1}")
+                InlineKeyboardButton(
+                    get_text(user_id, "prev", "globals"),
+                    callback_data=f"city_page_{page_num-1}",
+                )
             )
         if page_num < total:
             nav_row.append(
-                InlineKeyboardButton(get_text(user_id, "next", "globals" ), callback_data=f"city_page_{page_num+1}")
+                InlineKeyboardButton(
+                    get_text(user_id, "next", "globals"),
+                    callback_data=f"city_page_{page_num+1}",
+                )
             )
         if nav_row:
             kb.append(nav_row)
@@ -601,7 +639,8 @@ async def action_callback(update: Update, context: ContextTypes.DEFAULT_TYPE) ->
             return State.MOBILE_MANAGEMENT
         else:
             await query.edit_message_text(
-                get_text(user_id, "enter_mobile_post_case", "start-complaints"), parse_mode="Markdown"
+                get_text(user_id, "enter_mobile_post_case", "start-mobile"),
+                parse_mode="Markdown",
             )
             return State.CREATE_CASE_MOBILE
     elif choice == "find_people":
@@ -621,9 +660,9 @@ async def action_callback(update: Update, context: ContextTypes.DEFAULT_TYPE) ->
 
         if not cases:
             await query.edit_message_text(
-                get_text(user_id, "no_case_found_in_province", "start-complaints").format(
-                    province=province
-                ),
+                get_text(
+                    user_id, "no_case_found_in_province", "start-complaints"
+                ).format(province=province),
                 parse_mode="Markdown",
             )
             return State.START_CHOOSE_PROVINCE
@@ -650,10 +689,15 @@ async def action_callback(update: Update, context: ContextTypes.DEFAULT_TYPE) ->
         navigation_buttons = []
         if total_pages > 1:
             navigation_buttons.append(
-                InlineKeyboardButton(get_text(user_id, "prev", "globals"), callback_data="case_page_previous")
+                InlineKeyboardButton(
+                    get_text(user_id, "prev", "globals"),
+                    callback_data="case_page_previous",
+                )
             )
             navigation_buttons.append(
-                InlineKeyboardButton(get_text(user_id, "next", "globals"), callback_data="case_page_next")
+                InlineKeyboardButton(
+                    get_text(user_id, "next", "globals"), callback_data="case_page_next"
+                )
             )
         if navigation_buttons:
             keyboard.append(navigation_buttons)
@@ -673,12 +717,7 @@ async def action_callback(update: Update, context: ContextTypes.DEFAULT_TYPE) ->
         return State.END
 
 
-
-
-
-
 #  Ended Start Command
-
 
 
 @catch_async
@@ -744,10 +783,15 @@ async def message_router(update: Update, context: ContextTypes.DEFAULT_TYPE):
         navigation_buttons = []
         if total_pages > 1:
             navigation_buttons.append(
-                InlineKeyboardButton(get_text(user_id, "prev", "globals"), callback_data="case_page_previous")
+                InlineKeyboardButton(
+                    get_text(user_id, "prev", "globals"),
+                    callback_data="case_page_previous",
+                )
             )
             navigation_buttons.append(
-                InlineKeyboardButton(get_text(user_id, "next", "globals"), callback_data="case_page_next")
+                InlineKeyboardButton(
+                    get_text(user_id, "next", "globals"), callback_data="case_page_next"
+                )
             )
         if navigation_buttons:
             keyboard.append(navigation_buttons)
@@ -786,10 +830,6 @@ async def message_router(update: Update, context: ContextTypes.DEFAULT_TYPE):
     else:
         await query.edit_message_text("❗ Please choose an option using the buttons.")
         return State.HANDLE_REPLY
-
-
-
-
 
 
 # handlers/shared.py

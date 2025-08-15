@@ -296,6 +296,8 @@ async def handle_reason_for_finding(
     return State.CREATE_CASE_ASK_REWARD
 
 
+
+# _________ REWARD AMOUNT OF THE CASE
 # _________ REWARD AMOUNT OF THE CASE
 @catch_async
 async def handle_ask_reward_amount(
@@ -319,6 +321,7 @@ async def handle_ask_reward_amount(
         )
         return State.CREATE_CASE_ASK_REWARD
 
+    # Fetch draft case & wallet
     case = await Case.find_one({"user_id": user_id, "status": CaseStatus.DRAFT})
     wallet = await case.wallet.fetch()
 
@@ -329,21 +332,40 @@ async def handle_ask_reward_amount(
         else await TronWallet.get_usdt_balance(wallet.public_key)
     )
 
+    # === Insufficient balance case ===
     if wallet_balance < reward_amount:
-        await update.message.reply_text(
-            get_text(user_id, "insufficient_balance", "cases").format(wallet_balance)
+        msg = (
+            "🚫 <b>Insufficient Balance</b>\n\n"
+            f"⚠️ Your current balance is {wallet_balance} USDT.\n"
+            f"To continue, you’ll need to fund your wallet with {reward_amount} USDT.\n\n"
+            "🔐 <b>Your Wallet Address:</b>\n"
+            f"<code>{wallet.public_key}</code>\n\n"
+            "🌐 Network: TRC20 (Tron Network)\n\n"
+            "📥 <b>To top up:</b>\n\n"
+            "1️⃣ Open your crypto wallet\n"
+            "2️⃣ Select Send\n"
+            "3️⃣ Paste your wallet address\n"
+            "4️⃣ Select the correct network (TRC20)\n"
+            "5️⃣ Enter amount and confirm\n\n"
+            "🔁 Once you’ve completed the transfer, press <b>Refresh</b> to update your balance."
         )
-        await update.message.reply_text(get_text(user_id, "refresh_wallet_balance", "cases"))
+
+        buttons = [
+            [InlineKeyboardButton("🔄 Refresh", callback_data=f"refresh_balance:{reward_amount}")],
+            [InlineKeyboardButton("🔙 Back", callback_data=f"back_to_reason:{reward_amount}")]
+        ]
+
+        await update.message.reply_text(msg, parse_mode="HTML", reply_markup=InlineKeyboardMarkup(buttons))
         return State.CREATE_CASE_ASK_REWARD
 
+    # === Balance is OK ===
     case.reward = reward_amount
     await case.save()
 
+    # If reward is less than 1000 → show motivational tip with Continue button
     if reward_amount < 1000:
-        # 🧠 Motivational tip if reward is under 1000
-        # TODO: would be replace with language
         msg = (
-            f"💸 <b>Reward set to {reward_amount} {wallet_type}</b>\n\n"
+            f"💸 <b>Reward set to {reward_amount} USDT</b>\n\n"
             "💡 <b>Tip:</b> The higher the reward, the more eyes you attract!\n"
             "Offering a generous reward motivates more people to join the search — "
             "increasing your chances of finding the person faster. 🕵️‍♂️💬\n"
@@ -353,16 +375,14 @@ async def handle_ask_reward_amount(
         buttons = [
             [
                 InlineKeyboardButton("💰 Increase Reward", callback_data="increase_reward"),
-                InlineKeyboardButton("🔙 Back", callback_data="back_to_reason"),
+                InlineKeyboardButton("➡️ Continue", callback_data=f"continue_with_reward:{reward_amount}"),
             ]
         ]
 
-        await update.message.reply_text(
-            msg, parse_mode="HTML", reply_markup=InlineKeyboardMarkup(buttons)
-        )
-        return State.CREATE_CASE_ASK_REWARD  # Stay in same state for retry
+        await update.message.reply_text(msg, parse_mode="HTML", reply_markup=InlineKeyboardMarkup(buttons))
+        return State.CREATE_CASE_ASK_REWARD
 
-    # ✅ Reward OK, go to confirmation
+    # === Reward >= 1000 → move to confirmation ===
     await update.message.reply_text(
         get_text(user_id, "reward_amount_confirmed", "cases").format(reward_amount),
         reply_markup=InlineKeyboardMarkup(
@@ -380,6 +400,116 @@ async def handle_ask_reward_amount(
         parse_mode="HTML"
     )
     return State.CREATE_CASE_CONFIRM_TRANSFER
+
+
+# === Callback Handler for Continue with smaller reward ===
+@catch_async
+async def handle_continue_with_reward(update: Update, context: ContextTypes.DEFAULT_TYPE) -> int:
+    """Proceed to confirmation even if reward < 1000."""
+    query = update.callback_query
+    await query.answer()
+
+    user_id = query.from_user.id
+    reward_amount = float(query.data.split(":")[1])
+
+    await query.edit_message_text(
+        text=get_text(user_id, "reward_amount_confirmed", "cases").format(reward_amount),
+        parse_mode="HTML",
+        reply_markup=InlineKeyboardMarkup([
+            [
+                InlineKeyboardButton(
+                    get_text(user_id, "confirm_button", "globals"), callback_data="confirm_transfer"
+                ),
+                InlineKeyboardButton(
+                    get_text(user_id, "cancel_edit_button", "globals"), callback_data="cancel_transfer"
+                ),
+            ]
+        ])
+    )
+    return State.CREATE_CASE_CONFIRM_TRANSFER
+
+
+# === Callback Handler for Going Back with prompt ===
+@catch_async
+async def handle_back_to_reason(update: Update, context: ContextTypes.DEFAULT_TYPE) -> int:
+    """Re-prompt user for reward amount, showing what they entered last."""
+    query = update.callback_query
+    await query.answer()
+
+    reward_amount = query.data.split(":")[1] if ":" in query.data else None
+    reward_text = f"\n\n💡 You last entered: <b>{reward_amount} USDT</b>" if reward_amount else ""
+
+    msg = (
+        "💰 <b>Reward Setup</b>\n\n"
+        "What reward would you like to offer for verified leads? (in USDT)\n"
+        f"{reward_text}"
+    )
+
+    await query.edit_message_text(text=msg, parse_mode="HTML")
+    return State.CREATE_CASE_ASK_REWARD
+
+
+# === Callback Handler for Refreshing Balance ===
+@catch_async
+async def handle_refresh_balance(update: Update, context: ContextTypes.DEFAULT_TYPE) -> int:
+    """Re-check wallet balance when user presses Refresh button."""
+    query = update.callback_query
+    await query.answer()
+
+    user_id = query.from_user.id
+    data = query.data.split(":")
+    reward_amount = float(data[1]) if len(data) > 1 else 0
+
+    # Get draft case & wallet
+    case = await Case.find_one({"user_id": user_id, "status": CaseStatus.DRAFT})
+    wallet = await case.wallet.fetch()
+
+    wallet_type = wallet.wallet_type
+    wallet_balance = (
+        await WalletService.get_sol_balance(wallet.public_key)
+        if wallet_type == "SOL"
+        else await TronWallet.get_usdt_balance(wallet.public_key)
+    )
+
+    if wallet_balance < reward_amount:
+        await query.edit_message_text(
+            text=(
+                "🚫 <b>Insufficient Balance</b>\n\n"
+                f"⚠️ Your current balance is {wallet_balance} USDT.\n"
+                f"You still need at least {reward_amount} USDT to continue.\n\n"
+                "🔁 Please top up and press Refresh again."
+            ),
+            parse_mode="HTML",
+            reply_markup=InlineKeyboardMarkup([
+                [InlineKeyboardButton("🔄 Refresh", callback_data=f"refresh_balance:{reward_amount}")],
+                [InlineKeyboardButton("🔙 Back", callback_data="back_to_reason")]
+            ])
+        )
+        return State.CREATE_CASE_ASK_REWARD
+
+    # ✅ Balance now sufficient
+    case.reward = reward_amount
+    await case.save()
+
+    await query.edit_message_text(
+        text=get_text(user_id, "reward_amount_confirmed", "cases").format(reward_amount),
+        parse_mode="HTML",
+        reply_markup=InlineKeyboardMarkup([
+            [
+                InlineKeyboardButton(
+                    get_text(user_id, "confirm_button", "globals"), callback_data="confirm_transfer"
+                ),
+                InlineKeyboardButton(
+                    get_text(user_id, "cancel_edit_button", "globals"), callback_data="cancel_transfer"
+                ),
+            ]
+        ])
+    )
+    return State.CREATE_CASE_CONFIRM_TRANSFER
+
+
+
+
 
 # _________ COFIRMATION FO THE REWARD BY ASKING YES OR NO & IF YES THEN TRANSFER THE COIN TO THE STAKE WALLET
 async def handle_transfer_confirmation(

@@ -2,6 +2,8 @@ from handlers.case_handler import (
     create_case_disclaimer_2_callback,
     handle_age,
     handle_ask_reward_amount,
+    handle_back_to_reason,
+    handle_continue_with_reward,
     handle_distinctive_features,
     handle_eye_color,
     handle_hair_color,
@@ -10,12 +12,13 @@ from handlers.case_handler import (
     handle_person_name,
     handle_photo,
     handle_reason_for_finding,
+    handle_refresh_balance,
     handle_relationship,
     handle_sex,
     handle_transfer_confirmation,
     handle_weight,
 )
-from handlers.start_number_handler import (
+from handlers.start_finder_number_handler import (
     handle_new_mobile,
     handle_select_mobile,
     handle_tac,
@@ -247,9 +250,13 @@ start_handler = ConversationHandler(
         State.CREATE_CASE_ASK_REASON: [
             MessageHandler(filters.TEXT & ~filters.COMMAND, handle_reason_for_finding)
         ],
-        State.CREATE_CASE_ASK_REWARD: [
-            MessageHandler(filters.TEXT & ~filters.COMMAND, handle_ask_reward_amount)
-        ],
+    State.CREATE_CASE_ASK_REWARD: [
+    MessageHandler(filters.TEXT & ~filters.COMMAND, handle_ask_reward_amount),
+    CallbackQueryHandler(handle_refresh_balance, pattern="^refresh_balance:"),
+    CallbackQueryHandler(handle_back_to_reason, pattern="^back_to_reason:"),
+    CallbackQueryHandler(handle_continue_with_reward, pattern="^continue_with_reward:"),
+],
+
         State.CREATE_CASE_CONFIRM_TRANSFER: [
             CallbackQueryHandler(
                 handle_transfer_confirmation,
@@ -518,27 +525,27 @@ wallet_handler = ConversationHandler(
 settings_handler = ConversationHandler(
     entry_points=[CommandHandler("settings", settings_command)],
     states={
-        State.SETTINGS_MENU: [
+        State.SETTINGS.SETTINGS_MENU: [
             CallbackQueryHandler(
                 settings_menu_callback,
                 pattern="^(settings_language|settings_mobile|settings_close|setlang_)",
             ),
         ],
-        State.WAITING_FOR_MOBILE: [
+        State.SETTINGS.WAITING_FOR_MOBILE: [
             MessageHandler(filters.TEXT & ~filters.COMMAND, handle_setting_mobile),
         ],
-        State.SETTINGS_MOBILE_MANAGEMENT: [
+        State.SETTINGS.SETTINGS_MOBILE_MANAGEMENT: [
             CallbackQueryHandler(settings_menu_callback, pattern="^(mobile_|remove_)"),
         ],
-        State.MOBILE_VERIFICATION: [
+        State.SETTINGS.MOBILE_VERIFICATION: [
             CallbackQueryHandler(
                 settings_menu_callback, pattern="^(remove_|settings_mobile)"
             ),
         ],
-        State.SETTINGS_CREATE_CASE_TAC: [
+        State.SETTINGS.SETTINGS_CREATE_CASE_TAC: [
             MessageHandler(filters.TEXT & ~filters.COMMAND, handle_setting_tac),
         ],
-        State.END: [CommandHandler("settings", settings_command)],
+        State.SETTINGS.END: [CommandHandler("settings", settings_command)],
     },
     fallbacks=[
         CommandHandler("cancel", cancel),
