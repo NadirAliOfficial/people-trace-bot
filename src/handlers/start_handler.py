@@ -644,72 +644,26 @@ async def action_callback(update: Update, context: ContextTypes.DEFAULT_TYPE) ->
             )
             return State.CREATE_CASE_MOBILE
     elif choice == "find_people":
-        # Clearing the province
-        await FinderService.update_or_create_finder(
-            user_id=user_id,
-            province=province,
-            city=city,
-            country=country,
-        )
-        context.user_data["province"] = province  # Save province in context
+        existing_mobiles = await get_user_mobiles(user_id)
 
-        # Fetch cases from DB where last_seen_location matches province
-        cases = await Case.find(
-            {"province": province, "status": CaseStatus.ADVERTISE}
-        ).to_list()
-
-        if not cases:
+        print(f"Mobile numbers: {existing_mobiles}")
+        if existing_mobiles:
+            kb = [
+                [InlineKeyboardButton(mobile, callback_data=f"select_mobile_{mobile}")]
+                for mobile in existing_mobiles
+            ]
+            kb.append([InlineKeyboardButton("➕ Add New", callback_data="mobile_add")])
             await query.edit_message_text(
-                get_text(
-                    user_id, "no_case_found_in_province", "start-complaints"
-                ).format(province=province),
+                get_text(user_id, "choose_existing_mobile", "start-mobile"),
+                reply_markup=InlineKeyboardMarkup(kb),
+            )
+            return State.FINDER.MOBILE_MANAGEMENT
+        else:
+            await query.edit_message_text(
+                get_text(user_id, "enter_mobile_post_case", "start-mobile"),
                 parse_mode="Markdown",
             )
-            return State.START_CHOOSE_PROVINCE
-
-        # Save case list in context for pagination
-        context.user_data["cases"] = cases
-        context.user_data["page"] = 1
-
-        # Paginate cases
-        paginated_cases, total_pages = paginate_list(cases, 1)
-
-        # Create keyboard buttons for cases
-        keyboard = [
-            [
-                InlineKeyboardButton(
-                    f"{case.name} ({case.person_name})",
-                    callback_data=f"case_{str(case.id)}",
-                )
-            ]
-            for case in paginated_cases
-        ]
-
-        # Add pagination buttons
-        navigation_buttons = []
-        if total_pages > 1:
-            navigation_buttons.append(
-                InlineKeyboardButton(
-                    get_text(user_id, "prev", "globals"),
-                    callback_data="case_page_previous",
-                )
-            )
-            navigation_buttons.append(
-                InlineKeyboardButton(
-                    get_text(user_id, "next", "globals"), callback_data="case_page_next"
-                )
-            )
-        if navigation_buttons:
-            keyboard.append(navigation_buttons)
-
-        reply_markup = InlineKeyboardMarkup(keyboard)
-
-        await query.edit_message_text(
-            f"📍 **Cases from {province}:**",
-            reply_markup=reply_markup,
-            parse_mode="Markdown",
-        )
-        return State.CASE_DETAILS
+            return State.FINDER.CREATE_CASE_MOBILE
     else:
         await query.edit_message_text(
             get_text(user_id, "invalid_choice", "globals"), parse_mode="HTML"

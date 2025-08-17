@@ -4,6 +4,7 @@ from config.config_manager import (
     NODE_ENV,
 )
 from constant.language_constant import get_text
+from handlers.finder_handler import finder_choose_country
 from telegram import Update, InlineKeyboardMarkup, InlineKeyboardButton
 from telegram.ext import (
     ContextTypes,
@@ -18,20 +19,16 @@ from services.case_service import update_or_create_case
 from services.otp_service import send_otp, verify_otp
 from utils.twilio import generate_tac
 from solana.rpc.api import Client
-
 client = Client(CLIENT)
-
 
 logging.basicConfig(
     format="%(asctime)s - %(name)s - %(levelname)s - %(message)s", level=logging.INFO
 )
 logger = logging.getLogger(__name__)
 
-
 # --- Create Case Handlers (with separate states for each person detail) ---
 
-
-async def handle_select_mobile(
+async def handle_finder_select_mobile(
     update: Update, context: ContextTypes.DEFAULT_TYPE
 ) -> int:
     """Handle the selection of an existing mobile number or adding a new one."""
@@ -43,7 +40,8 @@ async def handle_select_mobile(
 
     if query.data == "mobile_add":
         await query.edit_message_text(
-            get_text(user_id, "enter_mobile_post_case", "start-mobile"), parse_mode="Markdown"
+            get_text(user_id, "enter_mobile_post_case", "start-mobile"),
+            parse_mode="Markdown",
         )
         return State.FINDER.CREATE_CASE_MOBILE
     else:
@@ -73,8 +71,9 @@ async def handle_select_mobile(
         await query.edit_message_text(get_text(user_id, "enter_tac", "start-mobile"))
         return State.FINDER.CREATE_CASE_TAC
 
-
-async def handle_new_mobile(update: Update, context: ContextTypes.DEFAULT_TYPE) -> int:
+async def handle_finder_new_mobile(
+    update: Update, context: ContextTypes.DEFAULT_TYPE
+) -> int:
     """Handle the input of a new mobile number."""
     user_id = update.effective_user.id
     mobile_number = update.message.text.strip()
@@ -109,8 +108,7 @@ async def handle_new_mobile(update: Update, context: ContextTypes.DEFAULT_TYPE) 
         )
         return State.FINDER.CREATE_CASE_MOBILE
 
-
-async def handle_tac(update: Update, context: ContextTypes.DEFAULT_TYPE) -> int:
+async def handle_finder_tac(update: Update, context: ContextTypes.DEFAULT_TYPE) -> int:
     """Handle TAC verification."""
     user_id = update.effective_user.id
     user_tac = update.message.text.strip()
@@ -128,7 +126,7 @@ async def handle_tac(update: Update, context: ContextTypes.DEFAULT_TYPE) -> int:
             await update_or_create_case(user_id, mobile=selected_number)
 
             # Show disclaimer before proceeding
-            disclaimer_text = get_text(user_id, "case_poster_disclaimer", "case")
+            disclaimer_text = get_text(user_id, "finder_disclaimer", "case")
             buttons = [
                 [
                     InlineKeyboardButton(
@@ -146,7 +144,7 @@ async def handle_tac(update: Update, context: ContextTypes.DEFAULT_TYPE) -> int:
             await update.message.reply_text(
                 disclaimer_text, reply_markup=markup, parse_mode="Markdown"
             )
-            return State.FINDER.CREATE_CASE_DISCLAIMER
+            return State.FINDER.FINDER_DISCLAIMER
 
         else:
             await update.message.reply_text(get_text(user_id, "tac_invalid"))
@@ -160,7 +158,7 @@ async def handle_tac(update: Update, context: ContextTypes.DEFAULT_TYPE) -> int:
         await update_or_create_case(user_id, mobile=selected_number)
 
         # Show disclaimer before proceeding
-        disclaimer_text = get_text(user_id, "case_poster_disclaimer", "cases")
+        disclaimer_text = get_text(user_id, "finder_disclaimer", "cases")
         buttons = [
             [
                 InlineKeyboardButton(
@@ -179,4 +177,21 @@ async def handle_tac(update: Update, context: ContextTypes.DEFAULT_TYPE) -> int:
             disclaimer_text, reply_markup=markup, parse_mode="Markdown"
         )
         print("This block runs")
-        return State.FINDER.CREATE_CASE_DISCLAIMER
+        return State.FINDER.FINDER_DISCLAIMER  # TODO: Will Replace it after that
+
+
+async def finder_disclaimer_callback(
+    update: Update, context: ContextTypes.DEFAULT_TYPE
+) -> int:
+    """Handle Disclaimer 2 agreement."""
+    query = update.callback_query
+    await query.answer()
+    user_id = query.from_user.id
+
+    print(f"User {user_id} entered disclaimer 2")
+    if query.data == "agree":
+        return await finder_choose_country(update, context)
+
+    else:
+        await query.edit_message_text(get_text(user_id, "disagree_end", "globals"))
+        return State.END

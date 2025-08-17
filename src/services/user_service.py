@@ -4,7 +4,6 @@ from beanie import PydanticObjectId
 from models.mobile_number_model import MobileNumber
 from models.user_model import User
 
-
 async def get_user_lang(user_id: int) -> str:
     """Get the user's language preference from the database."""
     user = await User.find_one(User.tl_id == user_id)
@@ -20,6 +19,8 @@ async def save_user_lang(user_id: int, lang: str):
     else:
         user = User(tl_id=user_id, lang=lang)
         await user.insert()
+
+
 
 
 async def save_user_mobiles(user_id: int, new_mobile: str):
@@ -43,8 +44,6 @@ async def save_user_mobiles(user_id: int, new_mobile: str):
     )  # Use user ID for reference
     await mobile_entry.insert()
 
-
-from beanie import PydanticObjectId
 
 
 async def get_user_mobiles(user_id: PydanticObjectId):

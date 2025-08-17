@@ -3,7 +3,10 @@ from bson import ObjectId
 import datetime
 import os
 import requests
-import telegram
+from models.case_model import Case, CaseStatus
+from models.user_model import User
+from services.case_service import get_complaints_by_country_and_province, update_or_create_case
+# import telegram
 
 from telegram.ext import (
     ContextTypes,
@@ -21,15 +24,419 @@ from services.case_service import get_case_by_id
 from services.wallet_service import WalletService
 from utils.cloudinary import CloudinaryError, upload_image, upload_video
 from utils.error_wrapper import catch_async
-from utils.get_network import get_network
+# from utils.get_network import get_network
 from utils.helper import paginate_list
 from utils.province_util import get_provinces_for_country
 from utils.wallet import load_user_wallet
 from constants import State
 from constant.language_constant import get_text, user_data_store
 from services.finder_service import FinderService
+from models.user_model import User
 
 
+async def get_available_countries() -> list[str]:
+    """Fetch distinct countries from active cases."""
+    countries = await Case.distinct(
+        "country",
+        {"status": {"$in": [CaseStatus.ADVERTISE.value]}}
+    )
+    return sorted(c for c in countries if c)  # filter out None
+
+# db/queries.py or similar
+async def get_provinces_by_country(country: str) -> list[str]:
+    """Fetch distinct provinces for a given country from active cases."""
+    provinces = await Case.distinct(
+        "province",
+        {
+            "country": country,
+            "status": {"$in": [CaseStatus.ADVERTISE.value]},
+            "province": {"$ne": None, "$ne": ""}  # avoid null/empty
+        }
+    )
+    # Return sorted, unique list (distinct already ensures uniqueness)
+    return sorted(p for p in provinces if p)
+
+
+# //NOTE - This the codebase for finder country selection
+
+@catch_async
+async def finder_choose_country(update: Update, context: ContextTypes.DEFAULT_TYPE, replace: bool = False) -> int:
+    """Show paginated list of countries for user to select."""
+    user_id = update.effective_user.id
+    page_num = 1
+    context.user_data["country_page"] = page_num
+
+    countries = await get_available_countries()
+    paginated, total_pages = paginate_list(countries, page_num, ITEMS_PER_PAGE)
+
+    kb = [[InlineKeyboardButton(c, callback_data=f"country_select_{c}")]
+          for c in paginated]
+
+    # Pagination buttons
+    if total_pages > 1:
+        nav_row = [
+            InlineKeyboardButton(
+                get_text(user_id, "next", "globals"),
+                callback_data=f"country_page_{page_num+1}",
+            )
+        ]
+        kb.append(nav_row)
+
+    markup = InlineKeyboardMarkup(kb)
+
+    # Decide whether to replace disclaimer OR send fresh
+    if replace and update.callback_query:
+        await update.callback_query.edit_message_text(
+            "🌍 Please select your country to begin browsing cases:\n",
+            reply_markup=markup,
+            parse_mode="HTML",
+        )
+    elif update.message:
+        await update.message.reply_text(
+            "🌍 Please select your country to begin browsing cases:\n",
+            reply_markup=markup,
+            parse_mode="HTML",
+        )
+    else:
+        await update.callback_query.message.reply_text(
+            "🌍 Please select your country to begin browsing cases:\n",
+            reply_markup=markup,
+            parse_mode="HTML",
+        )
+
+    return State.FINDER.CHOOSE_COUNTRY
+
+
+@catch_async
+async def finder_country_callback(update: Update, context: ContextTypes.DEFAULT_TYPE) -> int:
+    """Handle country selection or pagination."""
+    print("DEBUG: finder_country_callback_inside")
+    query = update.callback_query
+    await query.answer()
+    data = query.data
+    user_id = query.from_user.id
+
+    print("Country ", data)
+
+    if data.startswith("country_select_"):
+        country = data.replace("country_select_", "")
+        context.user_data["finder_country"] = country
+        await FinderService.update_or_create_finder(user_id, country=country)
+
+        await query.edit_message_text(
+            f"✅ {get_text(user_id, 'country_selected', 'start-complaints')} {country}\n\n"
+            f"🌍 {get_text(user_id, 'enter_province', 'start-complaints')}",
+            parse_mode="HTML",
+        )
+
+        return State.FINDER.CHOOSE_PROVINCE
+
+    elif data.startswith("country_page_"):
+        try:
+            page_num = int(data.replace("country_page_", ""))
+        except ValueError:
+            page_num = 1
+
+        context.user_data["country_page"] = page_num
+        countries = await get_available_countries()
+
+        paginated, total_pages = paginate_list(countries, page_num, ITEMS_PER_PAGE)
+
+        kb = [[InlineKeyboardButton(c, callback_data=f"country_select_{c}")]
+              for c in paginated]
+
+        nav_row = []
+        if page_num > 1:
+            nav_row.append(
+                InlineKeyboardButton(get_text(user_id, "prev", "globals"),
+                                     callback_data=f"country_page_{page_num-1}")
+            )
+        if page_num < total_pages:
+            nav_row.append(
+                InlineKeyboardButton(get_text(user_id, "next", "globals"),
+                                     callback_data=f"country_page_{page_num+1}")
+            )
+        if nav_row:
+            kb.append(nav_row)
+
+        await query.edit_message_text(
+            "🌍 Please select your country to begin browsing cases:\n",
+            reply_markup=InlineKeyboardMarkup(kb),
+            parse_mode="HTML",
+        )
+
+        return State.FINDER.CHOOSE_COUNTRY
+
+    else:
+        await query.edit_message_text(
+            get_text(user_id, "invalid_choice", "globals"), parse_mode="HTML"
+        )
+        return State.FINDER.END
+
+
+#  //NOTE - This the codebase for finder state/province selection
+async def finder_choose_province(
+    update: Update, context: ContextTypes.DEFAULT_TYPE
+) -> int:
+    """Handles province selection: show list of valid provinces for the country."""
+    user_id = update.effective_user.id
+    txt = update.message.text.strip()
+
+    # Get country from user_data
+    country = context.user_data.get("finder_country")
+    if not country:
+        await update.message.reply_text(
+            get_text(user_id, "country_not_found", "start-complaints"),
+            parse_mode="HTML",
+        )
+        return State.FINDER.CHOOSE_PROVINCE
+
+    # Fetch actual provinces from DB for this country
+    provinces = await get_provinces_by_country(country)
+
+    if not provinces:
+        await update.message.reply_text(
+            get_text(user_id, "no_provinces_available", "start-complaints"),
+            parse_mode="HTML",
+        )
+        return State.FINDER.CHOOSE_PROVINCE
+
+    # Check if user input matches any province
+    matched = [p for p in provinces if txt.lower() in p.lower()]
+
+    if len(matched) == 1:
+        province = matched[0]
+        context.user_data["finder_province"] = province
+        await FinderService.update_or_create_finder(user_id, province=province)
+
+        await update.message.reply_text(
+            f"{get_text(user_id, 'selected', 'globals')} {province}.",
+            parse_mode="HTML",
+        )
+        complaints = await get_complaints_by_country_and_province(country, province)
+
+        if not complaints:
+            await update.message.reply_text(f"❌ No cases found in {province}, {country}.")
+            return State.FINDER.END
+
+        context.user_data["finder_complaints"] = complaints
+        context.user_data["complaint_index"] = 0  # Add this line to initialize the index
+        await show_complaint(user_id, update, context)
+        return State.FINDER.VIEW_COMPLAINTS
+
+    elif len(matched) == 0:
+        # Show full list instead of saying "not found"
+        context.user_data["province_matches"] = provinces
+        context.user_data["province_page"] = 1
+
+        paginated, total_pages = paginate_list(provinces, 1, ITEMS_PER_PAGE)
+
+        kb = [
+            [InlineKeyboardButton(p, callback_data=f"province_select_{p}")]
+            for p in paginated
+        ]
+
+        nav_row = []
+        if total_pages > 1:
+            if 1 < total_pages:
+                nav_row.append(
+                    InlineKeyboardButton(
+                        get_text(user_id, "next", "globals"),
+                        callback_data="province_page_2",
+                    )
+                )
+            kb.append(nav_row)
+
+        markup = InlineKeyboardMarkup(kb)
+        await update.message.reply_text(
+            get_text(user_id, "province_list", "start-complaints").format(
+                country=country, page=1, total=total_pages
+            ),
+            reply_markup=markup,
+            parse_mode="HTML",
+        )
+        return State.FINDER.CHOOSE_PROVINCE
+
+    else:
+        # Multiple matches — show them
+        context.user_data["province_matches"] = matched
+        context.user_data["province_page"] = 1
+
+        paginated, total_pages = paginate_list(matched, 1, ITEMS_PER_PAGE)
+
+        kb = [
+            [InlineKeyboardButton(p, callback_data=f"province_select_{p}")]
+            for p in paginated
+        ]
+
+        if total_pages > 1:
+            kb.append([
+                InlineKeyboardButton(
+                    get_text(user_id, "next", "globals"),
+                    callback_data="province_page_2",
+                )
+            ])
+
+        markup = InlineKeyboardMarkup(kb)
+        await update.message.reply_text(
+            get_text(user_id, "province_multi", "start-complaints").format(
+                page=1, total=total_pages
+            ),
+            reply_markup=markup,
+            parse_mode="HTML",
+        )
+        return State.FINDER.CHOOSE_PROVINCE
+
+
+async def finder_province_callback(
+    update: Update, context: ContextTypes.DEFAULT_TYPE
+) -> int:
+    query = update.callback_query
+    await query.answer()
+    data = query.data
+    user_id = update.effective_user.id
+
+    if data.startswith("province_select_"):
+        province = data.replace("province_select_", "")
+        context.user_data["finder_province"] = province
+        await FinderService.update_or_create_finder(user_id, province=province)
+
+        # Fetch complaints for selected country + province
+        country = context.user_data.get("finder_country")
+        complaints = await get_complaints_by_country_and_province(country, province)
+
+        if not complaints:
+            await query.edit_message_text(f"❌ No cases found in {province}, {country}.")
+            return State.FINDER.END
+
+        context.user_data["finder_complaints"] = complaints
+        context.user_data["complaint_index"] = 0  # Add this line to initialize the index
+        await show_complaint(user_id, update, context)
+        return State.FINDER.VIEW_COMPLAINTS
+
+    elif data.startswith("province_page_"):
+        try:
+            page_num = max(1, int(data.replace("province_page_", "")))
+        except ValueError:
+            page_num = 1
+
+        matches = context.user_data.get("province_matches", [])
+        paginated, total = paginate_list(matches, page_num)
+
+        kb = [
+            [InlineKeyboardButton(p, callback_data=f"province_select_{p}")]
+            for p in paginated
+        ]
+
+        nav_row = []
+        if page_num > 1:
+            nav_row.append(
+                InlineKeyboardButton(
+                    get_text(user_id, "prev", "globals"),
+                    callback_data=f"province_page_{page_num - 1}",
+                )
+            )
+        if page_num < total:
+            nav_row.append(
+                InlineKeyboardButton(
+                    get_text(user_id, "next", "globals"),
+                    callback_data=f"province_page_{page_num + 1}",
+                )
+            )
+        if nav_row:
+            kb.append(nav_row)
+
+        markup = InlineKeyboardMarkup(kb)
+        await query.edit_message_text(
+            get_text(user_id, "province_multi", "start-complaints").format(
+                page=page_num, total=total
+            ),
+            reply_markup=markup,
+            parse_mode="HTML",
+        )
+
+        context.user_data["province_page"] = page_num
+        return State.FINDER.CHOOSE_PROVINCE
+
+    else:
+        await query.edit_message_text(
+            get_text(user_id, "invalid_choice", "globals"), parse_mode="HTML"
+        )
+        return State.FINDER.END
+
+
+async def show_complaint(user_id, update, context):
+    complaints = context.user_data["finder_complaints"]
+    index = context.user_data["complaint_index"]
+    total = len(complaints)
+    c = complaints[index]
+    
+    chat = await context.bot.get_chat(c.user_id)
+    poster_username = chat.username or "N/A"
+
+
+    text = (
+        f"🔍 Case {index+1}/{total}\n"
+        f"👤 Name: {c.person_name}\n"
+        f"📍 Last Seen: {c.last_seen_location}\n"
+        f"📅 Date: {c.created_at.strftime('%d %B %Y')}\n"
+        f"🎂 Age: {c.age}\n"
+        f"💰 Reward: {c.reward} USDT\n"
+        f"🧾 Posted by: @{poster_username}"
+    )
+
+    kb = [
+        [InlineKeyboardButton("🧩 I Have a Lead", callback_data=f"lead_{index}")],
+        [
+            InlineKeyboardButton("◀️ Back", callback_data=f"complaint_back_{index}"),
+            InlineKeyboardButton("▶️ Next", callback_data=f"complaint_next_{index}"),
+        ],
+        [InlineKeyboardButton("📬 Request Higher Reward", callback_data=f"reward_{index}")],
+    ]
+
+    if c.photo_url:
+        await update.message.reply_photo(
+            c.photo_url,
+            caption=text,
+            reply_markup=InlineKeyboardMarkup(kb),
+            parse_mode="HTML",
+        )
+    else:
+        await update.message.reply_text(
+            text,
+            reply_markup=InlineKeyboardMarkup(kb),
+            parse_mode="HTML",
+        )
+
+
+@catch_async
+async def finder_complaint_callback(
+    update: Update, context: ContextTypes.DEFAULT_TYPE
+) -> int:
+    query = update.callback_query
+    await query.answer()
+    data = query.data
+    index = context.user_data.get("complaint_index", 0)
+    complaints = context.user_data.get("finder_complaints", [])
+    total = len(complaints)
+
+    if data.startswith("complaint_next_") and index + 1 < total:
+        context.user_data["complaint_index"] += 1
+    elif data.startswith("complaint_back_") and index > 0:
+        context.user_data["complaint_index"] -= 1
+    elif data.startswith("lead_"):
+        await query.message.reply_text("✅ Lead submitted! Poster will be notified.")
+    elif data.startswith("reward_"):
+        await query.message.reply_text("📬 Reward request sent to poster.")
+    else:
+        return State.FINDER.END
+
+    await query.message.delete()
+    await show_complaint(query.from_user.id, update, context)
+    return State.FINDER.VIEW_COMPLAINTS
+
+
+# -----------------------------------------------------------------------------------------------------------
 
 def get_province_matches(query, country):
     """Geting the province match with query and inside the country which provided"""
@@ -59,42 +466,46 @@ async def fetch_case_by_number(case_no):
     case = await Case.find_one({"_id": ObjectId(case_no)})
     return case
 
-
+@catch_async
 async def choose_province(update: Update, context: ContextTypes.DEFAULT_TYPE) -> int:
-    """Handles province selection and shows cases for that province."""
-    print("Hello from the choose province")
+    """Let user pick a province only from existing complaints in DB."""
+    print("Hello from choose_province")
     user_id = update.effective_user.id
     txt = update.message.text.strip()
 
-    # Get country from user_data
-    country = context.user_data.get("country", None)
-    city = context.user_data.get("city", None)
-
+    # Get selected country
+    country = context.user_data.get("country")
     if not country:
         await update.message.reply_text(
             get_text(user_id, "country_not_found"), parse_mode="HTML"
         )
-        return State.CHOOSE_COUNTRY
+        return State.FINDER.CHOOSE_COUNTRY
 
-    # Get matching provinces
-    matches = get_province_matches(txt, country)
-    print(f"Matched Provinces are: {matches}")
+    # Fetch distinct provinces from DB for this country
+    provinces = await Case.find(
+        {"country": country, "status": CaseStatus.ADVERTISE}
+    ).distinct("province")
 
-    print(matches, len(matches))
+    provinces = [p for p in provinces if p]  # remove None
+    print(f"Available provinces for {country}: {provinces}")
+
+    # If user typed a province, filter it
+    matches = [p for p in provinces if txt.lower() in p.lower()]
+
     if len(matches) == 1:
-        # If there's only one match, fetch and display cases
         selected_province = matches[0]
+
+        # Update finder info
         await FinderService.update_or_create_finder(
             user_id=user_id,
             province=selected_province,
-            city=city,
             country=country,
         )
-        context.user_data["province"] = selected_province  # Save province in context
+        context.user_data["province"] = selected_province
 
-        # Fetch cases from DB where last_seen_location matches province
+        # Fetch cases in this province
         cases = await Case.find(
-            {"province": selected_province, "status": CaseStatus.ADVERTISE}
+            {"country": country, "province": selected_province, "status": CaseStatus.ADVERTISE}
         ).to_list()
 
         if not cases:
@@ -104,16 +515,14 @@ async def choose_province(update: Update, context: ContextTypes.DEFAULT_TYPE) ->
                 ),
                 parse_mode="Markdown",
             )
-            return State.CHOOSE_PROVINCE
+            return State.FINDER.CHOOSE_PROVINCE
 
-        # Save case list in context for pagination
+        # Save cases for pagination
         context.user_data["cases"] = cases
         context.user_data["page"] = 1
 
-        # Paginate cases
         paginated_cases, total_pages = paginate_list(cases, 1)
 
-        # Create keyboard buttons for cases
         keyboard = [
             [
                 InlineKeyboardButton(
@@ -124,58 +533,42 @@ async def choose_province(update: Update, context: ContextTypes.DEFAULT_TYPE) ->
             for case in paginated_cases
         ]
 
-        # Add pagination buttons
-        navigation_buttons = []
+        # Pagination buttons
+        nav = []
         if total_pages > 1:
-            navigation_buttons.append(
-                InlineKeyboardButton("⬅️ Previous", callback_data="case_page_previous")
-            )
-            navigation_buttons.append(
-                InlineKeyboardButton("➡️ Next", callback_data="case_page_next")
-            )
-        if navigation_buttons:
-            keyboard.append(navigation_buttons)
-
-        reply_markup = InlineKeyboardMarkup(keyboard)
+            nav.append(InlineKeyboardButton("⬅️ Previous", callback_data="case_page_previous"))
+            nav.append(InlineKeyboardButton("➡️ Next", callback_data="case_page_next"))
+        if nav:
+            keyboard.append(nav)
 
         await update.message.reply_text(
-            f"📍 **Cases from {selected_province}:**",
-            reply_markup=reply_markup,
+            f"📍 Cases from *{selected_province}*: ",
+            reply_markup=InlineKeyboardMarkup(keyboard),
             parse_mode="Markdown",
         )
-        return State.CASE_DETAILS  # Transition to case details handling
+        return State.FINDER.CASE_DETAILS
 
     elif len(matches) == 0:
-        await update.message.reply_text(
-            get_text(user_id, "province_not_exist"),
-            parse_mode="Markdown",
-        )
-        return State.CHOOSE_PROVINCE
+        # Show all provinces list (first page)
+        page = 1
+        paginated, total_pages = paginate_list(provinces, page)
 
-    else:
-        # If multiple matches, show province selection UI
-        user_data_store[user_id]["province_matches"] = matches
-        user_data_store[user_id]["province_page"] = 1
-        paginated, total = paginate_list(matches, 1)
-        kb = []
-        for p in paginated:
-            kb.append([InlineKeyboardButton(p, callback_data=f"province_select_{p}")])
+        kb = [[InlineKeyboardButton(p, callback_data=f"province_select_{p}")] for p in paginated]
 
-        # Pagination buttons
-        if total > 1:
+        if total_pages > 1:
             kb.append(
                 [
-                    InlineKeyboardButton("⬅️", callback_data="province_page_0"),
-                    InlineKeyboardButton("➡️", callback_data="province_page_2"),
+                    InlineKeyboardButton("⬅️", callback_data=f"province_page_{page-1}"),
+                    InlineKeyboardButton("➡️", callback_data=f"province_page_{page+1}"),
                 ]
             )
-        markup = InlineKeyboardMarkup(kb)
+
         await update.message.reply_text(
-            get_text(user_id, "province_multi").format(page=1, total=total),
-            reply_markup=markup,
+            f"📍 Please select your province (page {page}/{total_pages}):",
+            reply_markup=InlineKeyboardMarkup(kb),
             parse_mode="HTML",
         )
-        return State.CHOOSE_PROVINCE
+        return State.FINDER.CHOOSE_PROVINCE
 
 
 # Function to handle the province selection callback
@@ -241,7 +634,7 @@ async def province_callback(update: Update, context: ContextTypes.DEFAULT_TYPE) 
         return State.END
 
 
-# TODO: Why it has the seperate pagination function - Need to be fixe.
+        # TODO: Why it has the seperate pagination function - Need to be fixe.
 
 
 async def show_advertisements(
@@ -674,7 +1067,7 @@ async def finder_wallet_selection_callback(
         await query.message.reply_text(
             get_text(user_id, "wallet_not_found"), parse_mode="HTML"
         )
-        
+
 @catch_async
 async def finder_wallet_type_callback(
     update: Update, context: ContextTypes.DEFAULT_TYPE
@@ -972,7 +1365,6 @@ async def finder_handle_transaction_confirmation(
         return State.END
 
 
-
 # ------------------------------- FINDER LOGIC END ------------------------------------
 
 #  ---------------------------- Extend Reward ---------------------------
@@ -1153,7 +1545,6 @@ async def handle_confirm_found(update: Update, context: ContextTypes.DEFAULT_TYP
     else:
         await query.message.reply_text("Okay, let us know if you have any updates.", parse_mode="HTML")
         return State.END
-
 
 
 async def handle_found_case(update: Update, context: ContextTypes.DEFAULT_TYPE) -> int:

@@ -78,7 +78,20 @@ CASE_CONSTANT = {
         "transfer_canceled": "The transfer has been canceled.",
         "enter_reward_amount_unknown": "Please enter the reward amount (unknown wallet type).",
         "reward_amount_invalid": "❌ Please enter a valid numeric reward amount.",
-        
+        #  Used Inside Finder
+        "finder_disclaimer": (
+            "📜 Before You Continue – Please Read Carefully\n\n"
+            "By participating as a Finder on PeopleTrace, you agree to the following:\n\n"
+            "• 🔍 You will only use this platform to help locate missing persons lawfully\n"
+            "• 📹 Leads must include verifiable evidence (photo/video)\n"
+            "• 💬 Communication with posters must remain respectful and ethical\n"
+            "• 🧾 Do not use false, AI-generated, or misleading content\n"
+            "• 📍 You may be asked for additional clarification or location proof\n"
+            "• 💸 5% platform fee is deducted from successful reward claims\n"
+            "• 🚫 Misuse, extortion, or suspicious behavior will lead to a permanent ban and legal action\n"
+            "• ❗️ We reserve the right to reject false or unverified claims\n\n"
+            "Do you agree to these terms?"
+        ),
     },
     "zh": {
         "create_case_title": "创建新案件",
@@ -747,50 +760,49 @@ CASE_CONSTANT = {
 }
 
 
-
 # "enter_name": "Enter your name:",
-        # "disclaimer_2": (
-        #     "📜 *Before You Continue – Please Read Carefully*\n\n"
-        #     "By participating as a *Finder* on PeopleTrace, you agree to the following:\n\n"
-        #     "• 🔍 You will only use this platform to help locate missing persons lawfully\n"
-        #     "• 📹 Leads must include verifiable evidence (photo/video)\n"
-        #     "• 💬 Communication with posters must remain respectful and ethical\n"
-        #     "• 🧾 Do not use false, AI-generated, or misleading content\n"
-        #     "• 📍 You may be asked for additional clarification or location proof\n"
-        #     "• 💸 5% platform fee is deducted from successful reward claims\n"
-        #     "• 🚫 Misuse, extortion, or suspicious behavior will lead to a permanent ban and legal action\n"
-        #     "• ❗️ We reserve the right to reject false or unverified claims\n\n"
-        #     "*Do you agree to these terms?*"
-        # ),
-        # "reward_too_low_tip": (
-        #     "💸 <b>Reward set to {amount} {type}</b>\n\n"
-        #     "💡 <b>Tip:</b> The higher the reward, the more eyes you attract!\n"
-        #     "Offering a generous reward motivates more people to join the search — "
-        #     "increasing your chances of finding the person faster. 🕵️‍♂️💬\n"
-        #     "A little extra can go a long way in rallying a powerful crowd behind your case."
-        # ),
-        # "cancel_edit_button": "❌ Cancel / Edit",
-        # "increase_reward_button": "💰 Increase Reward",
-        # "back_button": "🔙 Back",
-        # "enter_reward_amount_usdt": "Please enter the reward amount in USDT.",
-        # "insufficient_balance_for_transfer": "You don't have enough balance to transfer. Your balance is {0}.",
-        # "transfer_successful": "The transfer was successful.",
-        # "transfer_error": "An error occurred while processing the transfer. Please try again.",
-        # "invalid_confirmation": "Invalid response. Please confirm with 'yes' or 'no'.",
-        # "enter_reason_for_finding": "Please provide the reason for finding.",
-        # "case_submitted": "Your case has been submitted successfully.",
-        # "case_completed": "Your case has been completed.",
-        # "reward_amount_negative": "The reward amount cannot be negative.",
-        # "other_option": "Other",
-        # "transfer_canceled": "❌ <b>Transfer Canceled</b>\n\nThe reward transfer has been canceled as per your request.",
-        # "choose_existing_mobile": "Please select an existing number or add a new one.",
-        # "tac_invalid": "❌ Invalid TAC. Please try again.",
-        # "wallet_name_empty": "Wallet name cannot be empty. Please try again.",
-        # "wallet_name_exists": "❌ A wallet with this name already exists. Please choose a different name.",
-        # "wallet_create_details": (
-        #     "✅ Wallet Created!\n"
-        #     "🧾 Name: {name}\n"
-        #     "💰 Type: {wallet_type}\n"
-        #     "🔐 Public Key: <code>{public_key}</code>\n"
-        #     "🌐 Network: {network}\n"
-        # ),
+# "disclaimer_2": (
+#     "📜 *Before You Continue – Please Read Carefully*\n\n"
+#     "By participating as a *Finder* on PeopleTrace, you agree to the following:\n\n"
+#     "• 🔍 You will only use this platform to help locate missing persons lawfully\n"
+#     "• 📹 Leads must include verifiable evidence (photo/video)\n"
+#     "• 💬 Communication with posters must remain respectful and ethical\n"
+#     "• 🧾 Do not use false, AI-generated, or misleading content\n"
+#     "• 📍 You may be asked for additional clarification or location proof\n"
+#     "• 💸 5% platform fee is deducted from successful reward claims\n"
+#     "• 🚫 Misuse, extortion, or suspicious behavior will lead to a permanent ban and legal action\n"
+#     "• ❗️ We reserve the right to reject false or unverified claims\n\n"
+#     "*Do you agree to these terms?*"
+# ),
+# "reward_too_low_tip": (
+#     "💸 <b>Reward set to {amount} {type}</b>\n\n"
+#     "💡 <b>Tip:</b> The higher the reward, the more eyes you attract!\n"
+#     "Offering a generous reward motivates more people to join the search — "
+#     "increasing your chances of finding the person faster. 🕵️‍♂️💬\n"
+#     "A little extra can go a long way in rallying a powerful crowd behind your case."
+# ),
+# "cancel_edit_button": "❌ Cancel / Edit",
+# "increase_reward_button": "💰 Increase Reward",
+# "back_button": "🔙 Back",
+# "enter_reward_amount_usdt": "Please enter the reward amount in USDT.",
+# "insufficient_balance_for_transfer": "You don't have enough balance to transfer. Your balance is {0}.",
+# "transfer_successful": "The transfer was successful.",
+# "transfer_error": "An error occurred while processing the transfer. Please try again.",
+# "invalid_confirmation": "Invalid response. Please confirm with 'yes' or 'no'.",
+# "enter_reason_for_finding": "Please provide the reason for finding.",
+# "case_submitted": "Your case has been submitted successfully.",
+# "case_completed": "Your case has been completed.",
+# "reward_amount_negative": "The reward amount cannot be negative.",
+# "other_option": "Other",
+# "transfer_canceled": "❌ <b>Transfer Canceled</b>\n\nThe reward transfer has been canceled as per your request.",
+# "choose_existing_mobile": "Please select an existing number or add a new one.",
+# "tac_invalid": "❌ Invalid TAC. Please try again.",
+# "wallet_name_empty": "Wallet name cannot be empty. Please try again.",
+# "wallet_name_exists": "❌ A wallet with this name already exists. Please choose a different name.",
+# "wallet_create_details": (
+#     "✅ Wallet Created!\n"
+#     "🧾 Name: {name}\n"
+#     "💰 Type: {wallet_type}\n"
+#     "🔐 Public Key: <code>{public_key}</code>\n"
+#     "🌐 Network: {network}\n"
+# ),

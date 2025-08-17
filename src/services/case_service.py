@@ -117,7 +117,7 @@ async def update_or_create_case(user_id: int, **kwargs) -> Case:
     await case.save()
     return case
 
-    
+
 async def update_case(case_id: PydanticObjectId, **kwargs) -> Case:
     """
     Update a case with the provided data.
@@ -138,7 +138,6 @@ async def update_case(case_id: PydanticObjectId, **kwargs) -> Case:
             setattr(case, key, value)
 
     await case.save()
-    
 
 
 async def get_drafted_case_wallet(user_id: int) -> dict:
@@ -157,3 +156,16 @@ async def get_drafted_case_wallet(user_id: int) -> dict:
         # Log the error or handle it as needed
         print(f"Error: {str(e)}")
         return None
+
+
+async def get_complaints_by_country_and_province(country: str, province: str) -> list:
+    """
+    Get all complaints for a given country and province.
+
+    :param country: The country code.
+    :param province: The province code.
+    :return: A list of complaints.
+    """
+    return await Case.find(
+        {"country": country, "province": province, "status": CaseStatus.ADVERTISE}
+    ).to_list()

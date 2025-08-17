@@ -23,8 +23,8 @@ class RewardExtensionStatus(Enum):
 
 class Finder(Document):
     country: Optional[str] = None
-    city: Optional[str] = None
     province: Optional[str] = None
+    city: Optional[str] = None
     status: FinderStatus = Field(default=FinderStatus.DRAFT)
     user_id: int  # Telegram user ID of the finder
     case: Optional[Link[Case]] = None  # Reference to the case the finder is reporting
