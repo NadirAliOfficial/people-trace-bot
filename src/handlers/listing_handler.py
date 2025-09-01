@@ -3,10 +3,10 @@ from datetime import datetime
 from beanie import PydanticObjectId
 from config.config_manager import (
     OWNER_TELEGRAM_ID,
-    STAKE_WALLET_PRIVATE_KEY,
-    STAKE_WALLET_PUBLIC_KEY,
-    TAX_COLLECT_PUBLIC_KEY,
-    TRON_TAX_COLLECT_PUBLIC_KEY,
+    SOL_WALLET_PRIVATE_KEY,
+    SOL_WALLET_PUBLIC_KEY,
+    SOL_COLLECT_PUBLIC_KEY,
+    TRON_COLLECT_PUBLIC_KEY,
     TRON_WALLET_PRIVATE_KEY,
 )
 from constant.language_constant import get_text, user_data_store
@@ -1116,7 +1116,7 @@ async def confirm_reward(update: Update, context: ContextTypes.DEFAULT_TYPE) -> 
         finder_wallet = finder.wallet
         is_transfer_to_finder_successful = (
             await WalletService.send_sol(
-                STAKE_WALLET_PRIVATE_KEY, finder_wallet.public_key, amount
+                SOL_WALLET_PRIVATE_KEY, finder_wallet.public_key, amount
             )
             if finder_wallet.wallet_type == "SOL"
             else await TronWallet.transfer_usdt(
@@ -1125,14 +1125,14 @@ async def confirm_reward(update: Update, context: ContextTypes.DEFAULT_TYPE) -> 
         )
         is_tax_transfer_successful = (
             await WalletService.send_sol(
-                STAKE_WALLET_PRIVATE_KEY,
-                TAX_COLLECT_PUBLIC_KEY,
+                SOL_WALLET_PRIVATE_KEY,
+                SOL_COLLECT_PUBLIC_KEY,
                 float(case.reward - amount),
             )
             if finder_wallet.wallet_type == "SOL"
             else await TronWallet.transfer_usdt(
                 TRON_WALLET_PRIVATE_KEY,
-                TRON_TAX_COLLECT_PUBLIC_KEY,
+                TRON_COLLECT_PUBLIC_KEY,
                 float(case.reward - amount),
             )
         )
@@ -1582,7 +1582,7 @@ async def approve_extend_callback(
             amount=escape_markdown(str(extend_reward.extend_reward_amount), version=2),
             wallet_type=escape_markdown(wallet_type, version=2),
             from_wallet=escape_markdown(best_wallet.public_key, version=2),
-            to_wallet=escape_markdown(STAKE_WALLET_PUBLIC_KEY, version=2),
+            to_wallet=escape_markdown(SOL_WALLET_PUBLIC_KEY, version=2),
         )
 
         print(confirmation_message)
@@ -1654,7 +1654,7 @@ async def select_wallet_callback(
         amount=extend_reward.extend_reward_amount,
         wallet_type=wallet_type,
         from_wallet=wallet.public_key,
-        to_wallet=STAKE_WALLET_PUBLIC_KEY,
+        to_wallet=SOL_WALLET_PUBLIC_KEY,
     )
     await query.message.edit_text(
         confirmation_message.strip(),
@@ -1731,7 +1731,7 @@ async def select_wallet_callback(
 #         amount=extend_reward.extend_reward_amount,
 #         wallet_type=wallet_type,
 #         from_wallet=best_wallet.public_key,
-#         to_wallet=STAKE_WALLET_PUBLIC_KEY,
+#         to_wallet=SOL_WALLET_PUBLIC_KEY,
 #     )
 #     await query.message.edit_text(message, reply_markup=keyboard, parse_mode="Markdown")
 #     return State.CONFIRM_EXTEND
@@ -1774,11 +1774,11 @@ async def confirm_extend_callback(
     try:
         if wallet_type == "SOL":
             await WalletService.send_sol(
-                selected_wallet.private_key, STAKE_WALLET_PUBLIC_KEY, extend_reward.extend_reward_amount
+                selected_wallet.private_key, SOL_WALLET_PUBLIC_KEY, extend_reward.extend_reward_amount
             )
         else:
             await WalletService.send_usdt(
-                selected_wallet.private_key, STAKE_WALLET_PUBLIC_KEY, extend_reward.extend_reward_amount
+                selected_wallet.private_key, SOL_WALLET_PUBLIC_KEY, extend_reward.extend_reward_amount
             )
     except Exception as e:
         logger.error(f"Transfer failed: {e}")

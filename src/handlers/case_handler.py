@@ -3,7 +3,7 @@ from config.config_manager import (
     CLIENT,
     NODE_ENV,
     OWNER_TELEGRAM_ID,
-    STAKE_WALLET_PUBLIC_KEY,
+    SOL_WALLET_PUBLIC_KEY,
     TRON_WALLET_PRIVATE_KEY,
     TRON_WALLET_PUBLIC_KEY,
 )
@@ -549,7 +549,7 @@ async def handle_transfer_confirmation(
 
             transfer_success = (
                 await WalletService.send_sol(
-                    wallet.private_key, STAKE_WALLET_PUBLIC_KEY, reward_amount
+                    wallet.private_key, SOL_WALLET_PUBLIC_KEY, reward_amount
                 )
                 if wallet.wallet_type == "SOL"
                 else await TronWallet.transfer_usdt(
