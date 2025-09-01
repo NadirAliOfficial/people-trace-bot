@@ -32,7 +32,7 @@ SETTINGS_CONSTANT = {
             "e.g., 123456\n"
             "📞 Please enter your mobile number (with country code):"
         ),
-        "number_already_registered": "This number is already registered. conversation ended.",
+        "number_already_registered": "This number is already registered. Conversation ended.",
     },
     "chinese": {
         "btn_language": "🌍 更改语言",
