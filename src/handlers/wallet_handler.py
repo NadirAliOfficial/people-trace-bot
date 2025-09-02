@@ -155,7 +155,8 @@ async def sol_wallets(update: Update, context: ContextTypes.DEFAULT_TYPE):
     )
 
     await query.edit_message_text(
-        "📋 Your SOL Wallets:", reply_markup=InlineKeyboardMarkup(kb)
+        get_text(user_id, "your_sol_wallet", "wallets"), 
+        reply_markup=InlineKeyboardMarkup(kb)
     )
     return State.WALLETS.SOL_WALLET_DETAIL
 
