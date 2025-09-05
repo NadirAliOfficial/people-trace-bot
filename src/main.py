@@ -21,7 +21,8 @@ from config.config_manager import MONGODB_NAME, MONGODB_URI, NODE_ENV
 from handlers.handlers import (
     settings_handler,
     wallet_handler,
-    start_handler
+    start_handler,
+    stats_handler
 )
 from handlers.start_handler import error_handler
 from models.case_model import Case
@@ -33,13 +34,14 @@ setup_logging()
 
 
 async def main_setup():
-    application = ApplicationBuilder().token(TOKEN if NODE_ENV.lower() == "production" else "8012413981:AAG-nklE6dsD_RU4bicbF0jJ-Zjrmbab3oM").build()
+    # application = ApplicationBuilder().token(TOKEN if NODE_ENV.lower() == "production" else "8466947355:AAHUohQPzgpQi5OyoEH1G_4MR1CC-msnwOo").build()
+    application = ApplicationBuilder().token("8466947355:AAHUohQPzgpQi5OyoEH1G_4MR1CC-msnwOo" if NODE_ENV.lower() == "production" else "8466947355:AAHUohQPzgpQi5OyoEH1G_4MR1CC-msnwOo").build()
 
     application.add_handler(start_handler)
     application.add_handler(wallet_handler)
     application.add_handler(settings_handler)
     # application.add_handler(listing_handler)
-    # application.add_handler(stats_handler)
+    application.add_handler(stats_handler)
 
     application.add_error_handler(error_handler)
 

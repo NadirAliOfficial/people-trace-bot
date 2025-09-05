@@ -42,8 +42,6 @@ logging.basicConfig(
 logger = logging.getLogger(__name__)
 
 
-
-
 async def create_case_disclaimer_2_callback(
     update: Update, context: ContextTypes.DEFAULT_TYPE
 ) -> int:
@@ -74,7 +72,7 @@ async def create_case_disclaimer_2_callback(
         return State.END
 
 
-# _________ PERSON
+# == HANDLER: Ask for missing person name  == #
 async def handle_person_name(update: Update, context: ContextTypes.DEFAULT_TYPE) -> int:
     """Handle input for the person's name (the case target)."""
     user_id = update.effective_user.id
@@ -98,7 +96,7 @@ async def handle_person_name(update: Update, context: ContextTypes.DEFAULT_TYPE)
     return State.CREATE_CASE_SEX
 
 
-# _________ WHAT IS THE GENDER OF HIS
+# == HANDLER: Ask for missing person gender  == #
 async def handle_sex(update: Update, context: ContextTypes.DEFAULT_TYPE) -> int:
     """Handle input for sex."""
     query = update.callback_query
@@ -112,7 +110,7 @@ async def handle_sex(update: Update, context: ContextTypes.DEFAULT_TYPE) -> int:
     return State.CREATE_CASE_AGE
 
 
-# _________ AGE OF THE PERSON
+# == HANDLER: Ask for missing person age  == #
 async def handle_age(update: Update, context: ContextTypes.DEFAULT_TYPE) -> int:
     """Handle input for age."""
     user_id = update.effective_user.id
@@ -129,7 +127,7 @@ async def handle_age(update: Update, context: ContextTypes.DEFAULT_TYPE) -> int:
     return State.CREATE_CASE_RELATIONSHIP
 
 
-# _________ RELATION TO THE PERSON
+# === HANDLER: Ask for the missing person's relationship to the lodged person in the case === #
 async def handle_relationship(
     update: Update, context: ContextTypes.DEFAULT_TYPE
 ) -> int:
@@ -144,7 +142,7 @@ async def handle_relationship(
     return State.CREATE_CASE_PHOTO
 
 
-# _________ PHOTO OF HIS/HER
+# == HANDLER: Ask for missing person photo  == #
 async def handle_photo(update: Update, context: ContextTypes.DEFAULT_TYPE) -> int:
     """Handle photo upload and store it on Cloudinary."""
     user_id = update.effective_user.id
@@ -171,7 +169,7 @@ async def handle_photo(update: Update, context: ContextTypes.DEFAULT_TYPE) -> in
     return State.CREATE_CASE_HAIR_COLOR
 
 
-# _________ HAIR COLOR OF THE PERSON
+# == HANDLER: Ask for missing person hair color  == #
 async def handle_hair_color(update: Update, context: ContextTypes.DEFAULT_TYPE) -> int:
     """Handle input for hair color."""
     user_id = update.effective_user.id
@@ -183,7 +181,7 @@ async def handle_hair_color(update: Update, context: ContextTypes.DEFAULT_TYPE) 
     return State.CREATE_CASE_EYE_COLOR
 
 
-# _________ EYE COLOR OF THE PERSON
+# == HANDLER: Ask for missing person eye color  == #
 async def handle_eye_color(update: Update, context: ContextTypes.DEFAULT_TYPE) -> int:
     """Handle input for eye color."""
     user_id = update.effective_user.id
@@ -195,7 +193,7 @@ async def handle_eye_color(update: Update, context: ContextTypes.DEFAULT_TYPE) -
     return State.CREATE_CASE_LAST_SEEN_LOCATION
 
 
-# _________ LOCATION OF THE PERSON WHERE IT CAN BE SEEN
+# == HANDLER: Ask for missing person last seen location  == #
 async def handle_last_seen_location(
     update: Update, context: ContextTypes.DEFAULT_TYPE
 ) -> int:
@@ -210,7 +208,7 @@ async def handle_last_seen_location(
     return State.CREATE_CASE_HEIGHT
 
 
-# _________ HEIGHT OF THE PERSON
+# == HANDLER: Ask for missing person height  == #
 async def handle_height(update: Update, context: ContextTypes.DEFAULT_TYPE) -> int:
     """Handle input for height."""
     user_id = update.effective_user.id
@@ -228,7 +226,7 @@ async def handle_height(update: Update, context: ContextTypes.DEFAULT_TYPE) -> i
     return State.CREATE_CASE_WEIGHT
 
 
-# _________ WEIGHT OF THE PERSON
+# == HANDLER: Ask for missing person weight  == #
 async def handle_weight(update: Update, context: ContextTypes.DEFAULT_TYPE) -> int:
     """Handle input for weight."""
     user_id = update.effective_user.id
@@ -245,7 +243,7 @@ async def handle_weight(update: Update, context: ContextTypes.DEFAULT_TYPE) -> i
     return State.CREATE_CASE_DISTINCTIVE_FEATURES
 
 
-# _________ DISTINCTIVE FEATURE
+# == HANDLER: Ask for missing person distinctive features  == #
 async def handle_distinctive_features(
     update: Update, context: ContextTypes.DEFAULT_TYPE
 ) -> int:
@@ -260,7 +258,7 @@ async def handle_distinctive_features(
     return State.CREATE_CASE_ASK_REASON
 
 
-# _________ REASON OF FINDING (TODO: Add a check to see if the user has already been notified)
+# == HANDLER: Ask for missing person reason for finding  == #
 async def handle_reason_for_finding(
     update: Update, context: ContextTypes.DEFAULT_TYPE
 ) -> int:
@@ -296,9 +294,7 @@ async def handle_reason_for_finding(
     return State.CREATE_CASE_ASK_REWARD
 
 
-
-# _________ REWARD AMOUNT OF THE CASE
-# _________ REWARD AMOUNT OF THE CASE
+# === Handler: Ask Reward Amount ===
 @catch_async
 async def handle_ask_reward_amount(
     update: Update, context: ContextTypes.DEFAULT_TYPE
@@ -362,8 +358,36 @@ async def handle_ask_reward_amount(
     case.reward = reward_amount
     await case.save()
 
-    # If reward is less than 1000 → show motivational tip with Continue button
+    # If reward is less than 1000 → show motivational tip with Increase Reward + Back
     if reward_amount < 1000:
+        # 👇 check if this is from "increase reward" mode
+        if context.user_data.get("increase_reward_mode"):
+            # Reset flag
+            context.user_data["increase_reward_mode"] = False
+            # Skip the motivational tip, go straight to confirmation
+            await update.message.reply_text(
+                get_text(user_id, "reward_amount_confirmed", "cases").format(
+                    reward_amount
+                ),
+                parse_mode="HTML",
+                reply_markup=InlineKeyboardMarkup(
+                    [
+                        [
+                            InlineKeyboardButton(
+                                get_text(user_id, "confirm_button", "globals"),
+                                callback_data="confirm_transfer",
+                            ),
+                            InlineKeyboardButton(
+                                get_text(user_id, "cancel_edit_button", "globals"),
+                                callback_data="cancel_transfer",
+                            ),
+                        ]
+                    ]
+                ),
+            )
+            return State.CREATE_CASE_CONFIRM_TRANSFER
+
+        # 👇 normal flow (first-time reward input)
         msg = (
             f"💸 <b>Reward set to {reward_amount} USDT</b>\n\n"
             "💡 <b>Tip:</b> The higher the reward, the more eyes you attract!\n"
@@ -374,35 +398,24 @@ async def handle_ask_reward_amount(
 
         buttons = [
             [
-                InlineKeyboardButton("💰 Increase Reward", callback_data="increase_reward"),
-                InlineKeyboardButton("➡️ Continue", callback_data=f"continue_with_reward:{reward_amount}"),
-            ]
+                InlineKeyboardButton(
+                    "💰 Increase Reward", callback_data="increase_reward"
+                )
+            ],
+            [
+                InlineKeyboardButton(
+                    "🔙 Back", callback_data=f"back_to_reason:{reward_amount}"
+                )
+            ],
         ]
 
-        await update.message.reply_text(msg, parse_mode="HTML", reply_markup=InlineKeyboardMarkup(buttons))
+        await update.message.reply_text(
+            msg, parse_mode="HTML", reply_markup=InlineKeyboardMarkup(buttons)
+        )
         return State.CREATE_CASE_ASK_REWARD
 
-    # === Reward >= 1000 → move to confirmation ===
-    await update.message.reply_text(
-        get_text(user_id, "reward_amount_confirmed", "cases").format(reward_amount),
-        reply_markup=InlineKeyboardMarkup(
-            [
-                [
-                    InlineKeyboardButton(
-                        get_text(user_id, "confirm_button", "globals"), callback_data="confirm_transfer"
-                    ),
-                    InlineKeyboardButton(
-                        get_text(user_id, "cancel_edit_button", "globals"), callback_data="cancel_transfer"
-                    ),
-                ]
-            ]
-        ),
-        parse_mode="HTML"
-    )
-    return State.CREATE_CASE_CONFIRM_TRANSFER
 
-
-# === Callback Handler for Continue with smaller reward ===
+# === Callback Handler: Continue with smaller reward ===
 @catch_async
 async def handle_continue_with_reward(update: Update, context: ContextTypes.DEFAULT_TYPE) -> int:
     """Proceed to confirmation even if reward < 1000."""
@@ -429,7 +442,7 @@ async def handle_continue_with_reward(update: Update, context: ContextTypes.DEFA
     return State.CREATE_CASE_CONFIRM_TRANSFER
 
 
-# === Callback Handler for Going Back with prompt ===
+# === Callback Handler: Going Back ===
 @catch_async
 async def handle_back_to_reason(update: Update, context: ContextTypes.DEFAULT_TYPE) -> int:
     """Re-prompt user for reward amount, showing what they entered last."""
@@ -449,7 +462,7 @@ async def handle_back_to_reason(update: Update, context: ContextTypes.DEFAULT_TY
     return State.CREATE_CASE_ASK_REWARD
 
 
-# === Callback Handler for Refreshing Balance ===
+# === Callback Handler: Refresh Balance ===
 @catch_async
 async def handle_refresh_balance(update: Update, context: ContextTypes.DEFAULT_TYPE) -> int:
     """Re-check wallet balance when user presses Refresh button."""
@@ -482,7 +495,7 @@ async def handle_refresh_balance(update: Update, context: ContextTypes.DEFAULT_T
             parse_mode="HTML",
             reply_markup=InlineKeyboardMarkup([
                 [InlineKeyboardButton("🔄 Refresh", callback_data=f"refresh_balance:{reward_amount}")],
-                [InlineKeyboardButton("🔙 Back", callback_data="back_to_reason")]
+                [InlineKeyboardButton("🔙 Back", callback_data=f"back_to_reason:{reward_amount}")]
             ])
         )
         return State.CREATE_CASE_ASK_REWARD
@@ -508,9 +521,23 @@ async def handle_refresh_balance(update: Update, context: ContextTypes.DEFAULT_T
     return State.CREATE_CASE_CONFIRM_TRANSFER
 
 
+# === Callback Handler: Increase Reward ===
+@catch_async
+async def handle_increase_reward(update: Update, context: ContextTypes.DEFAULT_TYPE) -> int:
+    """Let user input a higher reward again."""
+    query = update.callback_query
+    await query.answer()
 
+    # Set flag so next input is treated as increase reward
+    context.user_data["increase_reward_mode"] = True
 
+    msg = (
+        "💰 <b>Reward Setup</b>\n\n"
+        "Please enter a new (higher) reward amount in USDT."
+    )
 
+    await query.edit_message_text(text=msg, parse_mode="HTML")
+    return State.CREATE_CASE_ASK_REWARD
 # _________ COFIRMATION FO THE REWARD BY ASKING YES OR NO & IF YES THEN TRANSFER THE COIN TO THE STAKE WALLET
 async def handle_transfer_confirmation(
     update: Update, context: ContextTypes.DEFAULT_TYPE

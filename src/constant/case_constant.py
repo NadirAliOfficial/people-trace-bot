@@ -14,7 +14,7 @@ CASE_CONSTANT = {
             "*Do you agree to these terms?*"
         ),
         "create_case_title": "Case Details",
-        "enter_person_name": "👤 Enter the full name of the person you’re looking for:",
+        "enter_person_name": "👤 Enter the full name of the person you're looking for:",
         "male_option": "♂ Male",
         "female_option": "♀ Female",
         "other_option": "Other",
@@ -38,12 +38,42 @@ CASE_CONSTANT = {
             "💰 <b>Reward Setup</b>\n\n"
             "What reward would you like to offer for verified leads? (in {type})"
         ),
+        "reward_setup_prompt_usdt": (
+            "💰 <b>Reward Setup</b>\n\n"
+            "What reward would you like to offer for verified leads? (in USDT)"
+        ),
         "reward_amount_negative": "❌ Reward amount must be greater than 0. You entered: {0}.",
         "insufficient_balance": "🚫 Insufficient Balance. You have only {0} available.",
         "refresh_wallet_balance": "🔄 Please refresh your wallet balance or lower the reward.",
         "reward_amount_confirmed": (
             "💸 Reward amount of {0} has been confirmed.\n\n"
             "🔒 Your wallet balance is being checked..."
+        ),
+        "reward_set_with_tip": (
+            "💸 Reward set to <b>{amount} USDT</b>\n\n"
+            "💡 <b>Tip:</b> The higher the reward, the more eyes you attract!\n"
+            "Offering a generous reward motivates more people to join the search — "
+            "increasing your chances of finding the person faster. 🕵️‍♂️💬\n"
+            "A little extra can go a long way in rallying a powerful crowd behind your case."
+        ),
+        "insufficient_balance_detailed": (
+            "🚫 <b>Insufficient Balance</b>\n\n"
+            "⚠️ Your current balance is <b>{wallet_balance} USDT</b>.\n"
+            "To continue, you'll need to fund your wallet with <b>{reward_amount} USDT</b>.\n\n"
+            "🔐 <b>Your Wallet Address:</b>\n"
+            "<code>{wallet_address}</code>\n\n"
+            "🌐 <b>Network:</b> TRC20 (Tron Network)\n\n"
+            "📥 <b>To top up:</b>\n\n"
+            "1️⃣ Open your crypto wallet\n"
+            "2️⃣ Select <b>Send</b>\n"
+            "3️⃣ Paste your wallet address\n"
+            "4️⃣ Select the correct network (TRC20)\n"
+            "5️⃣ Enter amount and confirm\n\n"
+            "🔁 Once you've completed the transfer, press <b>Refresh</b> to update your balance."
+        ),
+        "case_ready_to_publish": (
+            "🔒 Your wallet balance is being checked...\n\n"
+            "Once the balance is confirmed, your case will be published and shared with the PeopleTrace community."
         ),
         "insufficient_balance_for_transfer": (
             "🚫 <b>Insufficient Balance</b>\n\n"
@@ -60,7 +90,7 @@ CASE_CONSTANT = {
             "🎁 <b>Reward Offered:</b> {reward_amount} {wallet_type}\n"
             "💸 <b>Platform Fee (5%):</b> {platform_fee} {wallet_type}\n"
             "🔒 <b>Net Held in Escrow:</b> {net_amount} {wallet_type}\n\n"
-            "🙌 We’ve lodged your case and the reward has been moved to the bot owner's wallet.\n"
+            "🙌 We've lodged your case and the reward has been moved to the bot owner's wallet.\n"
             "🛡️ <b>Your reward is securely held in escrow</b> and will only be released upon verified, successful leads.\n\n"
             "🚀 Thank you for being part of our platform!"
         ),
@@ -103,6 +133,12 @@ CASE_CONSTANT = {
         "cancel_edit_button": "❌ Cancel / Edit",
         "increase_reward_button": "💰 Increase Reward",
         "back_button": "🔙 Back",
+        "refresh_button": "🔄 Refresh",
+        "submit_case_button": "📤 Submit Case", 
+        "edit_button": "🔁 Edit",
+        "cancel_button": "❌ Cancel",
+        "increase_reward_btn": "💰 Increase Reward",
+        "back_btn": "🔙 Back",
         "enter_reward_amount_usdt": "Please enter the reward amount in USDT.",
         "transfer_successful": "The transfer was successful.",
         "transfer_error": "An error occurred while processing the transfer. Please try again.",
@@ -175,6 +211,10 @@ CASE_CONSTANT = {
         "enter_reward_amount": (
             "💰 <b>设置奖励</b>\n\n"
             "您希望为已验证的线索提供多少奖励？（以 {type} 计算）"
+        ),
+        "reward_setup_prompt_usdt": (
+            "💰 <b>奖励设置</b>\n\n"
+            "您希望为已验证的线索提供多少奖励？（以 USDT 计算）"
         ),
         "reward_amount_negative": "❌ 奖励金额必须大于 0。您输入的是：{0}。",
         "insufficient_balance": "🚫 余额不足。您当前可用余额为 {0}。",

@@ -29,6 +29,7 @@ LANG_DATA = {
     "start-mobile": START_MOBILE_NUMBER_CONSTANT,
     "cases": CASE_CONSTANT,
     "start-wallet": START_WALLET_CONSTANT,
+    "stats": STATS_CONSTANT,
 }
 
 # LANG_DATA = merge_lang_data(

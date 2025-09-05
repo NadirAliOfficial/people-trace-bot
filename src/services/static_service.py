@@ -76,11 +76,11 @@ class StatsService:
         # Common demographic
         demographics_pipeline = [
             {"$match": {"gender": {"$in": ["male", "female", "other"]}, "age": {"$type": "number", "$gte": 0}}},
-
             {
                 "$bucket": {
                     "groupBy": "$age",
                     "boundaries": [0, 18, 25, 35, 50, 65, 100],
+                    "default": "Other",
                     "output": {
                         "males": {
                             "$sum": {"$cond": [{"$eq": ["$gender", "male"]}, 1, 0]}
@@ -96,14 +96,30 @@ class StatsService:
             },
             {
                 "$addFields": {
-                    "index": {"$toInt": "$_id"}
+                    "index": {
+                        "$cond": {
+                            "if": {"$ne": ["$_id", "Other"]},
+                            "then": {"$toInt": "$_id"},
+                            "else": -1
+                        }
+                    }
                 }
             },
             {
                 "$project": {
                     "_id": 0,
                     "range": {
-                        "$arrayElemAt": [["0-17", "18-24", "25-34", "35-49", "50-64", "65+"], "$index"]
+                        "$switch": {
+                            "branches": [
+                                {"case": {"$eq": ["$index", 0]}, "then": "0-17"},
+                                {"case": {"$eq": ["$index", 1]}, "then": "18-24"},
+                                {"case": {"$eq": ["$index", 2]}, "then": "25-34"},
+                                {"case": {"$eq": ["$index", 3]}, "then": "35-49"},
+                                {"case": {"$eq": ["$index", 4]}, "then": "50-64"},
+                                {"case": {"$eq": ["$index", 5]}, "then": "65+"}
+                            ],
+                            "default": "Other"
+                        }
                     },
                     "males": 1,
                     "females": 1,

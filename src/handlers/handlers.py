@@ -8,6 +8,7 @@ from handlers.case_handler import (
     handle_eye_color,
     handle_hair_color,
     handle_height,
+    handle_increase_reward,
     handle_last_seen_location,
     handle_person_name,
     handle_photo,
@@ -256,6 +257,7 @@ start_handler = ConversationHandler(
         State.CREATE_CASE_ASK_REASON: [
             MessageHandler(filters.TEXT & ~filters.COMMAND, handle_reason_for_finding)
         ],
+        ##SECTION -  Reward and Transfer
         State.CREATE_CASE_ASK_REWARD: [
             MessageHandler(filters.TEXT & ~filters.COMMAND, handle_ask_reward_amount),
             CallbackQueryHandler(handle_refresh_balance, pattern="^refresh_balance:"),
@@ -263,6 +265,9 @@ start_handler = ConversationHandler(
             CallbackQueryHandler(
                 handle_continue_with_reward, pattern="^continue_with_reward:"
             ),
+            CallbackQueryHandler(
+                handle_increase_reward, pattern="^increase_reward$"
+            ),  
         ],
         State.CREATE_CASE_CONFIRM_TRANSFER: [
             CallbackQueryHandler(
@@ -270,6 +275,7 @@ start_handler = ConversationHandler(
                 pattern="^(confirm_transfer|cancel_transfer)$",
             )
         ],
+        ##SECTION -   Finder
         State.CASE_LIST: [
             CallbackQueryHandler(show_advertisements, pattern=r"^page_(previous|next)"),
             CallbackQueryHandler(case_details, pattern=r"^case_"),
@@ -328,24 +334,24 @@ start_handler = ConversationHandler(
             )
         ],
         # ---------------------- Settings Start ---------------------
-        State.SETTINGS_MENU: [
+        State.SETTINGS.SETTINGS_MENU: [
             CallbackQueryHandler(
                 settings_menu_callback,
                 pattern="^(settings_language|settings_mobile|settings_close|setlang_)",
             ),
         ],
-        State.WAITING_FOR_MOBILE: [
+        State.SETTINGS.WAITING_FOR_MOBILE: [
             MessageHandler(filters.TEXT & ~filters.COMMAND, handle_setting_mobile),
         ],
-        State.SETTINGS_MOBILE_MANAGEMENT: [
+        State.SETTINGS.SETTINGS_MOBILE_MANAGEMENT: [
             CallbackQueryHandler(settings_menu_callback, pattern="^(mobile_|remove_)"),
         ],
-        State.MOBILE_VERIFICATION: [
+        State.SETTINGS.MOBILE_VERIFICATION: [
             CallbackQueryHandler(
                 settings_menu_callback, pattern="^(remove_|settings_mobile)"
             ),
         ],
-        State.SETTINGS_CREATE_CASE_TAC: [
+        State.SETTINGS.SETTINGS_CREATE_CASE_TAC: [
             MessageHandler(filters.TEXT & ~filters.COMMAND, handle_setting_tac),
         ],
         # ---------------------- Settings End ---------------------
@@ -595,33 +601,32 @@ settings_handler = ConversationHandler(
     ],
     allow_reentry=True,
 )
-
 # # ---------------------- Settings Conversation Handler End  ---------------------
 
 # # handlers/stats_handler.py
 
-# stats_handler = ConversationHandler(
-#     entry_points=[CommandHandler("stats", stats_command)],
-#     states={
-#         State.SHOW_STATS_MENU: [
-#             CallbackQueryHandler(stats_menu_callback, pattern="^(view_unsolved|view_local_stats|view_my_cases|back_to_main_menu)$"),
-#             CallbackQueryHandler(back_to_stats, pattern="^back_to_stats$"),
-#         ],
-#         State.SHOW_UNSOLVED_COUNTRIES: [
-#             CallbackQueryHandler(unsolved_country_callback, pattern="^country_"),
-#             CallbackQueryHandler(back_to_stats, pattern="^back_to_stats$"),
-#         ],
-#         State.SHOW_MY_CASES: [
-#             CallbackQueryHandler(my_case_detail_callback, pattern="^mycase_"),
-#             CallbackQueryHandler(view_my_cases_callback, pattern="^view_my_cases$"),
-#             CallbackQueryHandler(back_to_stats, pattern="^back_to_stats$"),
-#         ],
-#         State.ASK_LOCAL_PROVINCE_CITY: [
-#             MessageHandler(filters.TEXT & ~filters.COMMAND, handle_local_province_city),
-#         ],
-#     },
-#     fallbacks=[
-#         CallbackQueryHandler(invalid_selection),
-#         CommandHandler("cancel", cancel),
-#     ],
-# )
+stats_handler = ConversationHandler(
+    entry_points=[CommandHandler("stats", stats_command)],
+    states={
+        State.STATS.SHOW_STATS_MENU: [
+            CallbackQueryHandler(stats_menu_callback, pattern="^(view_unsolved|view_local_stats|view_my_cases|back_to_main_menu)$"),
+            CallbackQueryHandler(back_to_stats, pattern="^back_to_stats$"),
+        ],
+        State.STATS.SHOW_UNSOLVED_COUNTRIES: [
+            CallbackQueryHandler(unsolved_country_callback, pattern="^country_"),
+            CallbackQueryHandler(back_to_stats, pattern="^back_to_stats$"),
+        ],
+        State.STATS.SHOW_MY_CASES: [
+            CallbackQueryHandler(my_case_detail_callback, pattern="^mycase_"),
+            CallbackQueryHandler(view_my_cases_callback, pattern="^view_my_cases$"),
+            CallbackQueryHandler(back_to_stats, pattern="^back_to_stats$"),
+        ],
+        State.STATS.ASK_LOCAL_PROVINCE_CITY: [
+            MessageHandler(filters.TEXT & ~filters.COMMAND, handle_local_province_city),
+        ],
+    },
+    fallbacks=[
+        CallbackQueryHandler(invalid_selection),
+        CommandHandler("cancel", cancel),
+    ],
+)

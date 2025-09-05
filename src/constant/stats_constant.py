@@ -1,5 +1,5 @@
 STATS_CONSTANT = {
-    "en": {
+    "english": {
         # Main stats page
         "community_stats_title": "<b>📊 PeopleTrace Community Stats</b>",
         "total_cases_submitted": "• <b>Total Cases Submitted:</b> {}",
@@ -64,7 +64,7 @@ STATS_CONSTANT = {
         "local_cases_found_title": "<b>📂 Cases in {city}, {province}:</b>",
     },
     
-    "zh": {
+    "chinese": {
         "community_stats_title": "<b>📊 PeopleTrace 社区数据</b>",
         "total_cases_submitted": "• <b>提交的总案件数：</b> {}",
         "regions_covered": "• <b>覆盖区域：</b> {} 个国家，{} 个城市",
@@ -122,7 +122,7 @@ STATS_CONSTANT = {
         "local_cases_found_title": "<b>📂 在 {city}, {province} 中的案件：</b>",
     },
 
-    "ms": {
+    "malay": {
         "community_stats_title": "<b>📊 Statistik Komuniti PeopleTrace</b>",
         "total_cases_submitted": "• <b>Jumlah Kes Dihantar:</b> {}",
         "regions_covered": "• <b>Kawasan Diliputi:</b> {} negara, {} bandar",
@@ -180,7 +180,7 @@ STATS_CONSTANT = {
         "local_cases_found_title": "<b>📂 Kes di {city}, {province}:</b>",
     },
 
-    "id": {
+    "indonesian": {
         "community_stats_title": "<b>📊 Statistik Komunitas PeopleTrace</b>",
         "total_cases_submitted": "• <b>Total Kasus Diajukan:</b> {}",
         "regions_covered": "• <b>Wilayah Terliputi:</b> {} negara, {} kota",
@@ -238,7 +238,7 @@ STATS_CONSTANT = {
         "local_cases_found_title": "<b>📂 Kasus di {city}, {province}:</b>",
     },
 
-        "th": {
+        "thai": {
         # ภาษาไทย - Thai
         "community_stats_title": "<b>📊 สถิติชุมชน PeopleTrace</b>",
         "total_cases_submitted": "• <b>จำนวนคดีที่ส่งทั้งหมด:</b> {}",
@@ -297,7 +297,7 @@ STATS_CONSTANT = {
         "local_cases_found_title": "<b>📂 คดีใน {city}, {province}:</b>",
     },
 
-    "vi": {
+    "vietnamese": {
         # Tiếng Việt - Vietnamese
         "community_stats_title": "<b>📊 Thống kê cộng đồng PeopleTrace</b>",
         "total_cases_submitted": "• <b>Tổng số trường hợp đã gửi:</b> {}",
@@ -355,7 +355,7 @@ STATS_CONSTANT = {
         "local_cases_found_title": "<b>📂 Các trường hợp ở {city}, {province}:</b>",
     },
 
-    "km": {
+    "khmer": {
         # ភាសាខ្មែរ - Khmer
         "community_stats_title": "<b>📊 ស្ថិតិសហគមន៍ PeopleTrace</b>",
         "total_cases_submitted": "• <b>ចំនួនករណីបានដាក់ផ្ញើ:</b> {}",
@@ -413,7 +413,7 @@ STATS_CONSTANT = {
         "local_cases_found_title": "<b>📂 ករណីនៅក្នុង {city}, {province}:</b>",
     },
 
-    "ja": {
+    "japanese": {
         # 日本語 - Japanese
         "community_stats_title": "<b>📊 PeopleTrace コミュニティ統計</b>",
         "total_cases_submitted": "• <b>送信された総ケース数：</b> {}",
@@ -471,7 +471,7 @@ STATS_CONSTANT = {
         "local_cases_found_title": "<b>📂 {city}, {province} のケース：</b>",
     },
 
-    "ko": {
+    "korean": {
         # 한국어 - Korean
         "community_stats_title": "<b>📊 PeopleTrace 커뮤니티 통계</b>",
         "total_cases_submitted": "• <b>제출된 총 사건 수:</b> {}",
@@ -529,7 +529,7 @@ STATS_CONSTANT = {
         "local_cases_found_title": "<b>📂 {city}, {province} 의 사건:</b>",
     },
 
-    "ur": {
+    "urdu": {
         # اردو - Urdu
         "community_stats_title": "<b>📊 پیپل ٹریس کمیونٹی شماریات</b>",
         "total_cases_submitted": "• <b>کُل معاملات جمع کروائے گئے:</b> {}",
