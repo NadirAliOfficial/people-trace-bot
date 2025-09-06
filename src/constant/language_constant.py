@@ -30,6 +30,7 @@ LANG_DATA = {
     "cases": CASE_CONSTANT,
     "start-wallet": START_WALLET_CONSTANT,
     "stats": STATS_CONSTANT,
+    "finder": FINDER_CONSTANT,
 }
 
 # LANG_DATA = merge_lang_data(

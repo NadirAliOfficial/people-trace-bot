@@ -341,17 +341,17 @@ start_handler = ConversationHandler(
         
         
         
-        State.CASE_LIST: [
-            CallbackQueryHandler(show_advertisements, pattern=r"^page_(previous|next)"),
-            CallbackQueryHandler(case_details, pattern=r"^case_"),
-            CallbackQueryHandler(show_advertisements, pattern="^back_to_list"),
-        ],
-        State.CASE_DETAILS: [
-            CallbackQueryHandler(handle_pagination, pattern="^case_page_"),
-            CallbackQueryHandler(case_details, pattern="^case_"),
-            CallbackQueryHandler(handle_found_case, pattern="^found_"),
-            CallbackQueryHandler(show_advertisements, pattern="^back_to_list"),
-        ],
+        # State.CASE_LIST: [
+        #     CallbackQueryHandler(show_advertisements, pattern=r"^page_(previous|next)"),
+        #     CallbackQueryHandler(case_details, pattern=r"^case_"),
+        #     CallbackQueryHandler(show_advertisements, pattern="^back_to_list"),
+        # ],
+        # State.CASE_DETAILS: [
+        #     CallbackQueryHandler(handle_pagination, pattern="^case_page_"),
+        #     CallbackQueryHandler(case_details, pattern="^case_"),
+        #     CallbackQueryHandler(handle_found_case, pattern="^found_"),
+        #     CallbackQueryHandler(show_advertisements, pattern="^back_to_list"),
+        # ],
         State.UPLOAD_PROOF: [
             MessageHandler(filters.PHOTO | filters.VIDEO, handle_proof)
         ],

@@ -25,7 +25,7 @@ from services.wallet_service import WalletService
 from utils.cloudinary import CloudinaryError, upload_image, upload_video
 from utils.error_wrapper import catch_async
 # from utils.get_network import get_network
-from utils.helper import paginate_list
+from utils.helper import get_username, paginate_list
 from utils.province_util import get_provinces_for_country
 from utils.wallet import load_user_wallet
 from constants import State
@@ -372,7 +372,7 @@ async def show_complaint(user_id, update, context):
     c = complaints[index]
 
     chat = await context.bot.get_chat(c.user_id)
-    poster_username = chat.username or "N/A"
+
 
     text = (
         f"🔍 Case {index+1}/{total}\n"
@@ -381,7 +381,7 @@ async def show_complaint(user_id, update, context):
         f"📅 Date: {c.created_at.strftime('%d %B %Y')}\n"
         f"🎂 Age: {c.age}\n"
         f"💰 Reward: {c.reward} USDT\n"
-        f"🧾 Posted by: @{poster_username}"
+        f"🧾 Posted by: @{get_username(chat)}"
     )
 
     # ✅ Build buttons dynamically
@@ -429,6 +429,7 @@ async def finder_complaint_callback(
 ) -> int:
     query = update.callback_query
     await query.answer()
+    user_id = update.effective_user.id
     data = query.data
     index = context.user_data.get("complaint_index", 0)
     complaints = context.user_data.get("finder_complaints", [])
@@ -439,7 +440,10 @@ async def finder_complaint_callback(
     elif data.startswith("complaint_back_") and index > 0:
         context.user_data["complaint_index"] -= 1
     elif data.startswith("lead_"):
-        await query.message.reply_text("✅ Lead submitted! Poster will be notified.")
+        ## TODO: Must be add the finder flow to continue the lead submission
+        # await query.message.reply_text("✅ Lead submitted! Poster will be notified.")
+        await query.edit_message_text(get_text(user_id, "proof_upload", "finder"))
+        return State.UPLOAD_PROOF
     elif data.startswith("reward_"):
         await query.message.reply_text("📬 Reward request sent to poster.")
     else:

@@ -1,5 +1,5 @@
 FINDER_CONSTANT = {
-    "en": {
+    "english": {
         "choose_province": "Please select a province:",
         "more_provinces": "More provinces...",
         "case_list": "Available cases:",
@@ -44,7 +44,7 @@ FINDER_CONSTANT = {
         "number_added": "The number <b>{number}</b> has been added successfully.",
         "invalid_otp": "Invalid OTP. Please try again.",
     },
-    "zh": {
+    "chinese": {
         "choose_province": "请选择一个省份：",
         "more_provinces": "更多省份...",
         "case_list": "可用案件：",
@@ -89,7 +89,7 @@ FINDER_CONSTANT = {
         "number_added": "号码 <b>{number}</b> 已成功添加。",
         "invalid_otp": "无效的验证码。请重试。",
     },
-    "ms": {
+    "malay": {
         "choose_province": "Sila pilih negeri:",
         "more_provinces": "Lebih banyak negeri...",
         "case_list": "Kes tersedia:",
@@ -134,7 +134,7 @@ FINDER_CONSTANT = {
         "number_added": "Nombor <b>{number}</b> telah berjaya ditambah.",
         "invalid_otp": "OTP tidak sah. Sila cuba lagi.",
     },
-    "th": {
+    "thai": {
         "choose_province": "กรุณาเลือกจังหวัด:",
         "more_provinces": "จังหวัดเพิ่มเติม...",
         "case_list": "รายการเคสที่พร้อมใช้งาน:",
@@ -179,7 +179,7 @@ FINDER_CONSTANT = {
         "number_added": "เบอร์ <b>{number}</b> ถูกเพิ่มเรียบร้อยแล้ว",
         "invalid_otp": "OTP ไม่ถูกต้อง กรุณาลองใหม่",
     },
-    "vi": {
+    "vietnamese": {
         "choose_province": "Vui lòng chọn tỉnh:",
         "more_provinces": "Thêm tỉnh...",
         "case_list": "Danh sách trường hợp:",
@@ -224,7 +224,7 @@ FINDER_CONSTANT = {
         "number_added": "Số điện thoại <b>{number}</b> đã được thêm thành công.",
         "invalid_otp": "OTP không hợp lệ. Vui lòng thử lại.",
     },
-    "ur": {
+    "urdu": {
         "choose_province": "براہ کرم ایک صوبہ منتخب کریں:",
         "more_provinces": "مزید صوبے...",
         "case_list": "دستیاب کیسز:",
@@ -269,7 +269,7 @@ FINDER_CONSTANT = {
         "number_added": "نمبر <b>{number}</b> کامیابی سے شامل کر دیا گیا ہے۔",
         "invalid_otp": "غلط OTP۔ براہ کرم دوبارہ کوشش کریں۔",
     },
-    "ja": {
+    "japanese": {
         "choose_province": "都道府県を選択してください：",
         "more_provinces": "その他の都道府県...",
         "case_list": "利用可能なケース：",
@@ -314,7 +314,7 @@ FINDER_CONSTANT = {
         "number_added": "電話番号<b>{number}</b>が正常に追加されました。",
         "invalid_otp": "無効なOTPです。もう一度お試しください。",
     },
-    "ko": {
+    "korean": {
         "choose_province": "도를 선택하세요:",
         "more_provinces": "더 많은 도...",
         "case_list": "사용 가능한 사례:",
@@ -359,7 +359,7 @@ FINDER_CONSTANT = {
         "number_added": "번호 <b>{number}</b>가 성공적으로 추가되었습니다.",
         "invalid_otp": "유효하지 않은 OTP입니다. 다시 시도하십시오.",
     },
-    "km": {
+    "khmer": {
         "choose_province": "សូមជ្រើសរើសខេត្ត៖",
         "more_provinces": "ខេត្តបន្ថែមទៀត...",
         "case_list": "ករណីដែលមាន៖",
@@ -404,7 +404,7 @@ FINDER_CONSTANT = {
         "number_added": "លេខ <b>{number}</b> ត្រូវបានបន្ថែមដោយជោគជ័យ។",
         "invalid_otp": "លេខ OTP មិនត្រឹមត្រូវ។ សូមព្យាយាមម្តងទៀត។",
     },
-    "id": {
+    "indonesian": {
         "choose_province": "Silakan pilih provinsi:",
         "more_provinces": "Provinsi lainnya...",
         "case_list": "Daftar kasus:",

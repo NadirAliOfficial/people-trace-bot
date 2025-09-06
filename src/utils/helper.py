@@ -90,3 +90,13 @@ def setup_logging():
     )
     logger = logging.getLogger(__name__)
     logger.info("Logging setup complete.")
+
+
+
+def get_username(chat) -> str:
+    if chat.first_name:
+        return f"{chat.first_name} {chat.last_name or ''}".strip()
+    elif chat.username:
+        return f"@{chat.username}"
+    else:
+        return "N/A"
