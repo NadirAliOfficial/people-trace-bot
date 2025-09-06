@@ -45,6 +45,10 @@ async def upload_video(file_path: str):
             folder="proofs",  # Optional: Upload to a specific folder
             public_id=file_path,  # Optional: Use the file's path as its public ID
         )
+
+        print(f"Cloudinary upload result: {upload_result}")
+        
+        
         # Return the secure URL for the uploaded video
         file_url = upload_result["secure_url"]
         print(f"Uploaded Video URL: {file_url}")

@@ -166,6 +166,10 @@ async def get_complaints_by_country_and_province(country: str, province: str) ->
     :param province: The province code.
     :return: A list of complaints.
     """
-    return await Case.find(
-        {"country": country, "province": province, "status": CaseStatus.ADVERTISE}
+    cases = await Case.find(
+        {"country": country, "province": province, "status": CaseStatus.ADVERTISE},
+        fetch_links=True
     ).to_list()
+
+
+    return cases

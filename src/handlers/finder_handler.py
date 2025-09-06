@@ -437,22 +437,40 @@ async def finder_complaint_callback(
 
     if data.startswith("complaint_next_") and index + 1 < total:
         context.user_data["complaint_index"] += 1
+
     elif data.startswith("complaint_back_") and index > 0:
         context.user_data["complaint_index"] -= 1
+
     elif data.startswith("lead_"):
-        ## TODO: Must be add the finder flow to continue the lead submission
-        # await query.message.reply_text("✅ Lead submitted! Poster will be notified.")
-        await query.edit_message_text(get_text(user_id, "proof_upload", "finder"))
+        # Extract index from callback_data
+        selected_index = int(data.split("_")[1])
+        selected_complaint = complaints[selected_index]
+
+        # Store selected complaint in user_data
+        context.user_data["selected_complaint"] = selected_complaint
+
+        # Continue lead flow
+        if query.message.photo:
+            await query.edit_message_caption(get_text(user_id, "proof_upload", "finder"))
+        else:
+            await query.edit_message_text(get_text(user_id, "proof_upload", "finder"))
+
         return State.UPLOAD_PROOF
+
     elif data.startswith("reward_"):
+        selected_index = int(data.split("_")[1])
+        selected_complaint = complaints[selected_index]
+
+        # Store selected complaint for reward logic if needed
+        context.user_data["selected_complaint"] = selected_complaint
         await query.message.reply_text("📬 Reward request sent to poster.")
+
     else:
         return State.FINDER.END
 
     await query.message.delete()
     await show_complaint(query.from_user.id, update, context)
     return State.FINDER.VIEW_COMPLAINTS
-
 
 
 
@@ -830,7 +848,7 @@ async def case_details(update: Update, context: ContextTypes.DEFAULT_TYPE) -> in
 
     except Exception as e:
         logger.error(f"Error showing case details: {e}")
-        await query.edit_message_text(get_text(user_id, "error_loading_case"))
+        await query.edit_message_text(get_text(user_id, "error_loading_case", "finder"))
         return State.END
 
 
@@ -839,11 +857,12 @@ async def handle_proof(update: Update, context: ContextTypes.DEFAULT_TYPE) -> in
     print("handle_proof")
     try:
         user_id = update.effective_user.id
-        case_no = context.user_data.get("found_case_no")
+        selected_case = context.user_data.get("selected_complaint")
+        # case_no = context.user_data.get("found_case_no")
 
-        if not case_no:
-            await update.message.reply_text(get_text(user_id, "no_case_selected"))
-            return State.END
+        # if not case_no:
+        #     await update.message.reply_text(get_text(user_id, "no_case_selected", "finder"))
+        #     return State.END
 
         # Ensure 'proofs' directory exists
         os.makedirs("proofs", exist_ok=True)
@@ -865,7 +884,7 @@ async def handle_proof(update: Update, context: ContextTypes.DEFAULT_TYPE) -> in
             file_size = update.message.video.file_size  # File size in bytes
             is_video = True  # Mark this as a video upload
         else:
-            await update.message.reply_text(get_text(user_id, "error_upload_proof"))
+            await update.message.reply_text(get_text(user_id, "error_upload_proof" , "finder"))
             return State.UPLOAD_PROOF
 
         # Define supported formats for both images and videos
@@ -894,7 +913,7 @@ async def handle_proof(update: Update, context: ContextTypes.DEFAULT_TYPE) -> in
 
         # Generate unique filename
         timestamp = datetime.datetime.now().strftime("%Y%m%d%H%M%S")
-        filename = f"proof_{user_id}_{case_no}_{timestamp}.{file_extension}"
+        filename = f"proof_{user_id}_{selected_case.case_no}_{timestamp}.{file_extension}"
         file_path = os.path.join("proofs", filename)
 
         # Download file
@@ -921,12 +940,12 @@ async def handle_proof(update: Update, context: ContextTypes.DEFAULT_TYPE) -> in
         # Store proof path in context
         context.user_data["proof_path"] = file_path
 
-        await update.message.reply_text(get_text(user_id, "proof_received"))
+        await update.message.reply_text(get_text(user_id, "proof_received",  "finder"))
         return State.ENTER_LOCATION
 
     except Exception as e:
         print(f"Error handling proof: {e}")
-        await update.message.reply_text(get_text(user_id, "error_processing_proof"))
+        await update.message.reply_text(get_text(user_id, "error_processing_proof", "finder"))
         return State.END
 
 
@@ -1611,12 +1630,7 @@ async def handle_extend_reward_amount(
     context.user_data["extend_flow"] = True
 
     demanded_reward = float(new_reward_str)
-    case_id = context.user_data.get("found_case_no")
-
-    # Fetch the case with linked documents (wallet)
-    case = await Case.find_one(
-        {"_id": PydanticObjectId(case_id)}, fetch_links=True  # Ensure wallet is fetched
-    )
+    case =  context.user_data.get("selected_complaint")
     # print(f"Case: {case}")
 
     print(f"Demand reward: {demanded_reward}")
@@ -1680,10 +1694,8 @@ async def handle_extend_reward_amount(
 async def handle_extend_reward(update: Update, context: ContextTypes.DEFAULT_TYPE):
     query = update.callback_query
     await query.answer()
-    case_id = context.user_data.get("found_case_no")
+    case = context.user_data.get("selected_complaint")
     user_id = update.effective_user.id
-    case = await Case.find_one({"_id": PydanticObjectId(case_id)}, fetch_links=True)
-    
     if query.data == "yes_extend":
         wallet_type = case.wallet.wallet_type
 

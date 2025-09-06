@@ -89,6 +89,7 @@ FINDER_CONSTANT = {
         "number_added": "号码 <b>{number}</b> 已成功添加。",
         "invalid_otp": "无效的验证码。请重试。",
     },
+    # cspell:disable
     "malay": {
         "choose_province": "Sila pilih negeri:",
         "more_provinces": "Lebih banyak negeri...",
@@ -134,6 +135,7 @@ FINDER_CONSTANT = {
         "number_added": "Nombor <b>{number}</b> telah berjaya ditambah.",
         "invalid_otp": "OTP tidak sah. Sila cuba lagi.",
     },
+    # cspell:enable
     "thai": {
         "choose_province": "กรุณาเลือกจังหวัด:",
         "more_provinces": "จังหวัดเพิ่มเติม...",
