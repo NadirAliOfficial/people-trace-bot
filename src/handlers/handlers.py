@@ -284,7 +284,7 @@ start_handler = ConversationHandler(
             CallbackQueryHandler(handle_edit_case, pattern="^edit_case$"),
             CallbackQueryHandler(handle_cancel_case_selection, pattern="^cancel_case$"),
         ],
-        ##!SECTION - Under development - cancel the case by asking the reason 
+        ##!SECTION -  Handle Links  -  to transfer or cancel case
         State.CASE_CANCEL_SELECT_REASON: [
             CallbackQueryHandler(handle_cancel_reason, pattern="^cancel_reason:"),
         ],
@@ -300,33 +300,47 @@ start_handler = ConversationHandler(
             CallbackQueryHandler(handle_back_to_menu, pattern="^back_to_menu$"),
         ],
         
-        # State.CREATE_CASE_ASK_REWARD: [
-        #     MessageHandler(filters.TEXT & ~filters.COMMAND, handle_ask_reward_amount),
-        #     CallbackQueryHandler(handle_refresh_balance, pattern="^refresh_balance:"),
-        #     CallbackQueryHandler(handle_back_to_reason, pattern="^back_to_reason:"),
-        #     CallbackQueryHandler(
-        #         handle_continue_with_reward, pattern="^continue_with_reward:"
-        #     ),
-        #     CallbackQueryHandler(
-        #         handle_increase_reward, pattern="^increase_reward$"
-        #     ),
-        # ],
-        # State.CREATE_CASE_CONFIRM_TRANSFER: [
-        #     CallbackQueryHandler(
-        #         handle_publish_case,
-        #         pattern="^(confirm_transfer|cancel_transfer)$",
-        #     )
-        # ],
-        # === Handler: Publish Case ===
-        # State.CREATE_CASE_PUBLISH_CASE: [
-        #     CallbackQueryHandler(
-        #         handle_publish_case,
-        #         pattern="^publish_case$",
-        #     )
-        # ],
-
         
         ##SECTION -   Finder
+        State.FINDER.CREATE_CASE_MOBILE: [
+            MessageHandler(filters.TEXT & ~filters.COMMAND, handle_finder_new_mobile)
+        ],
+        State.FINDER.MOBILE_MANAGEMENT: [
+            CallbackQueryHandler(
+                handle_finder_select_mobile, pattern="^(select_mobile_.*|mobile_add)$"
+            ),
+        ],
+        State.FINDER.CREATE_CASE_TAC: [
+            MessageHandler(filters.TEXT & ~filters.COMMAND, handle_finder_tac)
+        ],
+        State.FINDER.FINDER_DISCLAIMER: [
+            CallbackQueryHandler(
+                finder_disclaimer_callback, pattern="^(agree|disagree)$"
+            )
+        ],
+        State.FINDER.CHOOSE_COUNTRY: [
+            CallbackQueryHandler(
+                finder_country_callback, pattern="^(country_select_|country_page_)"
+            ),
+            MessageHandler(filters.TEXT & ~filters.COMMAND, finder_choose_country),
+        ],
+        State.FINDER.CHOOSE_PROVINCE: [
+            CallbackQueryHandler(
+                finder_province_callback,
+                pattern="^(province_select_|province_page_)",
+            ),
+            MessageHandler(filters.TEXT & ~filters.COMMAND, finder_choose_province),
+        ],
+        State.FINDER.VIEW_COMPLAINTS: [
+            CallbackQueryHandler(
+                finder_complaint_callback,
+                pattern="^(complaint_next_|complaint_back_|lead_|reward_)",
+            )
+        ],
+        
+        
+        
+        
         State.CASE_LIST: [
             CallbackQueryHandler(show_advertisements, pattern=r"^page_(previous|next)"),
             CallbackQueryHandler(case_details, pattern=r"^case_"),
@@ -408,41 +422,7 @@ start_handler = ConversationHandler(
         # ---------------------- Settings End ---------------------
         State.END: [CommandHandler("start", start)],
         # FINDER FUNCTIONALITY (FINDER)
-        State.FINDER.CREATE_CASE_MOBILE: [
-            MessageHandler(filters.TEXT & ~filters.COMMAND, handle_finder_new_mobile)
-        ],
-        State.FINDER.MOBILE_MANAGEMENT: [
-            CallbackQueryHandler(
-                handle_finder_select_mobile, pattern="^(select_mobile_.*|mobile_add)$"
-            ),
-        ],
-        State.FINDER.CREATE_CASE_TAC: [
-            MessageHandler(filters.TEXT & ~filters.COMMAND, handle_finder_tac)
-        ],
-        State.FINDER.FINDER_DISCLAIMER: [
-            CallbackQueryHandler(
-                finder_disclaimer_callback, pattern="^(agree|disagree)$"
-            )
-        ],
-        State.FINDER.CHOOSE_COUNTRY: [
-            CallbackQueryHandler(
-                finder_country_callback, pattern="^(country_select_|country_page_)"
-            ),
-            MessageHandler(filters.TEXT & ~filters.COMMAND, finder_choose_country),
-        ],
-        State.FINDER.CHOOSE_PROVINCE: [
-            CallbackQueryHandler(
-                finder_province_callback,
-                pattern="^(province_select_|province_page_)",
-            ),
-            MessageHandler(filters.TEXT & ~filters.COMMAND, finder_choose_province),
-        ],
-        State.FINDER.VIEW_COMPLAINTS: [
-            CallbackQueryHandler(
-                finder_complaint_callback,
-                pattern="^(complaint_next_|complaint_back_|lead_|reward_)",
-            )
-        ],
+        
     },
     fallbacks=[
         CommandHandler("cancel", cancel),

@@ -370,10 +370,9 @@ async def show_complaint(user_id, update, context):
     index = context.user_data["complaint_index"]
     total = len(complaints)
     c = complaints[index]
-    
+
     chat = await context.bot.get_chat(c.user_id)
     poster_username = chat.username or "N/A"
-
 
     text = (
         f"🔍 Case {index+1}/{total}\n"
@@ -385,28 +384,43 @@ async def show_complaint(user_id, update, context):
         f"🧾 Posted by: @{poster_username}"
     )
 
+    # ✅ Build buttons dynamically
     kb = [
-        [InlineKeyboardButton("🧩 I Have a Lead", callback_data=f"lead_{index}")],
-        [
-            InlineKeyboardButton("◀️ Back", callback_data=f"complaint_back_{index}"),
-            InlineKeyboardButton("▶️ Next", callback_data=f"complaint_next_{index}"),
-        ],
-        [InlineKeyboardButton("📬 Request Higher Reward", callback_data=f"reward_{index}")],
+        [InlineKeyboardButton("🧩 I Have a Lead", callback_data=f"lead_{index}")]
     ]
 
-    if c.photo_url:
-        await update.message.reply_photo(
-            c.photo_url,
+    nav_row = []
+    if index > 0:  # Show Back only if not first
+        nav_row.append(
+            InlineKeyboardButton("◀️ Back", callback_data=f"complaint_back_{index}")
+        )
+    if index < total - 1:  # Show Next only if not last
+        nav_row.append(
+            InlineKeyboardButton("▶️ Next", callback_data=f"complaint_next_{index}")
+        )
+    if nav_row:
+        kb.append(nav_row)
+
+    kb.append(
+        [InlineKeyboardButton("📬 Request Higher Reward", callback_data=f"reward_{index}")]
+    )
+
+    message = update.message or update.callback_query.message
+
+    if c.case_photo:
+        await message.reply_photo(
+            c.case_photo,
             caption=text,
             reply_markup=InlineKeyboardMarkup(kb),
             parse_mode="HTML",
         )
     else:
-        await update.message.reply_text(
+        await message.reply_text(
             text,
             reply_markup=InlineKeyboardMarkup(kb),
             parse_mode="HTML",
         )
+
 
 
 @catch_async
@@ -434,6 +448,16 @@ async def finder_complaint_callback(
     await query.message.delete()
     await show_complaint(query.from_user.id, update, context)
     return State.FINDER.VIEW_COMPLAINTS
+
+
+
+
+
+
+
+
+
+
 
 
 # -----------------------------------------------------------------------------------------------------------
