@@ -12,6 +12,7 @@ class CaseStatus(Enum):
     DRAFT = "draft"
     ADVERTISE = "advertise"
     COMPLETED = "completed"
+    CANCELLED = "cancelled"
 
 
 class Case(Document):

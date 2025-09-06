@@ -2,9 +2,16 @@ from handlers.case_handler import (
     create_case_disclaimer_2_callback,
     handle_age,
     handle_ask_reward_amount,
+    handle_back_to_menu,
     handle_back_to_reason,
+    handle_cancel_case_selection,
+    handle_cancel_published_case,
+    handle_cancel_reason,
     handle_continue_with_reward,
+    handle_custom_cancel_reason,
     handle_distinctive_features,
+    handle_edit_case,
+    handle_edit_published_case,
     handle_eye_color,
     handle_hair_color,
     handle_height,
@@ -16,7 +23,8 @@ from handlers.case_handler import (
     handle_refresh_balance,
     handle_relationship,
     handle_sex,
-    handle_transfer_confirmation,
+    handle_publish_case,
+    handle_submit_case,
     handle_weight,
 )
 from handlers.start_finder_number_handler import (
@@ -257,7 +265,7 @@ start_handler = ConversationHandler(
         State.CREATE_CASE_ASK_REASON: [
             MessageHandler(filters.TEXT & ~filters.COMMAND, handle_reason_for_finding)
         ],
-        ##SECTION -  Reward and Transfer
+        ##SECTION -  Ask For the reward and handle various cases
         State.CREATE_CASE_ASK_REWARD: [
             MessageHandler(filters.TEXT & ~filters.COMMAND, handle_ask_reward_amount),
             CallbackQueryHandler(handle_refresh_balance, pattern="^refresh_balance:"),
@@ -265,16 +273,59 @@ start_handler = ConversationHandler(
             CallbackQueryHandler(
                 handle_continue_with_reward, pattern="^continue_with_reward:"
             ),
-            CallbackQueryHandler(
-                handle_increase_reward, pattern="^increase_reward$"
-            ),  
+            CallbackQueryHandler(handle_increase_reward, pattern="^increase_reward$"),
+            CallbackQueryHandler(handle_submit_case, pattern="^submit_case$"),
+            CallbackQueryHandler(handle_edit_case, pattern="^edit_case$"),
+            CallbackQueryHandler(handle_cancel_case_selection, pattern="^cancel_case$"),
         ],
+        ##!SECTION -  Handle Links  -  to transfer or cancel case 
         State.CREATE_CASE_CONFIRM_TRANSFER: [
-            CallbackQueryHandler(
-                handle_transfer_confirmation,
-                pattern="^(confirm_transfer|cancel_transfer)$",
-            )
+            CallbackQueryHandler(handle_submit_case, pattern="^submit_case$"),
+            CallbackQueryHandler(handle_edit_case, pattern="^edit_case$"),
+            CallbackQueryHandler(handle_cancel_case_selection, pattern="^cancel_case$"),
         ],
+        ##!SECTION - Under development - cancel the case by asking the reason 
+        State.CASE_CANCEL_SELECT_REASON: [
+            CallbackQueryHandler(handle_cancel_reason, pattern="^cancel_reason:"),
+        ],
+        State.CASE_CANCEL_ENTER_REASON: [
+            MessageHandler(
+                filters.TEXT & ~filters.COMMAND, handle_custom_cancel_reason
+            ),
+        ],
+        ##!SECTION - After Published Show the detail what to edit / cancel / back to the menu 
+        State.POST_SUBMISSION_MENU: [
+            CallbackQueryHandler(handle_edit_published_case, pattern="^edit_published_case$"),
+            CallbackQueryHandler(handle_cancel_published_case, pattern="^cancel_published_case$"),
+            CallbackQueryHandler(handle_back_to_menu, pattern="^back_to_menu$"),
+        ],
+        
+        # State.CREATE_CASE_ASK_REWARD: [
+        #     MessageHandler(filters.TEXT & ~filters.COMMAND, handle_ask_reward_amount),
+        #     CallbackQueryHandler(handle_refresh_balance, pattern="^refresh_balance:"),
+        #     CallbackQueryHandler(handle_back_to_reason, pattern="^back_to_reason:"),
+        #     CallbackQueryHandler(
+        #         handle_continue_with_reward, pattern="^continue_with_reward:"
+        #     ),
+        #     CallbackQueryHandler(
+        #         handle_increase_reward, pattern="^increase_reward$"
+        #     ),
+        # ],
+        # State.CREATE_CASE_CONFIRM_TRANSFER: [
+        #     CallbackQueryHandler(
+        #         handle_publish_case,
+        #         pattern="^(confirm_transfer|cancel_transfer)$",
+        #     )
+        # ],
+        # === Handler: Publish Case ===
+        # State.CREATE_CASE_PUBLISH_CASE: [
+        #     CallbackQueryHandler(
+        #         handle_publish_case,
+        #         pattern="^publish_case$",
+        #     )
+        # ],
+
+        
         ##SECTION -   Finder
         State.CASE_LIST: [
             CallbackQueryHandler(show_advertisements, pattern=r"^page_(previous|next)"),
@@ -316,7 +367,7 @@ start_handler = ConversationHandler(
         ],
         State.TRANSFER_CONFIRMATION: [
             CallbackQueryHandler(
-                handle_transfer_confirmation,
+                handle_publish_case,
                 pattern="^(confirm_transfer|cancel_transfer)$",
             )
         ],
