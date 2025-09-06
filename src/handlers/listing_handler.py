@@ -55,10 +55,10 @@ async def listing_command(update: Update, context: ContextTypes.DEFAULT_TYPE) ->
         context.user_data["lang"] = user_lang
     if not all_cases:
         if update.message:
-            await update.message.reply_text(get_text(user_id, "no_advertise_cases"))
+            await update.message.reply_text(get_text(user_id, "no_advertise_cases", "listing"))
         elif update.callback_query:
             await update.callback_query.message.edit_text(
-                get_text(user_id, "no_advertise_cases")
+                get_text(user_id, "no_advertise_cases", "listing")
             )
         return State.END
     context.user_data["page"] = 1
@@ -79,13 +79,13 @@ async def listing_command(update: Update, context: ContextTypes.DEFAULT_TYPE) ->
         if case.user_id == user_id and len(finder_exist) == 0:
             row.append(
                 InlineKeyboardButton(
-                    get_text(user_id, "edit_button"),
+                    get_text(user_id, "edit_button", "listing"),
                     callback_data=f"edit_{str(case.id)}",
                 )
             )
             row.append(
                 InlineKeyboardButton(
-                    get_text(user_id, "delete_button"),
+                    get_text(user_id, "delete_button", "listing"),
                     callback_data=f"delete_{str(case.id)}",
                 )
             )
@@ -121,13 +121,13 @@ async def listing_command(update: Update, context: ContextTypes.DEFAULT_TYPE) ->
     if current_page > 1:
         navigation_buttons.append(
             InlineKeyboardButton(
-                get_text(user_id, "previous_button"), callback_data="page_previous"
+                get_text(user_id, "prev", "globals"), callback_data="page_previous"
             )
         )
     if current_page < total_pages:
         navigation_buttons.append(
             InlineKeyboardButton(
-                get_text(user_id, "next_button"), callback_data="page_next"
+                get_text(user_id, "next", "globals"), callback_data="page_next"
             )
         )
     if navigation_buttons:
@@ -137,13 +137,13 @@ async def listing_command(update: Update, context: ContextTypes.DEFAULT_TYPE) ->
     try:
         if update.message:
             await update.message.reply_text(
-                get_text(user_id, "select_case_details"),
+                get_text(user_id, "select_case_details", 'listing'),
                 reply_markup=reply_markup,
                 parse_mode="Markdown",
             )
         elif update.callback_query:
             await update.callback_query.message.edit_text(
-                get_text(user_id, "select_case_details"),
+                get_text(user_id, "select_case_details", "listing"),
                 reply_markup=reply_markup,
                 parse_mode="Markdown",
             )
@@ -171,7 +171,7 @@ async def case_details_callback(
         )
 
         if not case:
-            await query.message.edit_text(get_text(user_id, "case_not_found"))
+            await query.message.edit_text(get_text(user_id, "case_not_found", "listing"))
             return State.END
 
      
@@ -184,7 +184,7 @@ async def case_details_callback(
         )
 
         # Format the case message using localized template
-        case_message = get_text(context.user_data.get("lang", "en"), "case_details_template").format(
+        case_message = get_text(context.user_data.get("lang", "en"), "case_details_template", "listing").format(
             person_name=case.person_name,
             last_seen_location=case.last_seen_location,
             age=case.age or "Unknown",
@@ -200,8 +200,8 @@ async def case_details_callback(
         keyboard = []
         if case.user_id == user_id:
             row = [
-                InlineKeyboardButton(get_text(user_id, "edit_button"), callback_data=f"edit_{str(case.id)}"),
-                InlineKeyboardButton(get_text(user_id, "delete_button"), callback_data=f"delete_{str(case.id)}"),
+                InlineKeyboardButton(get_text(user_id, "edit_button", "listing"), callback_data=f"edit_{str(case.id)}"),
+                InlineKeyboardButton(get_text(user_id, "delete_button", "listing"), callback_data=f"delete_{str(case.id)}"),
             ]
             keyboard.append(row)
 
@@ -218,7 +218,7 @@ async def case_details_callback(
 
     except Exception as e:
         logger.error(f"[ERROR] Failed to show case details: {e}\n{traceback.format_exc()}")
-        await query.message.edit_text(get_text(user_id, "error_fetching_case_details"))
+        await query.message.edit_text(get_text(user_id, "error_fetching_case_details", "listing"))
         return State.END
 
 @catch_async
@@ -268,13 +268,13 @@ async def pagination_callback(
 
                 row.append(
                     InlineKeyboardButton(
-                        get_text(user_id, "edit_button"),
+                        get_text(user_id, "edit_button", "listing"),
                         callback_data=f"edit_{str(case.id)}",
                     )
                 )
                 row.append(
                     InlineKeyboardButton(
-                        get_text(user_id, "delete_button"),
+                        get_text(user_id, "delete_button", "listing"),
                         callback_data=f"delete_{str(case.id)}",
                     )
                 )
@@ -287,13 +287,13 @@ async def pagination_callback(
         if new_page > 1:
             navigation_buttons.append(
                 InlineKeyboardButton(
-                    get_text(user_id, "previous_button"), callback_data="page_previous"
+                    get_text(user_id, "prev", "listing"), callback_data="page_previous"
                 )
             )
         if new_page < total_pages:
             navigation_buttons.append(
                 InlineKeyboardButton(
-                    get_text(user_id, "next_button"), callback_data="page_next"
+                    get_text(user_id, "next", "listing"), callback_data="page_next"
                 )
             )
         if navigation_buttons:
@@ -312,7 +312,7 @@ async def pagination_callback(
         logger.error(
             f"Error in pagination_callback: {str(e)}\n{traceback.format_exc()}"
         )
-        await query.message.edit_text(get_text(user_id, "error_paginating_cases"))
+        await query.message.edit_text(get_text(user_id, "error_paginating_cases", "listing"))
         return State.END
 
 
@@ -333,22 +333,22 @@ async def edit_case_callback(update: Update, context: ContextTypes.DEFAULT_TYPE)
     try:
         case_id = ObjectId(case_id)
     except errors.InvalidId:
-        await query.message.edit_text(get_text(user_id, "invalid_case_id"))
+        await query.message.edit_text(get_text(user_id, "invalid_case_id", "listing"))
         return State.END
 
     # Fetch the case from the database
     case = await Case.find_one({"_id": case_id})
     if not case:
-        await query.message.edit_text(get_text(user_id, "case_not_found"))
+        await query.message.edit_text(get_text(user_id, "case_not_found", "listing"))
         return State.END
 
     user_id = update.effective_user.id
     if case.user_id != user_id:
-        await query.message.edit_text(get_text(user_id, "not_authorized_edit"))
+        await query.message.edit_text(get_text(user_id, "not_authorized_edit", "listing"))
         return State.END
 
     # Fetch editable fields based on the user's language
-    editable_fields = get_text(user_id, "editable_fields")
+    editable_fields = get_text(user_id, "editable_fields", "listing")
 
     # Group buttons in rows of 2
     keyboard = [
@@ -376,7 +376,7 @@ async def edit_case_callback(update: Update, context: ContextTypes.DEFAULT_TYPE)
     keyboard.append(
         [
             InlineKeyboardButton(
-                get_text(user_id, "cancel_edit_button"), callback_data="cancel_edit"
+                get_text(user_id, "cancel_edit_button", "listing"), callback_data="cancel_edit"
             )
         ]
     )
@@ -384,7 +384,7 @@ async def edit_case_callback(update: Update, context: ContextTypes.DEFAULT_TYPE)
     reply_markup = InlineKeyboardMarkup(keyboard)
 
     await query.message.edit_text(
-        get_text(user_id, "edit_field_prompt"),
+        get_text(user_id, "edit_field_prompt", "listing"),
         reply_markup=reply_markup,
         parse_mode="Markdown",
     )
@@ -426,7 +426,7 @@ async def edit_field_callback(
 
     # For other fields
     await query.message.edit_text(
-        get_text(user_id, "enter_new_value").format(
+        get_text(user_id, "enter_new_value", "listing").format(
             field_name=field_name.replace("_", " ").title()
         ),
         parse_mode="Markdown",
@@ -446,13 +446,13 @@ async def update_case_field(update: Update, context: ContextTypes.DEFAULT_TYPE) 
     print(f"CaseId: {case_id}, Field Name: {field_name}, New Value: {new_value}")
 
     if not case_id or not field_name:
-        await update.message.reply_text(get_text(user_id, "invalid_request"))
+        await update.message.reply_text(get_text(user_id, "invalid_request")) # TODO: not exist in the constant 
         return State.END
 
     # Fetch the case
     case = await Case.find_one({"_id": PydanticObjectId(case_id)})
     if not case:
-        await update.message.reply_text(get_text(user_id, "case_not_found"))
+        await update.message.reply_text(get_text(user_id, "case_not_found", "listing"))
         return State.END
 
     try:
@@ -475,6 +475,7 @@ async def update_case_field(update: Update, context: ContextTypes.DEFAULT_TYPE) 
             get_text(
                 user_id,
                 "field_updated_successfully",
+                "listing"
             ).format(
                 field_name=field_name.replace("_", " ").title(),
                 new_value=new_value,
@@ -483,7 +484,7 @@ async def update_case_field(update: Update, context: ContextTypes.DEFAULT_TYPE) 
         )
     except ValueError as e:
         await update.message.reply_text(
-            get_text(user_id, "invalid_value").format(error_message=str(e))
+            get_text(user_id, "invalid_value", "listing").format(error_message=str(e))
         )
         return State.EDIT_FIELD
 
@@ -586,7 +587,7 @@ async def update_choose_country(
             )
         markup = InlineKeyboardMarkup(kb)
         await update.message.reply_text(
-            get_text(user_id, "country_multi").format(page=1, total=total),
+            get_text(user_id, "country_multi", "start-complaints").format(page=1, total=total), ## TODO: Getting it from the start command
             reply_markup=markup,
             parse_mode="HTML",
         )
@@ -605,7 +606,7 @@ async def country_callback(update: Update, context: ContextTypes.DEFAULT_TYPE) -
         context.user_data["country"] = country
 
         await query.edit_message_text(
-            f"{get_text(user_id, 'country_selected')} {country}.",
+            f"{get_text(user_id, 'country_selected', "start-complaints")} {country}.",  ## TODO: Getting it from the start command
             parse_mode="HTML",
         )
         # Choose the country
@@ -637,7 +638,7 @@ async def country_callback(update: Update, context: ContextTypes.DEFAULT_TYPE) -
             kb.append(nav_row)
         markup = InlineKeyboardMarkup(kb)
         await query.edit_message_text(
-            get_text(user_id, "country_multi").format(page=page_num, total=total),
+            get_text(user_id, "country_multi", "start-complaints").format(page=page_num, total=total), ## TODO: Getting it from the start command
             reply_markup=markup,
             parse_mode="HTML",
         )
@@ -646,7 +647,7 @@ async def country_callback(update: Update, context: ContextTypes.DEFAULT_TYPE) -
         return State.CHOOSE_COUNTRY
     else:
         await query.edit_message_text(
-            get_text(user_id, "invalid_choice"), parse_mode="HTML"
+            get_text(user_id, "invalid_choice", "start-complaints"), parse_mode="HTML" ## TODO: Getting it from the start command
         )
         return State.END
 
@@ -658,19 +659,19 @@ async def choose_city(update: Update, context: ContextTypes.DEFAULT_TYPE) -> int
     country = context.user_data.get("country")
     if not country:
         await update.message.reply_text(
-            get_text(user_id, "invalid_choice"), parse_mode="HTML"
+            get_text(user_id, "invalid_choice", "start-complaints"), parse_mode="HTML" ## TODO: Getting it from the start command
         )
         return State.END
     matches = get_city_matches(country, city_input)
     if not matches:
         await update.message.reply_text(
-            get_text(user_id, "city_not_found"), parse_mode="HTML"
+            get_text(user_id, "city_not_found", "start-complaints"), parse_mode="HTML" ## TODO: Getting it from the start command
         )
         return State.CHOOSE_CITY
     if len(matches) == 1:
         context.user_data["city"] = matches[0]
         await update.message.reply_text(
-            f"{get_text(user_id, 'city_selected')} {matches[0]}",
+            f"{get_text(user_id, 'city_selected', "start-complaints")} {matches[0]}", ## TODO: Getting it from the start command
             parse_mode="HTML",
         )
         update.message.reply_text("Updated Successfully")
@@ -692,7 +693,7 @@ async def choose_city(update: Update, context: ContextTypes.DEFAULT_TYPE) -> int
             )
         markup = InlineKeyboardMarkup(kb)
         await update.message.reply_text(
-            get_text(user_id, "city_multi").format(page=1, total=total),
+            get_text(user_id, "city_multi", "start-complaints").format(page=1, total=total), ## TODO: Getting it from the start command
             reply_markup=markup,
             parse_mode="HTML",
         )
@@ -711,9 +712,9 @@ async def city_callback(update: Update, context: ContextTypes.DEFAULT_TYPE) -> i
         await update_or_create_case(user_id, city=city)
 
         await query.edit_message_text(
-            f"{get_text(user_id, 'city_selected')} {city}", parse_mode="HTML"
+            f"{get_text(user_id, 'city_selected')} {city}", parse_mode="HTML" ## TODO: Getting it from the start command
         )
-        await choose_action(update, context)
+        await choose_action(update, context) ## TODO: Import Issues 
         return State.CHOOSE_ACTION
     elif data.startswith("city_page_"):
         page_str = data.replace("city_page_", "")
@@ -741,7 +742,7 @@ async def city_callback(update: Update, context: ContextTypes.DEFAULT_TYPE) -> i
             kb.append(nav_row)
         markup = InlineKeyboardMarkup(kb)
         await query.edit_message_text(
-            get_text(user_id, "city_multi").format(page=page_num, total=total),
+            get_text(user_id, "city_multi", "start-complaints").format(page=page_num, total=total), ## TODO: Getting it from the start command
             reply_markup=markup,
             parse_mode="HTML",
         )
@@ -749,7 +750,7 @@ async def city_callback(update: Update, context: ContextTypes.DEFAULT_TYPE) -> i
         return State.CHOOSE_CITY
     else:
         await query.edit_message_text(
-            get_text(user_id, "invalid_choice"), parse_mode="HTML"
+            get_text(user_id, "invalid_choice", "start-complaints"), parse_mode="HTML"
         )
         return State.END
 
@@ -775,10 +776,10 @@ async def delete_case_callback(
         case_id = case_id.removeprefix("confirm_")
         case = await Case.find_one({"_id": PydanticObjectId(case_id)})
         if not case:
-            await query.edit_message_text(get_text(user_id, "case_not_found"))
+            await query.edit_message_text(get_text(user_id, "case_not_found", "listing"))
             return State.END
         if case.user_id != user_id:
-            await query.edit_message_text(get_text(user_id, "not_authorized_delete"))
+            await query.edit_message_text(get_text(user_id, "not_authorized_delete", "listing"))
             return State.END
         await update_case(case_id=PydanticObjectId(case_id), deleted=True)
         await query.edit_message_text(get_text(user_id, "case_deleted_successfully"))
@@ -788,10 +789,10 @@ async def delete_case_callback(
     keyboard = [
         [
             InlineKeyboardButton(
-                get_text(user_id, "yes"), callback_data=f"delete_confirm_{case_id}"
+                get_text(user_id, "yes", "listing"), callback_data=f"delete_confirm_{case_id}"
             ),
             InlineKeyboardButton(
-                get_text(user_id, "no"), callback_data="delete_cancel"
+                get_text(user_id, "no", "listing"), callback_data="delete_cancel"
             ),
         ]
     ]
@@ -799,12 +800,12 @@ async def delete_case_callback(
     # Check if message exists before editing
     if query.message:
         await query.edit_message_text(
-            get_text(user_id, "confirm_delete"), reply_markup=reply_markup
+            get_text(user_id, "confirm_delete", "listing"), reply_markup=reply_markup
         )
     else:
         await context.bot.send_message(
             chat_id=user_id,
-            text=get_text(user_id, "confirm_delete"),
+            text=get_text(user_id, "confirm_delete", "listing"),
             reply_markup=reply_markup,
         )
     return State.CASE_DETAILS
@@ -822,12 +823,12 @@ async def cancel_delete_callback(
     try:
         if query.message:
             await query.edit_message_text(
-                get_text(update.effective_user.id, "delete_cancelled")
+                get_text(update.effective_user.id, "delete_cancelled", "listing")
             )
         else:
             await context.bot.send_message(
                 chat_id=update.effective_user.id,
-                text=get_text(update.effective_user.id, "delete_cancelled"),
+                text=get_text(update.effective_user.id, "delete_cancelled", "listing"),
             )
     except Exception as e:
         logger.error(f"Error in cancel_delete_callback: {str(e)}")
@@ -853,13 +854,13 @@ async def cancel_edit_callback(
         context.user_data.pop("edit_field", None)
 
         # Return to the case listing
-        await query.message.edit_text(get_text(user_id, "edit_canceled"))
+        await query.message.edit_text(get_text(user_id, "edit_canceled", "listing"))
         return State.END
     except Exception as e:
         logger.error(
             f"Error in cancel_edit_callback: {str(e)}\n{traceback.format_exc()}"
         )
-        await query.message.edit_text(get_text(user_id, "error_canceling_edit"))
+        await query.message.edit_text(get_text(user_id, "error_canceling_edit")) ## TODO: Constant not found
         return State.END
 
 
@@ -878,16 +879,16 @@ async def reward_case_callback(
     try:
         case = await Case.find_one({"_id": ObjectId(case_id)}, fetch_links=True)
         if not case:
-            await query.message.edit_text(get_text(user_id, "case_not_found"))
+            await query.message.edit_text(get_text(user_id, "case_not_found", "listing"))
             return State.END
 
         finders = await Finder.find({"case.$id": PydanticObjectId(case.id)}).to_list()
         if not finders:
-            await query.message.edit_text(get_text(user_id, "no_finders_for_case"))
+            await query.message.edit_text(get_text(user_id, "no_finders_for_case", "listing"))
             return State.END
 
         # Construct case details message
-        case_details = get_text(user_id, "case_details_template").format(
+        case_details = get_text(user_id, "case_details_template", "listing").format(
             person_name=case.person_name,
             last_seen_location=case.last_seen_location,
             reward=case.reward,
@@ -900,7 +901,7 @@ async def reward_case_callback(
 
         # Show finders list below case details
         message = (
-            case_details + "\n\n" + get_text(user_id, "finder_list_header") + "\n\n"
+            case_details + "\n\n" + get_text(user_id, "finder_list_header", "listing") + "\n\n"
         )
         keyboard = []
 
@@ -926,7 +927,7 @@ async def reward_case_callback(
         logger.error(
             f"Error in reward_case_callback: {str(e)}\n{traceback.format_exc()}"
         )
-        await query.message.edit_text(get_text(user_id, "error_processing_reward"))
+        await query.message.edit_text(get_text(user_id, "error_processing_reward")) ## TODO: COnstant not found
         return State.END
 
 
@@ -949,11 +950,11 @@ async def finder_details_callback(
         )
 
         if not case or not finder:
-            await query.message.edit_text(get_text(user_id, "case_or_finder_not_found"))
+            await query.message.edit_text(get_text(user_id, "case_or_finder_not_found", "listing"))
             return State.END
 
         # Construct case details message
-        case_details = get_text(user_id, "case_details_template").format(
+        case_details = get_text(user_id, "case_details_template", "listing").format(
             person_name=case.person_name,
             last_seen_location=case.last_seen_location,
             reward=case.reward,
@@ -968,7 +969,7 @@ async def finder_details_callback(
         proof_text = (
             "\n".join(f"[Proof]({url})" for url in finder.proof_url)
             if finder.proof_url
-            else get_text(user_id, "no_proof_available")
+            else get_text(user_id, "no_proof_available") ## TODO: Constant not found
         )
         finder_details = (
             f"👤 *Finder ID:* `{finder.user_id}`\n"
@@ -980,7 +981,7 @@ async def finder_details_callback(
         keyboard = [
             [
                 InlineKeyboardButton(
-                    get_text(user_id, "reward_this_finder"),
+                    get_text(user_id, "reward_this_finder", "listing"),
                     callback_data=f"send_reward_{finder.user_id}_{case.id}",
                 )
             ]
@@ -998,7 +999,7 @@ async def finder_details_callback(
         logger.error(
             f"Error in finder_details_callback: {str(e)}\n{traceback.format_exc()}"
         )
-        await query.message.edit_text(get_text(user_id, "error_fetching_finder"))
+        await query.message.edit_text(get_text(user_id, "error_fetching_finder")) ## TODO: Constant not found.
         return State.END
 
 
@@ -1019,7 +1020,7 @@ async def ask_reward_amount(update: Update, context: ContextTypes.DEFAULT_TYPE) 
         )
 
         if not case or not finder:
-            await query.message.edit_text(get_text(user_id, "case_or_finder_not_found"))
+            await query.message.edit_text(get_text(user_id, "case_or_finder_not_found", "listing"))
             return State.END
 
         context.user_data["reward_case_id"] = case.id
@@ -1034,7 +1035,7 @@ async def ask_reward_amount(update: Update, context: ContextTypes.DEFAULT_TYPE) 
 
     except Exception as e:
         logger.error(f"Error in ask_reward_amount: {str(e)}\n{traceback.format_exc()}")
-        await query.message.edit_text(get_text(user_id, "error_asking_reward_amount"))
+        await query.message.edit_text(get_text(user_id, "error_asking_reward_amount")) ## TODO: constant not found 
         return State.END
 
 
@@ -1052,7 +1053,7 @@ async def process_reward_transfer(
     try:
         case = await Case.find_one({"_id": ObjectId(case_id)})
         if not case:
-            await update.message.reply_text(get_text(user_id, "case_not_found"))
+            await update.message.reply_text(get_text(user_id, "case_not_found", "listing"))
             return State.END
 
         # Validate amount
@@ -1068,11 +1069,11 @@ async def process_reward_transfer(
             [
                 [
                     InlineKeyboardButton(
-                        get_text(user_id, "confirm_button"),
+                        get_text(user_id, "confirm_button", "listing"),
                         callback_data="confirm_reward",
                     ),
                     InlineKeyboardButton(
-                        get_text(user_id, "cancel_button"),
+                        get_text(user_id, "cancel_button", "listing"),
                         callback_data="cancel_reward",
                     ),
                 ]
@@ -1080,7 +1081,7 @@ async def process_reward_transfer(
         )
 
         await update.message.reply_text(
-            get_text(user_id, "reward_confirmation").format(
+            get_text(user_id, "reward_confirmation", "listing").format(
                 amount=amount, finder_id=finder_id, case_no=case.case_no
             ),
             reply_markup=keyboard,
@@ -1090,7 +1091,7 @@ async def process_reward_transfer(
 
     except ValueError:
         await update.message.reply_text(
-            get_text(user_id, "invalid_reward_amount").format(max_amount=case.reward)
+            get_text(user_id, "invalid_reward_amount", "listing").format(max_amount=case.reward)
         )
         return State.EDIT_FIELD
 
@@ -1197,7 +1198,7 @@ async def cancel_reward(update: Update, context: ContextTypes.DEFAULT_TYPE) -> i
     context.user_data.pop("reward_finder_id", None)
     context.user_data.pop("reward_amount", None)
 
-    await query.message.edit_text(get_text(user_id, "reward_cancelled"))
+    await query.message.edit_text(get_text(user_id, "reward_cancelled", "listing"))
     return State.END
 
 

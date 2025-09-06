@@ -1,5 +1,5 @@
 LISTING_CONSTANT = {
-    "en": {
+    "english": {
         "no_advertise_cases": "No advertise cases found. Please check back later.",
         "select_case_details": "📋 **Select a Case to View Details:**",
         "case_not_found": "❌ Case not found.",
@@ -122,7 +122,7 @@ LISTING_CONSTANT = {
             "Please select a wallet from the options below:"
         ),
     },
-    "zh": {
+    "chinese": {
         "no_advertise_cases": "未找到任何广告案件。",
         "select_case_details": "📋 **选择一个案件查看详情：**",
         "case_not_found": "❌ 案件未找到。",
@@ -245,7 +245,7 @@ LISTING_CONSTANT = {
             "请从下方选项中选择一个钱包："
         ),
     },
-    "ms": {
+    "malay": {
         "no_advertise_cases": "Tiada kes iklan dijumpai.",
         "select_case_details": "📋 **Pilih satu kes untuk melihat butiran:**",
         "case_not_found": "❌ Kes tidak dijumpai.",
@@ -368,7 +368,7 @@ LISTING_CONSTANT = {
             "Sila pilih dompet dari pilihan di bawah:"
         ),
     },
-    "th": {
+    "thai": {
         "no_advertise_cases": "ไม่พบคดีประเภทโฆษณา",
         "select_case_details": "📋 **เลือกเคสเพื่อดูรายละเอียด:**",
         "case_not_found": "❌ ไม่พบเคส",
@@ -491,7 +491,7 @@ LISTING_CONSTANT = {
             "กรุณาเลือกกระเป๋าเงินจากตัวเลือกด้านล่าง:"
         ),
     },
-    "vi": {
+    "vietnamese": {
         "no_advertise_cases": "Không tìm thấy trường hợp quảng cáo nào.",
         "select_case_details": "📋 **Chọn một trường hợp để xem chi tiết:**",
         "case_not_found": "❌ Không tìm thấy trường hợp này.",
@@ -614,7 +614,7 @@ LISTING_CONSTANT = {
             "Vui lòng chọn một ví từ danh sách bên dưới:"
         ),
     },
-    "km": {
+    "khmer": {
         "no_advertise_cases": "គ្មានករណីផ្សព្វផ្សាយនៅទីនោះទេ។",
         "select_case_details": "📋 **ជ្រើសរើសករណីមួយដើម្បីមើលព័ត៌មានលម្អិត:**",
         "case_not_found": "❌ មិនរកឃើញករណីនោះទេ។",
@@ -737,7 +737,7 @@ LISTING_CONSTANT = {
             "សូមជ្រើសរើសកាបូបមួយពីជម្រើសខាងក្រោម:"
         ),
     },
-    "ur": {
+    "urdu": {
         "no_advertise_cases": "کوئی اشتہاری کیس نہیں ملا۔",
         "select_case_details": "📋 **تفصیلات دیکھنے کے لیے ایک کیس منتخب کریں:**",
         "case_not_found": "❌ کیس نہیں ملا۔",
@@ -860,7 +860,7 @@ LISTING_CONSTANT = {
             "براہ کرم ذیلی آپشنز میں سے ایک والیٹ منتخب کریں:"
         ),
     },
-    "ja": {
+    "japanese": {
         "no_advertise_cases": "広告案件は見つかりませんでした。",
         "select_case_details": "📋 **詳細を表示する案件を選択してください：**",
         "case_not_found": "❌ 案件が見つかりません。",
@@ -983,7 +983,7 @@ LISTING_CONSTANT = {
             "以下のオプションからウォレットを選択してください："
         ),
     },
-    "ko": {
+    "korean": {
         "no_advertise_cases": "광고 케이스가 없습니다.",
         "select_case_details": "📋 **상세 정보를 확인할 케이스를 선택하세요:**",
         "case_not_found": "❌ 케이스를 찾을 수 없습니다.",
@@ -1106,7 +1106,7 @@ LISTING_CONSTANT = {
             "다음 옵션에서 지갑을 선택하세요:"
         ),
     },
-    "id": {
+    "indonesian": {
         "no_advertise_cases": "Tidak ada kasus iklan ditemukan.",
         "select_case_details": "📋 **Pilih Kasus untuk Melihat Detail:**",
         "case_not_found": "❌ Kasus tidak ditemukan.",
