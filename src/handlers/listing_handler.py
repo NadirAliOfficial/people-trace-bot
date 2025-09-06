@@ -782,7 +782,7 @@ async def delete_case_callback(
             await query.edit_message_text(get_text(user_id, "not_authorized_delete", "listing"))
             return State.END
         await update_case(case_id=PydanticObjectId(case_id), deleted=True)
-        await query.edit_message_text(get_text(user_id, "case_deleted_successfully"))
+        await query.edit_message_text(get_text(user_id, "case_deleted_successfully", "listing"))
 
         return await listing_command(update, context)
 
@@ -891,12 +891,13 @@ async def reward_case_callback(
         case_details = get_text(user_id, "case_details_template", "listing").format(
             person_name=case.person_name,
             last_seen_location=case.last_seen_location,
-            reward=case.reward,
-            reward_type=case.wallet.wallet_type,
-            wallet=case.wallet.name,
-            gender=case.gender,
-            age=case.age,
-            height=case.height,
+            age=case.age or "Unknown",
+            reward=case.reward or "0",
+            reward_type=case.wallet.wallet_type if case.wallet else "None",
+            last_seen_date=case.created_at.strftime("%d %B %Y")
+            if case.created_at
+            else "Unknown",
+            height=case.height or "Unknown",
         )
 
         # Show finders list below case details
@@ -927,7 +928,7 @@ async def reward_case_callback(
         logger.error(
             f"Error in reward_case_callback: {str(e)}\n{traceback.format_exc()}"
         )
-        await query.message.edit_text(get_text(user_id, "error_processing_reward")) ## TODO: COnstant not found
+        await query.message.edit_text(get_text(user_id, "error_processing_reward", "listing")) ## TODO: COnstant not found
         return State.END
 
 
@@ -957,12 +958,13 @@ async def finder_details_callback(
         case_details = get_text(user_id, "case_details_template", "listing").format(
             person_name=case.person_name,
             last_seen_location=case.last_seen_location,
-            reward=case.reward,
-            reward_type=case.wallet.wallet_type,
-            wallet=case.wallet.name,
-            gender=case.gender,
-            age=case.age,
-            height=case.height,
+            age=case.age or "Unknown",
+            reward=case.reward or "0",
+            reward_type=case.wallet.wallet_type if case.wallet else "None",
+            last_seen_date=case.created_at.strftime("%d %B %Y")
+            if case.created_at
+            else "Unknown",
+            height=case.height or "Unknown",
         )
 
         # Finder details
@@ -1028,14 +1030,14 @@ async def ask_reward_amount(update: Update, context: ContextTypes.DEFAULT_TYPE) 
 
         await query.message.edit_text(
             # --- (TODO: Would be check here)
-            get_text(user_id, "enter_reward_amount").format(max_amount=case.reward),
+            get_text(user_id, "enter_reward_amount", "listing").format(max_amount=case.reward), 
             parse_mode="Markdown",
         )
         return State.REWARD_TRANSFER_PROCESS  # Next step: user enters amount
 
     except Exception as e:
         logger.error(f"Error in ask_reward_amount: {str(e)}\n{traceback.format_exc()}")
-        await query.message.edit_text(get_text(user_id, "error_asking_reward_amount")) ## TODO: constant not found 
+        await query.message.edit_text(get_text(user_id, "error_asking_reward_amount", "listing")) 
         return State.END
 
 
@@ -1453,15 +1455,16 @@ async def extend_reward_callback(
             if case.case_photo and case.case_photo.startswith("http")
             else get_text(user_id, "no_proof_available")
         )
-        case_details = get_text(user_id, "case_details_template").format(
+        case_details = get_text(user_id, "case_details_template", "listing").format(
             person_name=case.person_name,
             last_seen_location=case.last_seen_location,
-            reward=case.reward or "None",
-            reward_type=case.wallet.wallet_type or "None",
-            wallet="wallet",  # TODO: finalize wallet display
-            gender=case.gender,
-            age=case.age,
-            height=case.height,
+            age=case.age or "Unknown",
+            reward=case.reward or "0",
+            reward_type=case.wallet.wallet_type if case.wallet else "None",
+            last_seen_date=case.created_at.strftime("%d %B %Y")
+            if case.created_at
+            else "Unknown",
+            height=case.height or "Unknown",
         )
         case_message = case_details + f"\n**Proof:** {proof_text}\n"
 

@@ -121,6 +121,11 @@ LISTING_CONSTANT = {
             "📥 To: `{to_wallet}`\n\n"
             "Please select a wallet from the options below:"
         ),
+
+        ## ERROR CASES
+        "error_processing_reward": "❌ Error processing your reward. Please try again.",
+        "error_asking_reward_amount": "❌ Error asking reward amount. Please try again.",
+        "enter_reward_amount": "Please enter the reward amount you want to send: (max {max_amount})",
     },
     "chinese": {
         "no_advertise_cases": "未找到任何广告案件。",
