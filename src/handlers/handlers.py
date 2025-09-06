@@ -338,31 +338,15 @@ start_handler = ConversationHandler(
             )
         ],
         
-        
-        
-        
-        # State.CASE_LIST: [
-        #     CallbackQueryHandler(show_advertisements, pattern=r"^page_(previous|next)"),
-        #     CallbackQueryHandler(case_details, pattern=r"^case_"),
-        #     CallbackQueryHandler(show_advertisements, pattern="^back_to_list"),
-        # ],
-        # State.CASE_DETAILS: [
-        #     CallbackQueryHandler(handle_pagination, pattern="^case_page_"),
-        #     CallbackQueryHandler(case_details, pattern="^case_"),
-        #     CallbackQueryHandler(handle_found_case, pattern="^found_"),
-        #     CallbackQueryHandler(show_advertisements, pattern="^back_to_list"),
-        # ],
         State.UPLOAD_PROOF: [
             MessageHandler(filters.PHOTO | filters.VIDEO, handle_proof)
         ],
         State.ENTER_LOCATION: [
             MessageHandler(filters.TEXT & ~filters.COMMAND, handle_enter_location)
         ],
-        State.EXTEND_REWARD: [
-            CallbackQueryHandler(
-                handle_extend_reward, pattern="^(yes_extend|no_extend)$"
-            )
-        ],
+        
+        
+        ## TODO: WOrking on it
         State.FINDER_CHOOSE_WALLET_TYPE: [
             CallbackQueryHandler(finder_wallet_type_callback, pattern="^(SOL|USDT)$"),
             CallbackQueryHandler(finder_wallet_selection_callback, pattern="^wallet_"),
@@ -373,6 +357,15 @@ start_handler = ConversationHandler(
         State.FINDER_NAME_WALLET: [
             MessageHandler(filters.TEXT & ~filters.COMMAND, finder_wallet_name_handler),
         ],
+
+        
+
+        State.EXTEND_REWARD: [
+            CallbackQueryHandler(
+                handle_extend_reward, pattern="^(yes_extend|no_extend)$"
+            )
+        ],
+    
         State.FINDER_CONFIRM_TRANSACTION: [
             CallbackQueryHandler(
                 finder_handle_transaction_confirmation,

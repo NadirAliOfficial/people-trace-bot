@@ -25,6 +25,7 @@ from services.wallet_service import WalletService
 from utils.cloudinary import CloudinaryError, upload_image, upload_video
 from utils.error_wrapper import catch_async
 # from utils.get_network import get_network
+from utils.get_network import get_network
 from utils.helper import get_username, paginate_list
 from utils.province_util import get_provinces_for_country
 from utils.wallet import load_user_wallet
@@ -422,7 +423,6 @@ async def show_complaint(user_id, update, context):
         )
 
 
-
 @catch_async
 async def finder_complaint_callback(
     update: Update, context: ContextTypes.DEFAULT_TYPE
@@ -460,10 +460,16 @@ async def finder_complaint_callback(
     elif data.startswith("reward_"):
         selected_index = int(data.split("_")[1])
         selected_complaint = complaints[selected_index]
-
-        # Store selected complaint for reward logic if needed
         context.user_data["selected_complaint"] = selected_complaint
-        await query.message.reply_text("📬 Reward request sent to poster.")
+        wallet_type = selected_complaint.wallet.wallet_type
+
+        await query.message.edit_text(
+            f"The current reward amount is <b>{selected_complaint.reward} {wallet_type}</b>.\n"
+            f"Please enter the new reward amount you want to set:",
+            parse_mode="HTML"
+        )
+        return State.EXTEND_REWARD_AMOUNT # Transition to reward amount input
+        
 
     else:
         return State.FINDER.END
@@ -473,13 +479,104 @@ async def finder_complaint_callback(
     return State.FINDER.VIEW_COMPLAINTS
 
 
+@catch_async
+async def handle_proof(update: Update, context: ContextTypes.DEFAULT_TYPE) -> int:
+    """Handles uploaded proof (image or video) and uploads it to Cloudinary."""
+    print("handle_proof")
+    user_id = update.effective_user.id
+    selected_case = context.user_data.get("selected_complaint")
+    # Ensure 'proofs' directory exists
+    os.makedirs("proofs", exist_ok=True)
+    file_id = None
+    file_extension = None
+    file_size = None
+    is_video = False  # Flag to check if the file is a video
+    # Check for photo or video
+    if update.message.photo:
+        file_id = update.message.photo[-1].file_id
+        file_extension = "jpg"  # Telegram sends images in JPG format
+    elif update.message.video:
+        file_id = update.message.video.file_id
+        file_extension = update.message.video.mime_type.split("/")[
+            1
+        ]  
+        # Get video format (e.g., mp4, mov, etc.)
+        file_size = update.message.video.file_size  # File size in bytes
+        is_video = True  # Mark this as a video upload
+    else:
+        await update.message.reply_text(get_text(user_id, "error_upload_proof" , "finder"))
+        return State.UPLOAD_PROOF
+    # Define supported formats for both images and videos
+    supported_image_formats = ["jpg", "jpeg", "png"]
+    supported_video_formats = ["mp4", "mov", "avi", "mkv", "webm"]
+    # Validate the file format
+    if is_video:
+        if file_extension not in supported_video_formats:
+            await update.message.reply_text(
+                "Unsupported video format. Please upload a valid video (mp4, mov, avi, mkv, webm)."
+            )
+            return State.UPLOAD_PROOF
+        # Check video file size (5MB max)
+        if file_size and file_size > 5 * 1024 * 1024:
+            await update.message.reply_text(
+                "The file is too large. Please upload a video smaller than 5 MB."
+            )
+            return State.UPLOAD_PROOF
+    else:
+        if file_extension not in supported_image_formats:
+            await update.message.reply_text(
+                "Unsupported image format. Please upload a valid image (jpg, jpeg, png)."
+            )
+            return State.UPLOAD_PROOF
+    # Generate unique filename
+    timestamp = datetime.datetime.now().strftime("%Y%m%d%H%M%S")
+    filename = f"proof_{user_id}_{selected_case.case_no}_{timestamp}.{file_extension}"
+    file_path = os.path.join("proofs", filename)
+    # Download file
+    file = await context.bot.get_file(file_id)
+    await file.download_to_drive(file_path)
+    # Upload to Cloudinary
+    try:
+        if is_video:
+            upload_result = await upload_video(file_path)
+        else:
+            upload_result = await upload_image(file_path)
+        print(f"Uploaded File URL: {upload_result}")
+    except CloudinaryError as e:
+        print(f"Cloudinary upload error: {e}")
+        await update.message.reply_text(
+            "There was an error uploading the file. Please try again."
+        )
+        return State.END
+    await FinderService.update_or_create_finder(user_id, proof_url=[upload_result])
+    # Store proof path in context
+    context.user_data["proof_path"] = file_path
+    await update.message.reply_text(get_text(user_id, "proof_received",  "finder"))
+    return State.ENTER_LOCATION
 
 
+@catch_async
+async def handle_enter_location(
+    update: Update, context: ContextTypes.DEFAULT_TYPE
+) -> int:
+    """Notify the advertiser and ask them to confirm the reward transfer."""
+    user_id = update.effective_user.id
+    location = update.message.text.strip()
+    context.user_data["finder_location"] = location
 
-
-
-
-
+    await FinderService.update_or_create_finder(user_id, reported_location=location)
+    await update.message.reply_text(
+        "Do you want to extend the reward?",
+        reply_markup=InlineKeyboardMarkup(
+            [
+                [
+                    InlineKeyboardButton("Yes", callback_data="yes_extend"),
+                    InlineKeyboardButton("No", callback_data="no_extend"),
+                ],
+            ]
+        ),
+    )
+    return State.EXTEND_REWARD
 
 
 # -----------------------------------------------------------------------------------------------------------
@@ -523,7 +620,7 @@ async def choose_province(update: Update, context: ContextTypes.DEFAULT_TYPE) ->
     country = context.user_data.get("country")
     if not country:
         await update.message.reply_text(
-            get_text(user_id, "country_not_found"), parse_mode="HTML"
+            get_text(user_id, "country_not_found", "start-complaints"), parse_mode="HTML"
         )
         return State.FINDER.CHOOSE_COUNTRY
 
@@ -556,7 +653,7 @@ async def choose_province(update: Update, context: ContextTypes.DEFAULT_TYPE) ->
 
         if not cases:
             await update.message.reply_text(
-                get_text(user_id, "no_case_found_in_province").format(
+                get_text(user_id, "no_case_found_in_province", "start-complaints").format(
                     province=selected_province
                 ),
                 parse_mode="Markdown",
@@ -628,7 +725,7 @@ async def province_callback(update: Update, context: ContextTypes.DEFAULT_TYPE) 
         province = data.replace("province_select_", "")
         context.user_data["province"] = province  # Save province in context
         await query.edit_message_text(
-            f"{get_text(user_id, 'province_selected')} {province}.",
+            f"{get_text(user_id, 'province_selected', "finder")} {province}.",
             parse_mode="HTML",
         )
         # Proceed to the next step (case listing or whatever is next)
@@ -665,7 +762,7 @@ async def province_callback(update: Update, context: ContextTypes.DEFAULT_TYPE) 
 
         markup = InlineKeyboardMarkup(kb)
         await query.edit_message_text(
-            get_text(user_id, "province_multi").format(page=page_num, total=total),
+            get_text(user_id, "province_multi", "start-complaints").format(page=page_num, total=total),
             reply_markup=markup,
             parse_mode="HTML",
         )
@@ -695,7 +792,7 @@ async def show_advertisements(
 
     province = context.user_data.get("province")
     if not province:
-        await update.effective_message.reply_text(get_text(user_id, "select_province"))
+        await update.effective_message.reply_text(get_text(user_id, "select_province", "finder"))
         return State.CHOOSE_PROVINCE
 
     try:
@@ -709,7 +806,7 @@ async def show_advertisements(
 
         if not all_cases:
             await update.effective_message.reply_text(
-                get_text(user_id, "case_not_found_in_province")
+                get_text(user_id, "case_not_found_in_province", "finder")
             )
             return State.END
 
@@ -757,7 +854,7 @@ async def show_advertisements(
     except Exception as e:
         logger.error(f"Error showing advertisements: {e}")
         await update.effective_message.reply_text(
-            get_text(user_id, "error_loading_cases")
+            get_text(user_id, "error_loading_cases") # !SECTION ->  Skipped  
         )
         return State.END
 
@@ -802,7 +899,7 @@ async def case_details(update: Update, context: ContextTypes.DEFAULT_TYPE) -> in
         case = await fetch_case_by_number(case_id)
 
         if not case:
-            await query.edit_message_text(get_text(user_id, "case_not_found"))
+            await query.edit_message_text(get_text(user_id, "case_not_found", "start-complaints"))
             return State.END
 
         wallet = await case.wallet.fetch() if case.wallet else None
@@ -828,13 +925,13 @@ async def case_details(update: Update, context: ContextTypes.DEFAULT_TYPE) -> in
         keyboard = [
             [
                 InlineKeyboardButton(
-                    get_text(user_id, "mark_as_found"),
+                    get_text(user_id, "mark_as_found", "finder"),
                     callback_data=f"found_{case.id}",
                 )
             ],
             [
                 InlineKeyboardButton(
-                    get_text(user_id, "back_to_list"), callback_data="back_to_list"
+                    get_text(user_id, "back_to_list", "finder"), callback_data="back_to_list"
                 )
             ],
         ]
@@ -849,135 +946,6 @@ async def case_details(update: Update, context: ContextTypes.DEFAULT_TYPE) -> in
     except Exception as e:
         logger.error(f"Error showing case details: {e}")
         await query.edit_message_text(get_text(user_id, "error_loading_case", "finder"))
-        return State.END
-
-
-async def handle_proof(update: Update, context: ContextTypes.DEFAULT_TYPE) -> int:
-    """Handles uploaded proof (image or video) and uploads it to Cloudinary."""
-    print("handle_proof")
-    try:
-        user_id = update.effective_user.id
-        selected_case = context.user_data.get("selected_complaint")
-        # case_no = context.user_data.get("found_case_no")
-
-        # if not case_no:
-        #     await update.message.reply_text(get_text(user_id, "no_case_selected", "finder"))
-        #     return State.END
-
-        # Ensure 'proofs' directory exists
-        os.makedirs("proofs", exist_ok=True)
-
-        file_id = None
-        file_extension = None
-        file_size = None
-        is_video = False  # Flag to check if the file is a video
-
-        # Check for photo or video
-        if update.message.photo:
-            file_id = update.message.photo[-1].file_id
-            file_extension = "jpg"  # Telegram sends images in JPG format
-        elif update.message.video:
-            file_id = update.message.video.file_id
-            file_extension = update.message.video.mime_type.split("/")[
-                1
-            ]  # Get video format (e.g., mp4, mov, etc.)
-            file_size = update.message.video.file_size  # File size in bytes
-            is_video = True  # Mark this as a video upload
-        else:
-            await update.message.reply_text(get_text(user_id, "error_upload_proof" , "finder"))
-            return State.UPLOAD_PROOF
-
-        # Define supported formats for both images and videos
-        supported_image_formats = ["jpg", "jpeg", "png"]
-        supported_video_formats = ["mp4", "mov", "avi", "mkv", "webm"]
-
-        # Validate the file format
-        if is_video:
-            if file_extension not in supported_video_formats:
-                await update.message.reply_text(
-                    "Unsupported video format. Please upload a valid video (mp4, mov, avi, mkv, webm)."
-                )
-                return State.UPLOAD_PROOF
-            # Check video file size (5MB max)
-            if file_size and file_size > 5 * 1024 * 1024:
-                await update.message.reply_text(
-                    "The file is too large. Please upload a video smaller than 5 MB."
-                )
-                return State.UPLOAD_PROOF
-        else:
-            if file_extension not in supported_image_formats:
-                await update.message.reply_text(
-                    "Unsupported image format. Please upload a valid image (jpg, jpeg, png)."
-                )
-                return State.UPLOAD_PROOF
-
-        # Generate unique filename
-        timestamp = datetime.datetime.now().strftime("%Y%m%d%H%M%S")
-        filename = f"proof_{user_id}_{selected_case.case_no}_{timestamp}.{file_extension}"
-        file_path = os.path.join("proofs", filename)
-
-        # Download file
-        file = await context.bot.get_file(file_id)
-        await file.download_to_drive(file_path)
-
-        # Upload to Cloudinary
-        try:
-            if is_video:
-                upload_result = await upload_video(file_path)
-            else:
-                upload_result = await upload_image(file_path)
-
-            print(f"Uploaded File URL: {upload_result}")
-        except CloudinaryError as e:
-            print(f"Cloudinary upload error: {e}")
-            await update.message.reply_text(
-                "There was an error uploading the file. Please try again."
-            )
-            return State.END
-
-        await FinderService.update_or_create_finder(user_id, proof_url=[upload_result])
-
-        # Store proof path in context
-        context.user_data["proof_path"] = file_path
-
-        await update.message.reply_text(get_text(user_id, "proof_received",  "finder"))
-        return State.ENTER_LOCATION
-
-    except Exception as e:
-        print(f"Error handling proof: {e}")
-        await update.message.reply_text(get_text(user_id, "error_processing_proof", "finder"))
-        return State.END
-
-
-# TODO: Add a check to see if the user has already been notified
-async def handle_enter_location(
-    update: Update, context: ContextTypes.DEFAULT_TYPE
-) -> int:
-    """Notify the advertiser and ask them to confirm the reward transfer."""
-    user_id = update.effective_user.id
-    try:
-        location = update.message.text.strip()
-
-        context.user_data["finder_location"] = location
-        await FinderService.update_or_create_finder(user_id, reported_location=location)
-        await update.message.reply_text(
-            "Do you want to extend the reward?",
-            reply_markup=InlineKeyboardMarkup(
-                [
-                    [
-                        InlineKeyboardButton("Yes", callback_data="yes_extend"),
-                        InlineKeyboardButton("No", callback_data="no_extend"),
-                    ],
-                ]
-            ),
-        )
-        return (
-            State.EXTEND_REWARD
-        )  # Ensure this matches the state name in your ConversationHandler
-
-    except Exception as e:
-        logger.error(f"Error notifying advertiser: {e}")
-        await update.message.reply_text(get_text(user_id, "error_sending_notification"))
         return State.END
 
 
@@ -1013,19 +981,19 @@ async def finder_wallet_type_callback(
         kb.append(
             [
                 InlineKeyboardButton(
-                    get_text(user_id, "create_new_wallet"),
+                    get_text(user_id, "create_wallet", "globals"),
                     callback_data="create_new_wallet",
                 )
             ]
         )
         await query.edit_message_text(
-            get_text(user_id, "choose_existing_or_new_wallet"),
+            get_text(user_id, "choose_existing_or_new_wallet", "start-mobile"),
             reply_markup=InlineKeyboardMarkup(kb),
             parse_mode="HTML",
         )
         return State.FINDER_CHOOSE_WALLET_TYPE
     else:
-        msg = get_text(user_id, "wallet_name_prompt")
+        msg = get_text(user_id, "wallet_name_prompt", "start-mobile")
         if update.message:
             await update.message.reply_text(msg, parse_mode="HTML")
         elif update.callback_query:
@@ -1075,7 +1043,7 @@ async def finder_wallet_selection_callback(
 
         print("\n\n DEBUGGING -002 \n\n")
 
-        msg = get_text(user_id, "wallet_create_details_with_balance").format(
+        msg = get_text(user_id, "wallet_create_details_with_balance", "cases").format(
             name=wallet_details["name"],
             public_key=wallet_details["public_key"],
             type=wallet_details["wallet_type"],
@@ -1112,7 +1080,7 @@ async def finder_wallet_selection_callback(
 
     else:
         await query.message.reply_text(
-            get_text(user_id, "wallet_not_found"), parse_mode="HTML"
+            get_text(user_id, "wallet_not_found", "settings"), parse_mode="HTML"
         )
 
 @catch_async
@@ -1144,19 +1112,19 @@ async def finder_wallet_type_callback(
         kb.append(
             [
                 InlineKeyboardButton(
-                    get_text(user_id, "create_new_wallet"),
+                    get_text(user_id, "create_wallet", "globals"),
                     callback_data="create_new_wallet",
                 )
             ]
         )
         await query.edit_message_text(
-            get_text(user_id, "choose_existing_or_new_wallet"),
+            get_text(user_id, "choose_existing_or_new_wallet", "start-mobile"),
             reply_markup=InlineKeyboardMarkup(kb),
             parse_mode="HTML",
         )
         return State.FINDER_CHOOSE_WALLET_TYPE
     else:
-        msg = get_text(user_id, "wallet_name_prompt")
+        msg = get_text(user_id, "wallet_name_prompt", "start-mobile")
         if update.message:
             await update.message.reply_text(msg, parse_mode="HTML")
         elif update.callback_query:
@@ -1176,10 +1144,8 @@ async def finder_wallet_selection_callback(
 
     # Extract wallet name and type from callback data
     wallet_id = query.data.replace("wallet_", "")
-    wallet_type = context.user_data.get("wallet_type")  # 'sol' or 'usdt'
-
-    case_id = context.user_data.get("found_case_no")
-    case = await Case.find_one({"_id": PydanticObjectId(case_id)}, fetch_links=True)
+    case = context.user_data.get("selected_complaint")
+    wallet_type = case.wallet.wallet_type  # 'sol' or 'usdt'
 
     # Fetch wallet details by name and type
     wallet_details = await WalletService.get_wallet_by_id(wallet_id)
@@ -1208,7 +1174,7 @@ async def finder_wallet_selection_callback(
         print("\n\n DEBUGGING -002 \n\n")
 
         # Show wallet details
-        msg = get_text(user_id, "wallet_create_details_with_balance").format(
+        msg = get_text(user_id, "wallet_create_details_with_balance", "cases").format(
             name=wallet_details["name"],
             public_key=wallet_details["public_key"],
             balance=total_sol,
@@ -1256,7 +1222,7 @@ async def finder_wallet_selection_callback(
 
     else:
         await query.message.reply_text(
-            get_text(user_id, "wallet_not_found"), parse_mode="HTML"
+            get_text(user_id, "wallet_not_found", "wallets"), parse_mode="HTML" 
         )
         return State.END
 
@@ -1272,7 +1238,7 @@ async def finder_wallet_name_handler(
 
         # Prompt the user to enter a wallet name
         await query.edit_message_text(
-            get_text(user_id, "wallet_name_prompt"), parse_mode="HTML"
+            get_text(user_id, "wallet_name_prompt", "settings"), parse_mode="HTML"
         )
         return State.NAME_WALLET
 
@@ -1281,7 +1247,7 @@ async def finder_wallet_name_handler(
         wallet_name = update.message.text.strip()
     else:
         await update.message.reply_text(
-            get_text(user_id, "wallet_name_empty"), parse_mode="HTML"
+            get_text(user_id, "wallet_name_empty", "settings"), parse_mode="HTML"
         )
         return State.FINDER_NAME_WALLET
 
@@ -1292,7 +1258,7 @@ async def finder_wallet_name_handler(
 
     if not wallet_name:
         await update.message.reply_text(
-            get_text(user_id, "wallet_name_empty"), parse_mode="HTML"
+            get_text(user_id, "wallet_name_empty", "settings"), parse_mode="HTML"
         )
         return State.FINDER_NAME_WALLET
 
@@ -1333,7 +1299,7 @@ async def finder_wallet_name_handler(
 
     else:
         await update.message.reply_text(
-            get_text(user_id, "wallet_create_err"), parse_mode="HTML"
+            get_text(user_id, "wallet_create_err", "settings"), parse_mode="HTML"
         )
         return State.END
 
@@ -1345,8 +1311,7 @@ async def finder_handle_transaction_confirmation(
     query = update.callback_query
     await query.answer()
     user_id = update.effective_user.id
-    case_id = context.user_data.get("found_case_no")
-    case = await Case.find_one({"_id": PydanticObjectId(case_id)}, fetch_links=True)
+    case = context.user_data.get("selected_complaint")
     isExtendedFlow = context.user_data.get("extend_flow", False)
     print("Case: ", case)
     wallet = case.wallet
@@ -1366,7 +1331,7 @@ async def finder_handle_transaction_confirmation(
 
         finder = await FinderService.update_or_create_finder(
             user_id,
-            case=case_id,
+            case=case.id,
             status=FinderStatus.FIND,
         )
 
@@ -1607,12 +1572,12 @@ async def handle_found_case(update: Update, context: ContextTypes.DEFAULT_TYPE) 
         context.user_data["found_case_no"] = case_no
 
         # Ask for proof upload
-        await query.edit_message_text(get_text(user_id, "proof_upload"))
+        await query.edit_message_text(get_text(user_id, "proof_upload", "finder"))
         return State.UPLOAD_PROOF
 
     except Exception as e:
         logger.error(f"Error handling found case: {e}")
-        await query.edit_message_text(get_text(user_id, "error_processing_proof"))
+        await query.edit_message_text(get_text(user_id, "error_processing_proof", "finder"))
         return State.END
 
 
@@ -1667,7 +1632,7 @@ async def handle_extend_reward_amount(
         kb.append(
             [
                 InlineKeyboardButton(
-                    get_text(user_id, "create_new_wallet"),
+                    get_text(user_id, "create_wallet", "globals"),
                     callback_data="create_new_wallet",
                 )
             ]
@@ -1725,13 +1690,13 @@ async def handle_extend_reward(update: Update, context: ContextTypes.DEFAULT_TYP
             kb.append(
                 [
                     InlineKeyboardButton(
-                        get_text(user_id, "create_new_wallet"),
+                        get_text(user_id, "create_wallet", "globals"),
                         callback_data="create_new_wallet",
                     )
                 ]
             )
             await query.edit_message_text(
-                get_text(user_id, "choose_existing_or_new_wallet"),
+                get_text(user_id, "choose_existing_or_new_wallet", "settings"),
                 reply_markup=InlineKeyboardMarkup(kb),
                 parse_mode="HTML",
             )

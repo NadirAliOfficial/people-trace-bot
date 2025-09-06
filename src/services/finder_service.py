@@ -154,7 +154,7 @@ class FinderService:
         return await Finder.find_one({"user_id": user_id, "status": FinderStatus.DRAFT})
 
     @staticmethod
-    async def update_or_create_finder(user_id: int, **kwargs) -> Case:
+    async def update_or_create_finder(user_id: int, **kwargs) -> Finder:
 
         finder = await FinderService.get_drafted_finder_by_user(user_id)
 
@@ -167,16 +167,20 @@ class FinderService:
             if value is not None:
                 if key == "wallet" and isinstance(value, str):
                     wallet = await Wallet.get(PydanticObjectId(value))
-                    value = wallet  # Directly link the Wallet instance
-
-                elif key == "case" and isinstance(value, str):
-                    case = await Case.get(PydanticObjectId(value))
-                    value = case
+                    setattr(finder, key, wallet)
+                elif key == "case" and (
+                    isinstance(value, str) or isinstance(value, PydanticObjectId)
+                ):
+                    case_id = PydanticObjectId(value) if isinstance(value, str) else value
+                    case = await Case.get(case_id)
+                    setattr(finder, key, case)
                 elif key == "extend_reward_ref" and isinstance(value, str):
                     extend_reward = await ExtendReward.get(PydanticObjectId(value))
-                    value = finder.extend_reward_ref.append(extend_reward)
-
-                setattr(finder, key, value)
+                    if finder.extend_reward_ref is None:
+                        finder.extend_reward_ref = []
+                    finder.extend_reward_ref.append(extend_reward)
+                else:
+                    setattr(finder, key, value)
 
         # Save the case (update or create)
         await finder.save()
