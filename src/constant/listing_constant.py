@@ -126,6 +126,10 @@ LISTING_CONSTANT = {
         "error_processing_reward": "❌ Error processing your reward. Please try again.",
         "error_asking_reward_amount": "❌ Error asking reward amount. Please try again.",
         "enter_reward_amount": "Please enter the reward amount you want to send: (max {max_amount})",
+        "extend_reward_header": "🔄 Extend Reward",
+        "no_wallet_selected": "🚫 No wallet selected. Please try again.",
+        "error_fetching_finder": "❌ Error fetching finder details. Please try again.",
+        "no_proof_available": "🚫 No proof available. Please upload a valid image file.",
     },
     "chinese": {
         "no_advertise_cases": "未找到任何广告案件。",

@@ -111,7 +111,7 @@ async def listing_command(update: Update, context: ContextTypes.DEFAULT_TYPE) ->
             if case.user_id == user_id:  # Ensure only the owner sees the button
                 row.append(
                     InlineKeyboardButton(
-                        get_text(user_id, "extend_reward_button"),
+                        get_text(user_id, "extend_reward_button", "listing"),
                         callback_data=f"extend_reward_{str(case.id)}",
                     )
                 )
@@ -1001,7 +1001,7 @@ async def finder_details_callback(
         logger.error(
             f"Error in finder_details_callback: {str(e)}\n{traceback.format_exc()}"
         )
-        await query.message.edit_text(get_text(user_id, "error_fetching_finder")) ## TODO: Constant not found.
+        await query.message.edit_text(get_text(user_id, "error_fetching_finder", "listing")) ## TODO: Constant not found.
         return State.END
 
 
@@ -1469,7 +1469,7 @@ async def extend_reward_callback(
         case_message = case_details + f"\n**Proof:** {proof_text}\n"
 
         # Show extend reward requests below case details
-        extend_reward_message = get_text(user_id, "extend_reward_header") + "\n"
+        extend_reward_message = get_text(user_id, "extend_reward_header", "listing") + "\n"
         keyboard = []
 
         for extend_reward in extend_rewards:
@@ -1492,7 +1492,7 @@ async def extend_reward_callback(
         keyboard.append(
             [
                 InlineKeyboardButton(
-                    get_text(user_id, "cancel_button"),
+                    get_text(user_id, "cancel_button", "listing"),
                     callback_data="cancel_extend"
                 )
             ]
@@ -1510,7 +1510,7 @@ async def extend_reward_callback(
         logger.error(
             f"Error in extend_reward_callback: {str(e)}\n{traceback.format_exc()}"
         )
-        await query.message.edit_text(get_text(user_id, "error_processing_extend"))
+        await query.message.edit_text(get_text(user_id, "error_processing_extend", "listing"))
         return State.END
         
 @catch_async
@@ -1530,7 +1530,7 @@ async def approve_extend_callback(
         case = await Case.find_one({"_id": PydanticObjectId(case_id)}, fetch_links=True)
         extend_reward = await ExtendReward.find_one({"_id": PydanticObjectId(extend_reward_id)})
         if not case or not extend_reward:
-            await query.message.edit_text(get_text(user_id, "case_or_extend_not_found"))
+            await query.message.edit_text(get_text(user_id, "case_or_extend_not_found", "listing"))
             return State.END
 
         wallet_type = case.wallet.wallet_type
@@ -1540,7 +1540,7 @@ async def approve_extend_callback(
         ).to_list()
 
         if not wallets:
-            await query.message.edit_text(get_text(user_id, "no_wallet_found"))
+            await query.message.edit_text(get_text(user_id, "no_wallet_found", "listing"))
             return State.END
 
         # Select the wallet with the highest balance
@@ -1557,7 +1557,7 @@ async def approve_extend_callback(
 
         # Revalidate the wallet balance
         if best_balance < extend_reward.extend_reward_amount:
-            await query.message.edit_text(get_text(user_id, "insufficient_funds_after_selection"))
+            await query.message.edit_text(get_text(user_id, "insufficient_funds_after_selection", "listing"))
             return State.END
 
         # Prompt user to select a wallet
@@ -1574,7 +1574,7 @@ async def approve_extend_callback(
             + [
                 [
                     InlineKeyboardButton(
-                        get_text(user_id, "cancel_button"),
+                        get_text(user_id, "cancel_button", "listing"),
                         callback_data="cancel_extend",
                     )
                 ]
@@ -1582,7 +1582,7 @@ async def approve_extend_callback(
         )
 
         # Escape Markdown characters in dynamic content
-        confirmation_message = get_text(user_id, "select_wallet_for_extend").format(
+        confirmation_message = get_text(user_id, "select_wallet_for_extend", "listing").format(
             amount=escape_markdown(str(extend_reward.extend_reward_amount), version=2),
             wallet_type=escape_markdown(wallet_type, version=2),
             from_wallet=escape_markdown(best_wallet.public_key, version=2),
@@ -1599,7 +1599,7 @@ async def approve_extend_callback(
         return State.SELECT_WALLET_FOR_EXTEND
     except Exception as e:
         logger.error(f"Error in approve_extend_callback: {str(e)}")
-        await query.message.edit_text(get_text(user_id, "error_approving_extend"))
+        await query.message.edit_text(get_text(user_id, "error_approving_extend", "listing"))
         return State.END
     
 @catch_async
@@ -1623,7 +1623,7 @@ async def select_wallet_callback(
     extend_reward = await ExtendReward.find_one({"_id": PydanticObjectId(extend_reward_id)})
     wallet = await Wallet.find_one({"_id": PydanticObjectId(wallet_id)})
     if not case or not extend_reward or not wallet:
-        await query.message.edit_text(get_text(user_id, "case_or_extend_not_found"))
+        await query.message.edit_text(get_text(user_id, "case_or_extend_not_found", "listing"))
         return State.END
     wallet_type = case.wallet.wallet_type
     # Revalidate the wallet balance
@@ -1633,7 +1633,7 @@ async def select_wallet_callback(
         else await TronWallet.get_usdt_balance(wallet.public_key)
     )
     if balance < extend_reward.extend_reward_amount:
-        await query.message.edit_text(get_text(user_id, "insufficient_funds_after_selection"))
+        await query.message.edit_text(get_text(user_id, "insufficient_funds_after_selection", "listing"))
         return State.END
     # Store the selected wallet in context for later use
     context.user_data["selected_wallet"] = wallet
@@ -1642,19 +1642,19 @@ async def select_wallet_callback(
         [
             [
                 InlineKeyboardButton(
-                    get_text(user_id, "confirm_button"),
+                    get_text(user_id, "confirm_button", "listing"),
                     callback_data=f"confirm_extend_{extend_reward_id}_{case_id}",
                 )
             ],
             [
                 InlineKeyboardButton(
-                    get_text(user_id, "cancel_button"),
+                    get_text(user_id, "cancel_button", "listing"),
                     callback_data="cancel_extend"
                 )
             ],
         ]
     )
-    confirmation_message = get_text(user_id, "extend_reward_confirmation").format(
+    confirmation_message = get_text(user_id, "extend_reward_confirmation", "listing").format(
         amount=extend_reward.extend_reward_amount,
         wallet_type=wallet_type,
         from_wallet=wallet.public_key,
@@ -1731,7 +1731,7 @@ async def select_wallet_callback(
 #             ],
 #         ]
 #     )
-#     message = get_text(user_id, "extend_reward_confirmation").format(
+#     message = get_text(user_id, "extend_reward_confirmation", "listing").format(
 #         amount=extend_reward.extend_reward_amount,
 #         wallet_type=wallet_type,
 #         from_wallet=best_wallet.public_key,
@@ -1759,12 +1759,12 @@ async def confirm_extend_callback(
     case = await Case.find_one({"_id": PydanticObjectId(case_id)}, fetch_links=True)
     extend_reward = await ExtendReward.find_one({"case.$id": PydanticObjectId(case_id)})
     if not case or not extend_reward:
-        await query.message.edit_text(get_text(user_id, "case_or_extend_not_found"))
+        await query.message.edit_text(get_text(user_id, "case_or_extend_not_found", "listing"))
         return State.END
     # Retrieve the selected wallet from context.user_data
     selected_wallet = context.user_data.get("selected_wallet")
     if not selected_wallet:
-        await query.message.edit_text(get_text(user_id, "no_wallet_selected"))
+        await query.message.edit_text(get_text(user_id, "no_wallet_selected", "listing"))
         return State.END
     wallet_type = case.wallet.wallet_type
     # Recheck the wallet balance
@@ -1773,7 +1773,7 @@ async def confirm_extend_callback(
     else:
         current_balance = await TronWallet.get_usdt_balance(selected_wallet.public_key)
     if current_balance < extend_reward.extend_reward_amount:
-        await query.message.edit_text(get_text(user_id, "insufficient_funds_after_selection"))
+        await query.message.edit_text(get_text(user_id, "insufficient_funds_after_selection", "listing"))
         return State.END
     try:
         if wallet_type == "SOL":
@@ -1786,14 +1786,14 @@ async def confirm_extend_callback(
             )
     except Exception as e:
         logger.error(f"Transfer failed: {e}")
-        await query.message.edit_text(get_text(user_id, "transfer_failed"))
+        await query.message.edit_text(get_text(user_id, "transfer_failed", "listing"))
         return State.END
     # Update case and extend reward
     case.reward += extend_reward.extend_reward_amount
     await case.save()
     extend_reward.status = "completed"  # Update status
     await extend_reward.save()
-    await query.message.edit_text(get_text(user_id, "extend_success"))
+    await query.message.edit_text(get_text(user_id, "extend_success", "listing"))
     return State.END
 
 @catch_async
