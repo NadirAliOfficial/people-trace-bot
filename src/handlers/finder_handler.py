@@ -214,7 +214,9 @@ async def finder_choose_province(
             f"{get_text(user_id, 'selected', 'globals')} {province}.",
             parse_mode="HTML",
         )
-        complaints = await get_complaints_by_country_and_province(country, province)
+        complaints = await get_complaints_by_country_and_province(
+            country, province, user_id
+        )
 
         if not complaints:
             await update.message.reply_text(f"❌ No cases found in {province}, {country}.")
@@ -304,7 +306,9 @@ async def finder_province_callback(
 
         # Fetch complaints for selected country + province
         country = context.user_data.get("finder_country")
-        complaints = await get_complaints_by_country_and_province(country, province)
+        complaints = await get_complaints_by_country_and_province(
+            country, province, user_id
+        )
 
         if not complaints:
             await query.edit_message_text(f"❌ No cases found in {province}, {country}.")
@@ -463,13 +467,17 @@ async def finder_complaint_callback(
         context.user_data["selected_complaint"] = selected_complaint
         wallet_type = selected_complaint.wallet.wallet_type
 
-        await query.message.edit_text(
+        new_text = (
             f"The current reward amount is <b>{selected_complaint.reward} {wallet_type}</b>.\n"
-            f"Please enter the new reward amount you want to set:",
-            parse_mode="HTML"
+            f"Please enter the new reward amount you want to set:"
         )
-        return State.EXTEND_REWARD_AMOUNT # Transition to reward amount input
-        
+
+        if query.message.photo:
+            await query.edit_message_caption(new_text, parse_mode="HTML")
+        else:
+            await query.edit_message_text(new_text, parse_mode="HTML")
+
+        return State.EXTEND_REWARD_AMOUNT
 
     else:
         return State.FINDER.END
@@ -1638,7 +1646,7 @@ async def handle_extend_reward_amount(
             ]
         )
         await update.message.reply_text(
-            get_text(user_id, "choose_existing_or_new_wallet"),
+            get_text(user_id, "choose_existing_or_new_wallet", "finder"),
             reply_markup=InlineKeyboardMarkup(kb),
             parse_mode="HTML",
         )

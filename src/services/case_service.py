@@ -1,6 +1,7 @@
 from typing import Optional
 from beanie import Link, PydanticObjectId
 from models.case_model import Case, CaseStatus
+from models.finder_model import Finder, FinderStatus
 from models.mobile_number_model import MobileNumber
 from models.user_model import User
 from models.wallet_model import Wallet
@@ -158,15 +159,33 @@ async def get_drafted_case_wallet(user_id: int) -> dict:
         return None
 
 
-async def get_complaints_by_country_and_province(country: str, province: str) -> list:
+async def get_complaints_by_country_and_province(
+    country: str, province: str, user_id: int
+) -> list:
     """
-    Get all complaints for a given country and province.
+    Get all complaints for a given country and province that the user has applied to.
 
     :param country: The country code.
     :param province: The province code.
+    :param user_id: The user ID of the finder.
     :return: A list of complaints.
     """
+    # Find all finder entries for the user with status "find"
+    applied_finders = await Finder.find(
+        {"user_id": user_id, "status": FinderStatus.FIND},
+        fetch_links=True,
+    ).to_list()
+
+    # Get the list of case IDs the user has applied to
+    applied_case_ids = [finder.case.id for finder in applied_finders]
+
+    # Find all cases that match the criteria and have not been applied to by the user
     return await Case.find(
-        {"country": country, "province": province, "status": CaseStatus.ADVERTISE},
+        {
+            "country": country,
+            "province": province,
+            "status": CaseStatus.ADVERTISE,
+            "_id": {"$nin": applied_case_ids},
+        },
         fetch_links=True,
     ).to_list()

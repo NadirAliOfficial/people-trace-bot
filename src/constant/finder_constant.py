@@ -43,6 +43,8 @@ FINDER_CONSTANT = {
         "otp_sent": "An OTP has been sent to <b>{number}</b>. Please enter the OTP to verify.",
         "number_added": "The number <b>{number}</b> has been added successfully.",
         "invalid_otp": "Invalid OTP. Please try again.",
+        "choose_existing_or_new_wallet": "Choose an existing wallet or create a new one:",
+        "wallet_name_prompt": "Please enter a name for your {wallet_type} wallet:",
     },
     "chinese": {
         "choose_province": "请选择一个省份：",
@@ -450,7 +452,7 @@ FINDER_CONSTANT = {
         "otp_sent": "OTP telah dikirim ke <b>{number}</b>. Mohon masukkan OTP untuk verifikasi.",
         "number_added": "Nomor <b>{number}</b> telah berhasil ditambahkan.",
         "invalid_otp": "OTP tidak valid. Mohon coba lagi.",
-    }
+    },
 }
 
 
