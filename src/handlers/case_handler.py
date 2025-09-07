@@ -8,6 +8,7 @@ from config.config_manager import (
     TRON_WALLET_PUBLIC_KEY,
 )
 from constant.language_constant import get_text
+from handlers.start_handler import start
 from models.case_model import Case, CaseStatus
 import os
 from telegram import Update, InlineKeyboardMarkup, InlineKeyboardButton
@@ -716,6 +717,26 @@ async def handle_submit_case(
 
 
 
+
+# === NEW: Cancel Case Selection Handler ===
+@catch_async
+async def handle_cancel_case(
+    update: Update, context: ContextTypes.DEFAULT_TYPE
+) -> int:
+    """Cancels (deletes) the user's draft case."""
+    query = update.callback_query
+    await query.answer()
+
+    user_id = query.from_user.id
+    case = await Case.find_one({"user_id": user_id, "status": CaseStatus.DRAFT})
+
+    if case:
+        await case.delete()   # make sure delete is awaited
+        await query.edit_message_text("✅ Your draft case has been deleted.")
+    else:
+        await query.edit_message_text("⚠️ No draft case found to delete.")
+
+    await start(update, context)  
     
     
     

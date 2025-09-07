@@ -4,6 +4,7 @@ from handlers.case_handler import (
     handle_ask_reward_amount,
     handle_back_to_menu,
     handle_back_to_reason,
+    handle_cancel_case,
     handle_cancel_case_selection,
     handle_cancel_published_case,
     handle_cancel_reason,
@@ -282,7 +283,7 @@ start_handler = ConversationHandler(
         State.CREATE_CASE_CONFIRM_TRANSFER: [
             CallbackQueryHandler(handle_submit_case, pattern="^submit_case$"),
             CallbackQueryHandler(handle_edit_case, pattern="^edit_case$"),
-            CallbackQueryHandler(handle_cancel_case_selection, pattern="^cancel_case$"),
+            CallbackQueryHandler(handle_cancel_case, pattern="^cancel_case$"),
         ],
         ##!SECTION -  Handle Links  -  to transfer or cancel case
         State.CASE_CANCEL_SELECT_REASON: [
