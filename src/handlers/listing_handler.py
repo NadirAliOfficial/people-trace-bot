@@ -971,7 +971,7 @@ async def finder_details_callback(
         proof_text = (
             "\n".join(f"[Proof]({url})" for url in finder.proof_url)
             if finder.proof_url
-            else get_text(user_id, "no_proof_available") ## TODO: Constant not found
+            else get_text(user_id, "no_proof_available", "listing") ## TODO: Constant not found
         )
         finder_details = (
             f"👤 *Finder ID:* `{finder.user_id}`\n"
@@ -1453,7 +1453,7 @@ async def extend_reward_callback(
         proof_text = (
             f"[Proof]({case.case_photo})"
             if case.case_photo and case.case_photo.startswith("http")
-            else get_text(user_id, "no_proof_available")
+            else get_text(user_id, "no_proof_available", "listing")
         )
         case_details = get_text(user_id, "case_details_template", "listing").format(
             person_name=case.person_name,
