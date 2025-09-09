@@ -1,0 +1,37 @@
+[tool.poetry]
+name = "advertise-finder-telegram-bot"
+packages = [{ include = "modules" }]
+
+version = "0.1.0"
+description = "Telegram Bot for advertise and find the telegram user"
+authors = ["sulemanahmedrajput <sulemanahmed2704@gmail.com>"]
+readme = "README.md"
+
+
+[tool.poetry.dependencies]
+python = "^3.12"
+pycountry = "^24.6.1"
+python-telegram-bot = "^21.10"
+solders = ">=0.23.0,<0.24.0"
+solana = "^0.36.6"
+base58 = "^2.1.1"
+geonamescache = "^2.0.0"
+nest-asyncio = "^1.6.0"
+twilio = "^9.4.4"
+pydantic = "^2.10.6"
+beanie = "^1.29.0"
+pylint = "^3.3.4"
+geopy = "^2.4.1"
+geopandas = "^1.0.1"
+countryinfo = "^0.1.2"
+pygeocoder = "^1.2.5"
+iso3166 = "^2.1.1"
+cloudinary = "^1.42.2"
+watchdog = "^6.0.0"
+solathon = "^1.0.7"
+tronpy = "^0.5.0"
+python-dotenv = "^1.1.0"
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"
