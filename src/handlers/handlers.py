@@ -28,6 +28,7 @@ from handlers.case_handler import (
     handle_submit_case,
     handle_weight,
 )
+from handlers.settings_handler import handle_setting_mobile, handle_setting_tac, settings_command, settings_menu_callback
 from handlers.start_finder_number_handler import (
     finder_disclaimer_callback,
     handle_finder_new_mobile,
@@ -98,28 +99,7 @@ from handlers.stats_handler import (
     unsolved_country_callback,
     view_my_cases_callback,
 )
-from handlers.wallet_handler import (
-    back_to_wallet_menu,
-    cancel_delete_wallet,
-    confirm_delete_wallet,
-    create_wallet,
-    delete_wallet,
-    process_create_wallet,
-    process_delete_wallet,
-    refresh_wallets,
-    request_private_key,
-    select_wallet_type,
-    show_address,
-    show_private_key,
-    show_sol_wallet_detail,
-    show_specific_address,
-    show_usdt_wallet_detail,
-    sol_wallets,
-    usdt_wallets,
-    view_history,
-    view_specific_history,
-    wallet_command,
-)
+from handlers.main.main_wallets_handler import wallet_handler
 from telegram.ext import (
     CommandHandler,
     CallbackQueryHandler,
@@ -132,12 +112,7 @@ import logging
 # Import your text-getting function and other constants
 from constants import State
 from constant.language_constant import get_text
-from handlers.settings_handler import (
-    handle_setting_mobile,
-    handle_setting_tac,
-    settings_command,
-    settings_menu_callback,
-)
+from handlers.main.main_settings_handler import settings_handler
 from handlers.start_handler import (
     action_callback,
     choose_city,
@@ -428,77 +403,6 @@ start_handler = ConversationHandler(
 
 
 # ---------------------- Wallet Conversation Handler End  ---------------------
-# Define conversation handler
-wallet_handler = ConversationHandler(
-    entry_points=[CommandHandler("wallets", wallet_command)],
-    states={
-        State.WALLETS.WALLET_MENU: [
-            CallbackQueryHandler(refresh_wallets, pattern="^refresh_wallets$"),
-            CallbackQueryHandler(sol_wallets, pattern="^sol_wallets$"),
-            CallbackQueryHandler(usdt_wallets, pattern="^usdt_wallets$"),
-            CallbackQueryHandler(show_address, pattern="^show_address$"),
-            CallbackQueryHandler(view_history, pattern="^view_history$"),
-            CallbackQueryHandler(create_wallet, pattern="^create_wallet$"),
-            CallbackQueryHandler(delete_wallet, pattern="^delete_wallet$"),
-            CallbackQueryHandler(
-                back_to_wallet_menu, pattern="^back_to_wallet_menu$"
-            ),  # TESTED
-        ],
-        State.WALLETS.SOL_WALLET_DETAIL: [
-            CallbackQueryHandler(show_sol_wallet_detail, pattern="^sol_detail_"),
-            CallbackQueryHandler(back_to_wallet_menu, pattern="^back_to_wallet_menu$"),
-        ],
-        State.WALLETS.SOL_WALLET_ACTIONS: [
-            CallbackQueryHandler(request_private_key, pattern="^req_pk_"),
-            CallbackQueryHandler(back_to_wallet_menu, pattern="^back_to_wallet_menu$"),
-        ],
-        State.WALLETS.USDT_WALLET_DETAIL: [
-            CallbackQueryHandler(show_usdt_wallet_detail, pattern="^usdt_detail_"),
-            CallbackQueryHandler(back_to_wallet_menu, pattern="^back_to_wallet_menu$"),
-        ],
-        State.WALLETS.USDT_WALLET_ACTIONS: [
-            CallbackQueryHandler(request_private_key, pattern="^req_pk_"),
-            CallbackQueryHandler(back_to_wallet_menu, pattern="^back_to_wallet_menu$"),
-        ],
-        State.WALLETS.CONFIRM_PRIVATE_KEY: [
-            CallbackQueryHandler(show_private_key, pattern="^(confirm_pk|cancel_pk)$"),
-            CallbackQueryHandler(back_to_wallet_menu, pattern="^back_to_wallet_menu$"),
-        ],
-        State.WALLETS.SHOW_ADDRESS: [
-            CallbackQueryHandler(show_specific_address, pattern="^show_address_"),
-            CallbackQueryHandler(back_to_wallet_menu, pattern="^back_to_wallet_menu$"),
-        ],
-        State.WALLETS.VIEW_HISTORY: [
-            CallbackQueryHandler(view_specific_history, pattern="^view_history_"),
-            CallbackQueryHandler(back_to_wallet_menu, pattern="^back_to_wallet_menu$"),
-        ],
-        State.WALLETS.SELECT_WALLET_TYPE: [
-            CallbackQueryHandler(
-                select_wallet_type, pattern="^(USDT|SOL)$"
-            ),  # Handle wallet type selection
-        ],
-        State.WALLETS.ENTER_WALLET_NAME: [
-            MessageHandler(
-                filters.TEXT & ~filters.COMMAND, process_create_wallet
-            ),  # Handle wallet name input
-        ],
-        State.WALLETS.CONFIRM_DELETE_WALLET: [
-            CallbackQueryHandler(
-                confirm_delete_wallet, pattern="^confirm_delete_wallet_"
-            ),
-        ],
-        State.WALLETS.DELETE_WALLET: [
-            CallbackQueryHandler(process_delete_wallet, pattern="^delete_wallet_"),
-            CallbackQueryHandler(cancel_delete_wallet, pattern="^cancel_delete_wallet"),
-        ],
-        State.WALLETS.END: [CommandHandler("wallet", wallet_command)],
-    },
-    fallbacks=[
-        CommandHandler("cancel", cancel),
-    ],
-    allow_reentry=True,
-)
-# ---------------------- Wallet Conversation Handler End  ---------------------
 
 # ---------------------- Listing Conversation Handler Start  ---------------------
 listing_handler = ConversationHandler(
@@ -591,40 +495,6 @@ listing_handler = ConversationHandler(
     allow_reentry=True,
 )
 # ---------------------- Settings Conversation Handler End  ---------------------
-
-
-# ---------------------- Settings Conversation Handler Start  ---------------------
-settings_handler = ConversationHandler(
-    entry_points=[CommandHandler("settings", settings_command)],
-    states={
-        State.SETTINGS.SETTINGS_MENU: [
-            CallbackQueryHandler(
-                settings_menu_callback,
-                pattern="^(settings_language|settings_mobile|settings_close|setlang_)",
-            ),
-        ],
-        State.SETTINGS.WAITING_FOR_MOBILE: [
-            MessageHandler(filters.TEXT & ~filters.COMMAND, handle_setting_mobile),
-        ],
-        State.SETTINGS.SETTINGS_MOBILE_MANAGEMENT: [
-            CallbackQueryHandler(settings_menu_callback, pattern="^(mobile_|remove_)"),
-        ],
-        State.SETTINGS.MOBILE_VERIFICATION: [
-            CallbackQueryHandler(
-                settings_menu_callback, pattern="^(remove_|settings_mobile)"
-            ),
-        ],
-        State.SETTINGS.SETTINGS_CREATE_CASE_TAC: [
-            MessageHandler(filters.TEXT & ~filters.COMMAND, handle_setting_tac),
-        ],
-        State.SETTINGS.END: [CommandHandler("settings", settings_command)],
-    },
-    fallbacks=[
-        CommandHandler("cancel", cancel),
-    ],
-    allow_reentry=True,
-)
-# # ---------------------- Settings Conversation Handler End  ---------------------
 
 # # handlers/stats_handler.py
 

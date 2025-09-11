@@ -64,38 +64,7 @@ async def wallet_command(update: Update, context: ContextTypes.DEFAULT_TYPE):
     if wallets is None:
         wallets = []
 
-    kb = [
-        [
-            InlineKeyboardButton(
-                get_text(user_id, "refresh_btn", "wallets"),
-                callback_data="refresh_wallets",
-            )
-        ],
-        [
-            InlineKeyboardButton(
-                get_text(user_id, "sol_btn", "globals"), callback_data="sol_wallets"
-            ),
-            InlineKeyboardButton(
-                get_text(user_id, "usdt_btn", "globals"), callback_data="usdt_wallets"
-            ),
-        ],
-        [
-            InlineKeyboardButton(
-                get_text(user_id, "address_btn", "wallets"),
-                callback_data="show_address",
-            )
-        ],
-        [
-            InlineKeyboardButton(
-                get_text(user_id, "create_wallet_btn", "wallets"),
-                callback_data="create_wallet",
-            ),
-            InlineKeyboardButton(
-                get_text(user_id, "delete_wallet_btn", "wallets"),
-                callback_data="delete_wallet",
-            ),
-        ],
-    ]
+    kb = back_to_wallet_menu_keyboard(user_id)
 
     if update.message:
         await update.message.reply_text(
@@ -120,38 +89,7 @@ async def refresh_wallets(update: Update, context: ContextTypes.DEFAULT_TYPE):
         wallets = []
 
     # Rebuild the keyboard with updated wallet information
-    kb = [
-        [
-            InlineKeyboardButton(
-                get_text(user_id, "refresh_btn", "wallets"),
-                callback_data="refresh_wallets",
-            )
-        ],
-        [
-            InlineKeyboardButton(
-                get_text(user_id, "sol_btn", "globals"), callback_data="sol_wallets"
-            ),
-            InlineKeyboardButton(
-                get_text(user_id, "usdt_btn", "globals"), callback_data="usdt_wallets"
-            ),
-        ],
-        [
-            InlineKeyboardButton(
-                get_text(user_id, "address_btn", "wallets"),
-                callback_data="show_address",
-            )
-        ],
-        [
-            InlineKeyboardButton(
-                get_text(user_id, "create_wallet_btn", "wallets"),
-                callback_data="create_wallet",
-            ),
-            InlineKeyboardButton(
-                get_text(user_id, "delete_wallet_btn", "wallets"),
-                callback_data="delete_wallet",
-            ),
-        ],
-    ]
+    kb = back_to_wallet_menu_keyboard(user_id)
 
     new_text = get_text(user_id, "refresh_wallet_text", "wallets")
 
@@ -237,7 +175,7 @@ async def show_sol_wallet_detail(update: Update, context: ContextTypes.DEFAULT_T
 
     # Get balance
     try:
-        balance = await WalletService.get_sol_balance(wallet["public_key"])
+        balance = await WalletService.get_sol_balance(wallet.public_key)
         balance_text = f"{balance} SOL"
     except Exception as e:
         balance_text = f"Error: {str(e)}"
@@ -245,7 +183,7 @@ async def show_sol_wallet_detail(update: Update, context: ContextTypes.DEFAULT_T
     # Format and escape message
     message = escape_markdown_v2(
         get_text(user_id, "show_balance", "wallets").format(
-            name=wallet["name"], balance=balance_text, public_key=wallet["public_key"]
+            name=wallet.name, balance=balance_text, public_key=wallet.public_key
         )
     )
 
@@ -254,7 +192,7 @@ async def show_sol_wallet_detail(update: Update, context: ContextTypes.DEFAULT_T
         [
             InlineKeyboardButton(
                 get_text(user_id, "show_private_key", "wallets"),
-                callback_data=f"req_pk_{wallet['id']}",
+                callback_data=f"req_pk_{wallet.id}",
             )
         ],
         [
@@ -272,59 +210,6 @@ async def show_sol_wallet_detail(update: Update, context: ContextTypes.DEFAULT_T
 
 
 # ====================== USDT Wallets Implementation ======================
-@catch_async
-async def usdt_wallets(update: Update, context: ContextTypes.DEFAULT_TYPE):
-    """Display USDT wallets as interactive buttons with balances"""
-    query = update.callback_query
-    await query.answer()
-    user_id = query.from_user.id
-
-    wallets = await WalletService.get_wallet_by_user(user_id, False)
-    usdt_wallets = [w for w in wallets if w["wallet_type"].upper() == "USDT"]
-
-    if not usdt_wallets:
-        message = get_text(user_id, "no_usdt_wallets", "wallets")
-        await query.edit_message_text(message)
-        return State.WALLETS.WALLET_MENU
-
-    # Create buttons with balances for each USDT wallet
-    kb = []
-    for wallet in usdt_wallets:
-        try:
-            balance = await TronWallet.get_usdt_balance(wallet["public_key"])
-            btn_text = f"{wallet['name']} - {balance} USDT"
-        except Exception:
-            btn_text = f"{wallet['name']} - Error fetching balance"
-
-        kb.append(
-            [
-                InlineKeyboardButton(
-                    btn_text, callback_data=f"usdt_detail_{wallet['id']}"
-                )
-            ]
-        )
-
-    # Add navigation buttons
-    kb.append(
-        [
-            InlineKeyboardButton(
-                get_text(user_id, "refresh_btn", "wallets"),
-                callback_data="usdt_wallets",
-            ),
-            InlineKeyboardButton(
-                get_text(user_id, "back_to_wallet", "globals"),
-                callback_data="back_to_wallet_menu",
-            ),
-        ]
-    )
-
-    await query.edit_message_text(
-        get_text(user_id, "your_usdt_wallet", "wallets"),
-        reply_markup=InlineKeyboardMarkup(kb),
-    )
-    return State.WALLETS.USDT_WALLET_DETAIL
-
-
 @catch_async
 async def usdt_wallets(update: Update, context: ContextTypes.DEFAULT_TYPE):
     """Display USDT wallets as interactive buttons with balances"""
@@ -389,7 +274,7 @@ async def show_usdt_wallet_detail(update: Update, context: ContextTypes.DEFAULT_
 
     # Get balance
     try:
-        balance = await TronWallet.get_usdt_balance(wallet["public_key"])
+        balance = await TronWallet.get_usdt_balance(wallet.public_key)
         balance_text = f"{balance} USDT"
     except Exception as e:
         balance_text = f"Error: {str(e)}"
@@ -397,7 +282,7 @@ async def show_usdt_wallet_detail(update: Update, context: ContextTypes.DEFAULT_
     # Format and escape message
     message = escape_markdown_v2(
         get_text(user_id, "show_balance", "wallets").format(
-            name=wallet["name"], balance=balance_text, public_key=wallet["public_key"]
+            name=wallet.name, balance=balance_text, public_key=wallet.public_key
         )
     )
 
@@ -406,7 +291,7 @@ async def show_usdt_wallet_detail(update: Update, context: ContextTypes.DEFAULT_
         [
             InlineKeyboardButton(
                 get_text(user_id, "show_private_key", "wallets"),
-                callback_data=f"req_pk_{wallet['id']}",
+                callback_data=f"req_pk_{wallet.id}",
             )
         ],
         [
@@ -479,7 +364,7 @@ async def show_private_key(update: Update, context: ContextTypes.DEFAULT_TYPE):
     # Format and escape the private key message
     warning_message = escape_markdown_v2(
         get_text(user_id, "private_key_warning", "wallets").format(
-            wallet=wallet["private_key"]
+            wallet=wallet.private_key
         )
     )
 
@@ -547,7 +432,7 @@ async def show_specific_address(update: Update, context: ContextTypes.DEFAULT_TY
     if wallet:
         # Format the wallet details using the language-specific template
         message = get_text(user_id, "wallet_details", "wallets").format(
-            name=wallet["name"], public_key=wallet["public_key"]
+            name=wallet.name, public_key=wallet.public_key
         )
 
         # Add a back button for navigation
@@ -617,11 +502,11 @@ async def view_specific_history(update: Update, context: ContextTypes.DEFAULT_TY
 
     if wallet:
         history = (
-            await WalletService.get_usdt_history(wallet["public_key"])
-            if wallet["wallet_type"] == "USDT"
-            else await WalletService.get_sol_history(wallet["public_key"])
+            await WalletService.get_usdt_history(wallet.public_key)
+            if wallet.wallet_type == "USDT"
+            else await WalletService.get_sol_history(wallet.public_key)
         )
-        message = f"Transaction History for {wallet["name"]}:\n"
+        message = f"Transaction History for {wallet.name}:\n"
         for tx in history:
             message += f"Signature: {tx['signature']}, Time: {tx['block_time']}\n"
     else:
@@ -770,7 +655,7 @@ async def process_delete_wallet(update: Update, context: ContextTypes.DEFAULT_TY
 
     print("Getting the query data", query.data)
 
-    wallet_id = query.data.split("_")[2]
+    wallet_id = query.data.split("_")[-1]
 
     if not wallet_id:
         message = get_text(user_id, "delete_wallet_confirm_reject", "wallets")

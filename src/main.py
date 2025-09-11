@@ -19,13 +19,13 @@ from telegram.ext import ApplicationBuilder
 
 from config.config_manager import MONGODB_NAME, MONGODB_URI, NODE_ENV
 from handlers.handlers import (
-    settings_handler,
-    wallet_handler,
     start_handler,
     stats_handler,
-    listing_handler
-
+    listing_handler,
+    settings_handler
 )
+
+from handlers.main.main_wallets_handler import wallet_handler
 from handlers.start_handler import error_handler
 from models.case_model import Case
 from config.config_manager import TOKEN
@@ -37,8 +37,8 @@ setup_logging()
 
 async def main_setup():
     # application = ApplicationBuilder().token(TOKEN if NODE_ENV.lower() == "production" else "8466947355:AAHUohQPzgpQi5OyoEH1G_4MR1CC-msnwOo").build()
-    # application = ApplicationBuilder().token("8466947355:AAHUohQPzgpQi5OyoEH1G_4MR1CC-msnwOo" if NODE_ENV.lower() == "production" else "7333467475:AAEj3gKOVlc1MG_PiyCrrVkOZU4WY7x9A48").build()
-    application = ApplicationBuilder().token("7333467475:AAEj3gKOVlc1MG_PiyCrrVkOZU4WY7x9A48" if NODE_ENV.lower() == "production" else "7333467475:AAEj3gKOVlc1MG_PiyCrrVkOZU4WY7x9A48").build()
+    application = ApplicationBuilder().token("8466947355:AAHUohQPzgpQi5OyoEH1G_4MR1CC-msnwOo" if NODE_ENV.lower() == "production" else "7333467475:AAEj3gKOVlc1MG_PiyCrrVkOZU4WY7x9A48").build()
+    # application = ApplicationBuilder().token("7333467475:AAEj3gKOVlc1MG_PiyCrrVkOZU4WY7x9A48" if NODE_ENV.lower() == "production" else "7333467475:AAEj3gKOVlc1MG_PiyCrrVkOZU4WY7x9A48").build()
 
     application.add_handler(start_handler)
     application.add_handler(wallet_handler)
