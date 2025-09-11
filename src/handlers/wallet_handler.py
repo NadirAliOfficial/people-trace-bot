@@ -166,16 +166,17 @@ async def show_sol_wallet_detail(update: Update, context: ContextTypes.DEFAULT_T
     query = update.callback_query
     await query.answer()
     user_id = query.from_user.id
-    wallet_id = query.data.split("_")[-1]
+    wallet_id = query.data.split("_")[2]
 
     wallet = await WalletService.get_wallet_by_id(wallet_id)
+    print(f"wallet from show_sol_wallet_detail: {wallet}")
     if not wallet:
         await query.message.edit_text(get_text(user_id, "wallet_not_found", "wallets"))
         return State.WALLETS.WALLET_MENU
 
     # Get balance
     try:
-        balance = await WalletService.get_sol_balance(wallet.public_key)
+        balance = await WalletService.get_sol_balance(wallet["public_key"])
         balance_text = f"{balance} SOL"
     except Exception as e:
         balance_text = f"Error: {str(e)}"
@@ -183,7 +184,9 @@ async def show_sol_wallet_detail(update: Update, context: ContextTypes.DEFAULT_T
     # Format and escape message
     message = escape_markdown_v2(
         get_text(user_id, "show_balance", "wallets").format(
-            name=wallet.name, balance=balance_text, public_key=wallet.public_key
+            name=wallet["name"],
+            balance=balance_text,
+            public_key=wallet["public_key"],
         )
     )
 
@@ -192,7 +195,7 @@ async def show_sol_wallet_detail(update: Update, context: ContextTypes.DEFAULT_T
         [
             InlineKeyboardButton(
                 get_text(user_id, "show_private_key", "wallets"),
-                callback_data=f"req_pk_{wallet.id}",
+                callback_data=f"req_pk_{str(wallet['id'])}",
             )
         ],
         [
@@ -274,7 +277,7 @@ async def show_usdt_wallet_detail(update: Update, context: ContextTypes.DEFAULT_
 
     # Get balance
     try:
-        balance = await TronWallet.get_usdt_balance(wallet.public_key)
+        balance = await TronWallet.get_usdt_balance(wallet["public_key"])
         balance_text = f"{balance} USDT"
     except Exception as e:
         balance_text = f"Error: {str(e)}"
@@ -282,7 +285,9 @@ async def show_usdt_wallet_detail(update: Update, context: ContextTypes.DEFAULT_
     # Format and escape message
     message = escape_markdown_v2(
         get_text(user_id, "show_balance", "wallets").format(
-            name=wallet.name, balance=balance_text, public_key=wallet.public_key
+            name=wallet["name"],
+            balance=balance_text,
+            public_key=wallet["public_key"],
         )
     )
 
@@ -291,7 +296,7 @@ async def show_usdt_wallet_detail(update: Update, context: ContextTypes.DEFAULT_
         [
             InlineKeyboardButton(
                 get_text(user_id, "show_private_key", "wallets"),
-                callback_data=f"req_pk_{wallet.id}",
+                callback_data=f"req_pk_{str(wallet['_id'])}",
             )
         ],
         [
@@ -364,7 +369,7 @@ async def show_private_key(update: Update, context: ContextTypes.DEFAULT_TYPE):
     # Format and escape the private key message
     warning_message = escape_markdown_v2(
         get_text(user_id, "private_key_warning", "wallets").format(
-            wallet=wallet.private_key
+            wallet=wallet["private_key"]
         )
     )
 
@@ -432,7 +437,7 @@ async def show_specific_address(update: Update, context: ContextTypes.DEFAULT_TY
     if wallet:
         # Format the wallet details using the language-specific template
         message = get_text(user_id, "wallet_details", "wallets").format(
-            name=wallet.name, public_key=wallet.public_key
+            name=wallet["name"], public_key=wallet["public_key"]
         )
 
         # Add a back button for navigation
@@ -502,11 +507,11 @@ async def view_specific_history(update: Update, context: ContextTypes.DEFAULT_TY
 
     if wallet:
         history = (
-            await WalletService.get_usdt_history(wallet.public_key)
-            if wallet.wallet_type == "USDT"
-            else await WalletService.get_sol_history(wallet.public_key)
+            await WalletService.get_usdt_history(wallet["public_key"])
+            if wallet["wallet_type"] == "USDT"
+            else await WalletService.get_sol_history(wallet["public_key"])
         )
-        message = f"Transaction History for {wallet.name}:\n"
+        message = f"Transaction History for {wallet['name']}:\n"
         for tx in history:
             message += f"Signature: {tx['signature']}, Time: {tx['block_time']}\n"
     else:
