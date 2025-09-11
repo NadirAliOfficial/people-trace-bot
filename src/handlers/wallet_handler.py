@@ -296,7 +296,7 @@ async def show_usdt_wallet_detail(update: Update, context: ContextTypes.DEFAULT_
         [
             InlineKeyboardButton(
                 get_text(user_id, "show_private_key", "wallets"),
-                callback_data=f"req_pk_{str(wallet['_id'])}",
+                callback_data=f"req_pk_{str(wallet['id'])}",
             )
         ],
         [
