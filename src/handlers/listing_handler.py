@@ -390,6 +390,44 @@ async def update_case_field(update: Update, context: ContextTypes.DEFAULT_TYPE) 
     return State.HANDLER_END
 
 
+@catch_async
+async def delete_case_callback(
+    update: Update, context: ContextTypes.DEFAULT_TYPE
+) -> int:
+    """Handler for confirming and soft deleting a case."""
+    query = update.callback_query
+    print("calling from the delete case callback", query.data)
+    await query.answer()
+
+    case = context.user_data.get("deleting_complaint", None)
+    user_id = update.effective_user.id
+
+    if not case:
+        await query.message.edit_text(get_text(user_id, "case_not_found", "listing"))
+        return State.HANDLER_END
+
+    # Authorization check
+    if case.user_id != user_id:
+        if query.message.photo:
+            await query.edit_message_caption(get_text(user_id, "not_authorized_delete", "listing"))
+        else:
+            await query.edit_message_text(get_text(user_id, "not_authorized_delete", "listing"))
+        return State.HANDLER_END
+
+    # Soft delete
+    await update_case(case_id=PydanticObjectId(case.id), deleted=True)
+
+    # Send success message
+    success_text = get_text(user_id, "case_deleted_successfully", "listing")
+    if query.message.photo:
+        await query.edit_message_caption(success_text)
+    else:
+        await query.edit_message_text(success_text)
+
+    # Show updated listing
+    return await listing_command(update, context)
+
+
 
 # ------------------------
 # 🎯 REWARD FINDER FLOW
@@ -487,6 +525,8 @@ async def finder_details_callback(update: Update, context: ContextTypes.DEFAULT_
         logger.error(f"Finder details error: {e}")
         await query.message.edit_text(get_text(query.from_user.id, "error_fetching_finder", "listing"), parse_mode="MarkdownV2")
         return State.END
+
+
 
 
 # ------------------------
@@ -986,42 +1026,6 @@ async def process_city(update: Update, context: ContextTypes.DEFAULT_TYPE):
         )
         return State.ENTER_CITY
 
-@catch_async
-async def delete_case_callback(
-    update: Update, context: ContextTypes.DEFAULT_TYPE
-) -> int:
-    """Handler for confirming and soft deleting a case."""
-    query = update.callback_query
-    print("calling from the delete case callback", query.data)
-    await query.answer()
-
-    case = context.user_data.get("deleting_complaint", None)
-    user_id = update.effective_user.id
-
-    if not case:
-        await query.message.edit_text(get_text(user_id, "case_not_found", "listing"))
-        return State.HANDLER_END
-
-    # Authorization check
-    if case.user_id != user_id:
-        if query.message.photo:
-            await query.edit_message_caption(get_text(user_id, "not_authorized_delete", "listing"))
-        else:
-            await query.edit_message_text(get_text(user_id, "not_authorized_delete", "listing"))
-        return State.HANDLER_END
-
-    # Soft delete
-    await update_case(case_id=PydanticObjectId(case.id), deleted=True)
-
-    # Send success message
-    success_text = get_text(user_id, "case_deleted_successfully", "listing")
-    if query.message.photo:
-        await query.edit_message_caption(success_text)
-    else:
-        await query.edit_message_text(success_text)
-
-    # Show updated listing
-    return await listing_command(update, context)
 
 @catch_async
 async def cancel_delete_callback(
