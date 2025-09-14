@@ -151,6 +151,10 @@ class State(Enum):
         ASK_LOCAL_PROVINCE_CITY = "ASK_LOCAL_PROVINCE_CITY"
         BACK_TO_STATS = "BACK_TO_STATS"
         END = "END"
+        
+    class LISTING(Enum): 
+        COMPLAINT_ACTION = "COMPLAINT_ACTION"
+        VIEW_COMPLAINTS = "VIEW_COMPLAINTS"
 
 # ======================
 # Language Data & Constants

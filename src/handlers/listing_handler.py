@@ -1,5 +1,6 @@
 import logging
 from datetime import datetime
+from typing import List
 from beanie import PydanticObjectId
 from config.config_manager import (
     OWNER_TELEGRAM_ID,
@@ -28,7 +29,597 @@ from services.wallet_service import WalletService
 from utils.get_network import get_network
 from utils.logger import logger
 from utils.error_wrapper import catch_async
-from utils.helper import get_city_matches, get_country_matches, paginate_list
+from utils.helper import get_city_matches, get_country_matches, get_username, paginate_list
+
+
+
+# ------------------------
+# 🖼️ UTILITY: FORMATTED CASE CARD DISPLAY
+# ------------------------
+async def format_case_card(case: Case, user_id: int, lang: str) -> str:
+    """Generate a clean, readable case card in MarkdownV2"""
+    proof_text = (
+        f"[📸 Proof]({case.case_photo})"
+        if case.case_photo and case.case_photo.startswith("http")
+        else "❌ No proof available"
+    )
+
+    # Format last seen wearing (if exists)
+    clothing = case.last_seen_wearing or "Unknown"
+
+    return (
+        f"🔍 **Case #{case.case_no or 'N/A'}**\n\n"
+        f"👤 **Name**: {escape_markdown(case.person_name, version=2)}\n"
+        f"📍 **Last Seen**: {escape_markdown(case.last_seen_location, version=2)}\n"
+        f"📅 **Date Reported**: {case.created_at.strftime('%d %B %Y') if case.created_at else 'Unknown'}\n"
+        f"🎂 **Age**: {case.age or 'Unknown'}\n"
+        f"🧥 **Last Seen Wearing**: {escape_markdown(clothing, version=2)}\n"
+        f"💰 **Reward**: {case.reward or '0'} {case.wallet.wallet_type if case.wallet else 'N/A'}\n"
+        f"🧾 **Posted by**: @{(await case.get_user()).username if await case.get_user() else 'Unknown'}\n\n"
+        f"{proof_text}\n"
+    )
+
+# ------------------------
+# 📋 UTILITY: FORMATTED FINDER LIST CARD
+# ------------------------
+async def format_finder_list_card(case: Case, finders: List[Finder], user_id: int, lang: str) -> str:
+    """Format the header for finder list view"""
+    total_finders = len(finders)
+    return (
+        f"👥 **Finders ({total_finders}) for Case #{case.case_no or 'N/A'}**\n\n"
+        f"👤 **Name**: {escape_markdown(case.person_name, version=2)}\n"
+        f"📍 **Last Seen**: {escape_markdown(case.last_seen_location, version=2)}\n"
+        f"📅 **Date Reported**: {case.created_at.strftime('%d %B %Y') if case.created_at else 'Unknown'}\n"
+        f"💰 **Reward**: {case.reward or '0'} {case.wallet.wallet_type if case.wallet else 'N/A'}\n"
+        f"🧾 **Posted by**: @{(await case.get_user()).username if await case.get_user() else 'Unknown'}\n\n"
+        f"📌 Tap a finder below to view details & send reward.\n"
+    )
+
+# ------------------------
+# 🧩 UTILITY: FORMATTED FINDER DETAIL CARD
+# ------------------------
+async def format_finder_detail_card(
+    case: Case,
+    finder: Finder,
+    user_id: int,
+    lang: str
+) -> str:
+    """Format detailed finder info with proof links"""
+    proof_urls = "\n".join([f"[📸 Proof]({url})" for url in finder.proof_url]) if finder.proof_url else "❌ No proof uploaded"
+    
+    return (
+        f"👤 **Finder Details**\n\n"
+        f"🆔 **Finder ID**: `{finder.user_id}`\n"
+        f"📍 **Reported Location**: {escape_markdown(finder.reported_location, version=2)}\n"
+        f"📎 **Proofs**:\n{proof_urls}\n\n"
+        f"⚠️ Only the case owner can send the reward.\n"
+    )
+
+# ------------------------
+# 🔢 UTILITY: CREATE PAGINATED KEYBOARD FOR CASES
+# ------------------------
+async def create_cases_pagination_keyboard(
+    cases: List[Case],
+    page: int,
+    total_pages: int,
+    user_id: int,
+    lang: str
+) -> InlineKeyboardMarkup:
+    """Create pagination keyboard for case listings"""
+    keyboard = []
+    paginated_cases, _ = paginate_list(cases, page)
+
+    for case in paginated_cases:
+        # Count active finders
+        finders = await Finder.find(
+            {"case.$id": case.id, "status": FinderStatus.FIND}
+        ).to_list()
+        finder_count = len(finders)
+
+        # Get pending extend requests
+        extend_requests = await ExtendReward.find(
+            {"case.$id": case.id, "status": {"$ne": ExtendRewardStatus.COMPLETED}}
+        ).to_list()
+        extend_count = len(extend_requests)
+
+        # Case button (name + ID)
+        row = [
+            InlineKeyboardButton(
+                f"{escape_markdown(case.person_name, version=2)} ({case.id})", 
+                callback_data=f"case_{str(case.id)}"
+            )
+        ]
+
+        # Owner-only buttons: Edit/Delete (only if no finder)
+        if case.user_id == user_id and finder_count == 0:
+            row.append(
+                InlineKeyboardButton("🧩 Edit", callback_data=f"edit_{str(case.id)}")
+            )
+            row.append(
+                InlineKeyboardButton("🗑️ Delete", callback_data=f"delete_{str(case.id)}")
+            )
+
+        # Owner-only: Reward button (if finder exists)
+        elif case.user_id == user_id and finder_count > 0:
+            row.append(
+                InlineKeyboardButton(f"📬 View Finders ({finder_count})", callback_data=f"reward_{str(case.id)}")
+            )
+
+        # Owner-only: Extend Reward button (if pending extend request)
+        elif case.user_id == user_id and extend_count > 0:
+            row.append(
+                InlineKeyboardButton(f"🔄 Extend ({extend_count})", callback_data=f"extend_reward_{str(case.id)}")
+            )
+
+        # Admin-only: Reward button (for admin to reward any finder)
+        elif str(user_id) == str(OWNER_TELEGRAM_ID) and finder_count > 0:
+            row.append(
+                InlineKeyboardButton(f"📬 Reward Finder ({finder_count})", callback_data=f"reward_{str(case.id)}")
+            )
+
+        keyboard.append(row)
+
+    # Pagination controls
+    nav_buttons = []
+    if page > 1:
+        nav_buttons.append(
+            InlineKeyboardButton("◀️ Back", callback_data="page_previous")
+        )
+    if page < total_pages:
+        nav_buttons.append(
+            InlineKeyboardButton("▶️ Next", callback_data="page_next")
+        )
+
+    if nav_buttons:
+        keyboard.append(nav_buttons)
+
+    return InlineKeyboardMarkup(keyboard)
+
+# ------------------------
+# 🚀 MAIN HANDLERS
+# ------------------------
+
+@catch_async
+async def listing_command(update: Update, context: ContextTypes.DEFAULT_TYPE) -> int:
+    """Display paginated list of ADVERTISE cases."""
+    query = update.callback_query
+    user_id = update.effective_user.id
+    lang = await get_user_lang(user_id) or "en"
+    context.user_data["lang"] = lang
+
+    # Fetch all advertise cases, newest first
+    all_cases = await Case.find(
+        {"status": CaseStatus.ADVERTISE, "deleted": False}
+    ).sort(-Case.created_at).to_list()
+
+    if not all_cases:
+        msg = get_text(user_id, "no_advertise_cases", "listing")
+        if update.message:
+            await update.message.reply_text(msg)
+        elif update.callback_query:
+            await update.callback_query.message.edit_text(msg)
+        return State.END
+
+    # Initialize pagination
+    context.user_data["listing_complaints"] = all_cases
+    context.user_data["listing_index"] = 0  # start at first case
+
+    await show_complaint(user_id, update, context)
+    return State.LISTING.VIEW_COMPLAINTS
+
+
+
+async def show_complaint(user_id, update, context):
+    complaints = context.user_data["listing_complaints"]
+    index = context.user_data["listing_index"]
+    total = len(complaints)
+    c = complaints[index]
+
+    chat = await context.bot.get_chat(c.user_id)
+
+    finder_count = await Finder.find(
+    {"case.$id": c.id, "status": FinderStatus.FIND.value}
+).count()
+
+
+    print("Case details callback", c)
+    text = (
+        f"🔍 Case {index+1}/{total}\n"
+        f"👤 Name: {c.person_name}\n"
+        f"📍 Last Seen: {c.last_seen_location}\n"
+        f"📅 Date: {c.created_at.strftime('%d %B %Y')}\n"
+        f"🎂 Age: {c.age}\n"
+        f"💰 Reward: {c.reward} {c.reward_type or "N/A"}\n"
+        f"🧾 Posted by: @{get_username(chat)} \n"
+        f" 👥 Finders: {finder_count}"
+    )
+
+    # ✅ Build buttons dynamically
+    kb = [
+        [InlineKeyboardButton("🧩 Edit", callback_data=f"edit_{index}")],
+        [InlineKeyboardButton("🧩 DELETE", callback_data=f"delete_{index}")]
+    ]
+
+    nav_row = []
+    if index > 0:  # Show Back only if not first
+        nav_row.append(
+            InlineKeyboardButton("◀️ Back", callback_data=f"complaint_back_{index}")
+        )
+    if index < total - 1:  # Show Next only if not last
+        nav_row.append(
+            InlineKeyboardButton("▶️ Next", callback_data=f"complaint_next_{index}")
+        )
+    if nav_row:
+        kb.append(nav_row)
+
+    if finder_count > 0:
+        kb.append(
+            [InlineKeyboardButton(f"📬 View Finder ({finder_count})", callback_data=f"reward_{index}")]
+        )
+
+    message = update.message or update.callback_query.message
+
+    if c.case_photo:
+        await message.reply_photo(
+            c.case_photo,
+            caption=text,
+            reply_markup=InlineKeyboardMarkup(kb),
+            parse_mode="HTML",
+        )
+    else:
+        await message.reply_text(
+            text,
+            reply_markup=InlineKeyboardMarkup(kb),
+            parse_mode="HTML",
+        )
+
+
+
+@catch_async
+async def listing_complaint_callback(update: Update, context: ContextTypes.DEFAULT_TYPE) -> int:
+    query = update.callback_query
+    await query.answer()
+    user_id = update.effective_user.id
+    data = query.data
+    index = context.user_data.get("listing_index", 0)
+    complaints = context.user_data.get("listing_complaints", [])
+    total = len(complaints)
+
+    print("data is", {data})
+
+    if data.startswith("complaint_next_") and index + 1 < total:
+        context.user_data["listing_index"] += 1
+
+    elif data.startswith("complaint_back_") and index > 0:
+        context.user_data["listing_index"] -= 1
+
+    # elif data.startswith("lead_"):
+    #     # Extract index from callback_data
+    #     selected_index = int(data.split("_")[1])
+    #     selected_complaint = complaints[selected_index]
+
+    #     # Store selected complaint in user_data
+    #     context.user_data["selected_complaint"] = selected_complaint
+
+    #     # Continue lead flow
+    #     if query.message.photo:
+    #         await query.edit_message_caption(get_text(user_id, "proof_upload", "finder"))
+    #     else:
+    #         await query.edit_message_text(get_text(user_id, "proof_upload", "finder"))
+
+    #     return State.UPLOAD_PROOF
+
+    # elif data.startswith("reward_"):
+    #     selected_index = int(data.split("_")[1])
+    #     selected_complaint = complaints[selected_index]
+    #     context.user_data["selected_complaint"] = selected_complaint
+    #     wallet_type = selected_complaint.wallet.wallet_type
+
+    #     new_text = (
+    #         f"The current reward amount is <b>{selected_complaint.reward} {wallet_type}</b>.\n"
+    #         f"Please enter the new reward amount you want to set:"
+    #     )
+
+    #     if query.message.photo:
+    #         await query.edit_message_caption(new_text, parse_mode="HTML")
+    #     else:
+    #         await query.edit_message_text(new_text, parse_mode="HTML")
+
+    #     return State.EXTEND_REWARD_AMOUNT
+
+    else:
+        return State.FINDER.END
+
+    print("Inside the listing complaint callback")
+
+    await query.message.delete()
+    await show_complaint(user_id, update, context)
+    return State.LISTING.VIEW_COMPLAINTS
+
+
+
+
+
+@catch_async
+async def case_details_callback(update: Update, context: ContextTypes.DEFAULT_TYPE) -> int:
+    """Show full case details when a case button is clicked."""
+    query = update.callback_query
+    await query.answer()
+
+    case_id_str = query.data.removeprefix("case_")
+    try:
+        case_id = PydanticObjectId(case_id_str)
+        case = await Case.find_one({"_id": case_id, "deleted": False}, fetch_links=True)
+        if not case:
+            await query.message.edit_text(get_text(query.from_user.id, "case_not_found", "listing"), parse_mode="MarkdownV2")
+            return State.END
+
+        # Format and send case card
+        lang = context.user_data.get("lang", "en")
+        case_card = await format_case_card(case, query.from_user.id, lang)
+
+        # Get finder count
+        finders = await Finder.find({"case.$id": case_id, "status": FinderStatus.FIND}).to_list()
+        finder_count = len(finders)
+
+        # Build buttons based on ownership and finder status
+        keyboard = []
+
+        # Owner: Can edit/delete if no finder
+        if case.user_id == query.from_user.id and finder_count == 0:
+            keyboard.append([
+                InlineKeyboardButton("🧩 Edit", callback_data=f"edit_{case_id}"),
+                InlineKeyboardButton("🗑️ Delete", callback_data=f"delete_{case_id}")
+            ])
+        # Owner or Admin: Reward button if finders exist
+        elif (case.user_id == query.from_user.id or str(query.from_user.id) == str(OWNER_TELEGRAM_ID)) and finder_count > 0:
+            keyboard.append([
+                InlineKeyboardButton(f"📬 View Finders ({finder_count})", callback_data=f"reward_{case_id}")
+            ])
+        # Owner: Extend reward button if pending extends
+        elif case.user_id == query.from_user.id:
+            extend_requests = await ExtendReward.find(
+                {"case.$id": case_id, "status": {"$ne": ExtendRewardStatus.COMPLETED}}
+            ).to_list()
+            if extend_requests:
+                keyboard.append([
+                    InlineKeyboardButton(f"🔄 Extend ({len(extend_requests)})", callback_data=f"extend_reward_{case_id}")
+                ])
+
+        # Always add back navigation
+        keyboard.append([
+            InlineKeyboardButton("◀️ Back to Cases", callback_data="back_to_listing")
+        ])
+
+        reply_markup = InlineKeyboardMarkup(keyboard)
+
+        await query.message.edit_text(
+            case_card,
+            reply_markup=reply_markup,
+            parse_mode="MarkdownV2"
+        )
+        return State.CASE_DETAILS
+
+    except Exception as e:
+        logger.error(f"Error showing case details: {e}")
+        await query.message.edit_text(get_text(query.from_user.id, "error_fetching_case_details", "listing"), parse_mode="MarkdownV2")
+        return State.END
+
+
+@catch_async
+async def pagination_callback(update: Update, context: ContextTypes.DEFAULT_TYPE) -> int:
+    """Handle Next/Previous page navigation."""
+    query = update.callback_query
+    await query.answer()
+
+    current_page = context.user_data.get("page", 1)
+    cases = context.user_data.get("cases", [])
+    user_id = query.from_user.id
+    lang = context.user_data.get("lang", "en")
+
+    if query.data == "page_next":
+        new_page = min(current_page + 1, (len(cases) + 9) // 10)
+    elif query.data == "page_previous":
+        new_page = max(current_page - 1, 1)
+    else:
+        new_page = current_page
+
+    context.user_data["page"] = new_page
+
+    reply_markup = await create_cases_pagination_keyboard(
+        cases, new_page, (len(cases) + 9) // 10, user_id, lang
+    )
+
+    message = get_text(user_id, "select_case_details", "listing")
+
+    try:
+        await query.message.edit_text(message, reply_markup=reply_markup, parse_mode="MarkdownV2")
+    except Exception as e:
+        if "Message is not modified" in str(e):
+            await query.answer("No change in page.")
+        else:
+            logger.error(f"Pagination error: {e}")
+            await query.message.edit_text(get_text(user_id, "error_paginating_cases", "listing"))
+
+    return State.CASE_DETAILS
+
+
+@catch_async
+async def back_to_listing_callback(update: Update, context: ContextTypes.DEFAULT_TYPE) -> int:
+    """Return to main case list after viewing a case."""
+    query = update.callback_query
+    await query.answer()
+
+    # Re-render the current page
+    cases = context.user_data.get("cases", [])
+    page = context.user_data.get("page", 1)
+    user_id = query.from_user.id
+    lang = context.user_data.get("lang", "en")
+
+    reply_markup = await create_cases_pagination_keyboard(
+        cases, page, (len(cases) + 9) // 10, user_id, lang
+    )
+
+    message = get_text(user_id, "select_case_details", "listing")
+
+    await query.message.edit_text(message, reply_markup=reply_markup, parse_mode="MarkdownV2")
+    return State.CASE_DETAILS
+
+
+
+# ------------------------
+# 🎯 REWARD FINDER FLOW
+# ------------------------
+
+@catch_async
+async def reward_case_callback(update: Update, context: ContextTypes.DEFAULT_TYPE) -> int:
+    """Show list of finders for a case."""
+    query = update.callback_query
+    await query.answer()
+
+    case_id_str = query.data.removeprefix("reward_")
+    try:
+        case_id = PydanticObjectId(case_id_str)
+        case = await Case.find_one({"_id": case_id, "deleted": False}, fetch_links=True)
+        if not case:
+            await query.message.edit_text(get_text(query.from_user.id, "case_not_found", "listing"), parse_mode="MarkdownV2")
+            return State.END
+
+        finders = await Finder.find(
+            {"case.$id": case_id, "status": FinderStatus.FIND}
+        ).to_list()
+
+        if not finders:
+            await query.message.edit_text(get_text(query.from_user.id, "no_finders_for_case", "listing"), parse_mode="MarkdownV2")
+            return State.END
+
+        # Format finder list header
+        header = await format_finder_list_card(case, finders, query.from_user.id, context.user_data.get("lang", "en"))
+
+        # Create finder buttons
+        keyboard = []
+        for finder in finders:
+            keyboard.append([
+                InlineKeyboardButton(
+                    f"👤 Finder ID: {finder.user_id}",
+                    callback_data=f"finder_details_{finder.id}_{case_id}"
+                )
+            ])
+
+        keyboard.append([InlineKeyboardButton("◀️ Back to Case", callback_data=f"case_{case_id}")])
+
+        reply_markup = InlineKeyboardMarkup(keyboard)
+
+        await query.message.edit_text(header, reply_markup=reply_markup, parse_mode="MarkdownV2")
+        return State.CASE_DETAILS
+
+    except Exception as e:
+        logger.error(f"Reward callback error: {e}")
+        await query.message.edit_text(get_text(query.from_user.id, "error_processing_reward", "listing"), parse_mode="MarkdownV2")
+        return State.END
+
+
+@catch_async
+async def finder_details_callback(update: Update, context: ContextTypes.DEFAULT_TYPE) -> int:
+    """Show detailed finder info and reward button."""
+    query = update.callback_query
+    await query.answer()
+
+    data = query.data.removeprefix("finder_details_")
+    finder_id_str, case_id_str = data.split("_", 1)
+
+    try:
+        case_id = PydanticObjectId(case_id_str)
+        finder_id = PydanticObjectId(finder_id_str)
+
+        case = await Case.find_one({"_id": case_id, "deleted": False}, fetch_links=True)
+        finder = await Finder.find_one({"_id": finder_id, "status": FinderStatus.FIND}, fetch_links=True)
+
+        if not case or not finder:
+            await query.message.edit_text(get_text(query.from_user.id, "case_or_finder_not_found", "listing"), parse_mode="MarkdownV2")
+            return State.END
+
+        # Format finder detail card
+        detail_card = await format_finder_detail_card(case, finder, query.from_user.id, context.user_data.get("lang", "en"))
+
+        # Only show reward button if user is case owner or admin
+        keyboard = []
+        if str(query.from_user.id) == str(case.user_id) or str(query.from_user.id) == str(OWNER_TELEGRAM_ID):
+            keyboard.append([
+                InlineKeyboardButton(
+                    "💸 Send Reward",
+                    callback_data=f"send_reward_{finder_id}_{case_id}"
+                )
+            ])
+
+        keyboard.append([InlineKeyboardButton("◀️ Back to Finders", callback_data=f"reward_{case_id}")])
+
+        reply_markup = InlineKeyboardMarkup(keyboard)
+
+        await query.message.edit_text(detail_card, reply_markup=reply_markup, parse_mode="MarkdownV2")
+        return State.CASE_DETAILS
+
+    except Exception as e:
+        logger.error(f"Finder details error: {e}")
+        await query.message.edit_text(get_text(query.from_user.id, "error_fetching_finder", "listing"), parse_mode="MarkdownV2")
+        return State.END
+
+
+# ------------------------
+# 🔄 EXTEND REWARD FLOW
+# ------------------------
+
+@catch_async
+async def extend_reward_callback(update: Update, context: ContextTypes.DEFAULT_TYPE) -> int:
+    """Show pending extend reward requests for this case."""
+    query = update.callback_query
+    await query.answer()
+
+    case_id_str = query.data.removeprefix("extend_reward_")
+    try:
+        case_id = PydanticObjectId(case_id_str)
+        case = await Case.find_one({"_id": case_id, "deleted": False}, fetch_links=True)
+        if not case:
+            await query.message.edit_text(get_text(query.from_user.id, "case_not_found", "listing"), parse_mode="MarkdownV2")
+            return State.END
+
+        # Fetch all pending extend rewards
+        extend_rewards = await ExtendReward.find(
+            {"case.$id": case_id, "status": {"$ne": ExtendRewardStatus.COMPLETED}}
+        ).to_list()
+
+        if not extend_rewards:
+            await query.message.edit_text(get_text(query.from_user.id, "extend_reward_not_found", "listing"), parse_mode="MarkdownV2")
+            return State.END
+
+        # Format case header
+        header = await format_case_card(case, query.from_user.id, context.user_data.get("lang", "en"))
+        header += "\n\n🔄 **Pending Extend Requests:**\n"
+
+        keyboard = []
+        for er in extend_rewards:
+            header += f"👤 Requested by: `{er.user_id}` | Amount: {er.extend_reward_amount} {case.wallet.wallet_type}\n"
+            keyboard.append([
+                InlineKeyboardButton(
+                    f"✅ Approve {er.extend_reward_amount} {case.wallet.wallet_type}",
+                    callback_data=f"approve_extend_{er.id}_{case_id}"
+                )
+            ])
+
+        keyboard.append([InlineKeyboardButton("◀️ Back to Case", callback_data=f"case_{case_id}")])
+
+        reply_markup = InlineKeyboardMarkup(keyboard)
+
+        await query.message.edit_text(header.strip(), reply_markup=reply_markup, parse_mode="MarkdownV2")
+        return State.CONFIRM_EXTEND
+
+    except Exception as e:
+        logger.error(f"Extend reward callback error: {e}")
+        await query.message.edit_text(get_text(query.from_user.id, "error_approving_extend", "listing"), parse_mode="MarkdownV2")
+        return State.END
+
+
+
 
 # ------------------------
 # UTILITY FUNCTIONS (REFACTORED TO AVOID DUPLICATION)
@@ -414,146 +1005,6 @@ async def handle_extend_reward_flow(
         await update.callback_query.message.edit_text(get_text(user_id, "error_processing_extend", "listing"))
         return State.END
 
-# ------------------------
-# MAIN HANDLERS (OPTIMIZED)
-# ------------------------
-
-@catch_async
-async def listing_command(update: Update, context: ContextTypes.DEFAULT_TYPE) -> int:
-    """Handler for the /listing command."""
-    user_id = update.effective_user.id
-    logger.info(f"User {user_id} issued /listing command")
-    
-    # Fetch all advertise cases
-    all_cases = (
-        await Case.find({"status": CaseStatus.ADVERTISE, "deleted": False})
-        .sort(-Case.created_at)
-        .to_list()
-    )
-    
-    logger.info(f"Fetched {len(all_cases)} ADVERTISE cases from the database")
-    
-    # Set language
-    user_lang = await get_user_lang(user_id)
-    if user_lang:
-        user_data_store[user_id] = {"lang": user_lang}
-        context.user_data["lang"] = user_lang
-    
-    if not all_cases:
-        message = get_text(user_id, "no_advertise_cases", "listing")
-        if update.message:
-            await update.message.reply_text(message)
-        elif update.callback_query:
-            await update.callback_query.message.edit_text(message)
-        return State.END
-    
-    # Initialize pagination
-    context.user_data["page"] = 1
-    context.user_data["cases"] = all_cases
-    total_pages = (len(all_cases) + 9) // 10  # Assuming 10 items per page
-    
-    # Create keyboard
-    reply_markup = await create_pagination_keyboard(
-        all_cases, 
-        1, 
-        total_pages, 
-        user_id,
-        show_edit_delete=True,
-        show_reward_button=True
-    )
-    
-    try:
-        if update.message:
-            await update.message.reply_text(
-                get_text(user_id, "select_case_details", 'listing'),
-                reply_markup=reply_markup,
-                parse_mode="Markdown",
-            )
-        elif update.callback_query:
-            await update.callback_query.message.edit_text(
-                get_text(user_id, "select_case_details", "listing"),
-                reply_markup=reply_markup,
-                parse_mode="Markdown",
-            )
-    except error.BadRequest as e:
-        if "Message is not modified" in str(e):
-            await update.callback_query.answer("Cases are already updated.", show_alert=True)
-    
-    return State.CASE_DETAILS
-
-@catch_async
-async def case_details_callback(
-    update: Update, context: ContextTypes.DEFAULT_TYPE
-) -> int:
-    """Handler for displaying case details when a button is clicked."""
-    query = update.callback_query
-    await query.answer()
-    
-    try:
-        case_id = query.data.removeprefix("case_")
-        case, valid = await get_case_with_validation(case_id, query.from_user.id, context)
-        if not valid:
-            return State.END
-            
-        await send_case_details(update, context, case, show_edit_delete=True)
-        return State.CASE_DETAILS if case.user_id == query.from_user.id else State.END
-        
-    except Exception as e:
-        logger.error(f"[ERROR] Failed to show case details: {e}\n{traceback.format_exc()}")
-        await query.message.edit_text(get_text(query.from_user.id, "error_fetching_case_details", "listing"))
-        return State.END
-
-@catch_async
-async def pagination_callback(
-    update: Update, context: ContextTypes.DEFAULT_TYPE
-) -> int:
-    """Handler for the pagination (Next/Previous) buttons."""
-    query = update.callback_query
-    await query.answer()
-    
-    try:
-        current_page = context.user_data.get("page", 1)
-        cases = context.user_data.get("cases", [])
-        user_id = update.effective_user.id
-        
-        # Determine navigation
-        if query.data == "page_next":
-            new_page = current_page + 1
-        elif query.data == "page_previous":
-            new_page = current_page - 1
-        else:
-            new_page = current_page
-        
-        # Ensure page boundaries
-        total_pages = (len(cases) + 9) // 10  # Assuming 10 items per page
-        new_page = max(1, min(new_page, total_pages))
-        
-        # Update context
-        context.user_data["page"] = new_page
-        
-        # Create updated keyboard
-        reply_markup = await create_pagination_keyboard(
-            cases, 
-            new_page, 
-            total_pages, 
-            user_id,
-            show_edit_delete=True,
-            show_reward_button=True
-        )
-        
-        # Edit message
-        await query.message.edit_text(
-            get_text(user_id, "select_case_details", "listing"),
-            reply_markup=reply_markup,
-            parse_mode="Markdown",
-        )
-        
-        return State.CASE_DETAILS
-        
-    except Exception as e:
-        logger.error(f"Error in pagination_callback: {str(e)}\n{traceback.format_exc()}")
-        await query.message.edit_text(get_text(update.effective_user.id, "error_paginating_cases", "listing"))
-        return State.END
 
 @catch_async
 async def edit_case_callback(update: Update, context: ContextTypes.DEFAULT_TYPE) -> int:
@@ -880,137 +1331,6 @@ async def cancel_edit_callback(
         await query.message.edit_text(get_text(user_id, "error_canceling_edit", "listing"))
         return State.END
 
-# ---------------------------- Reward the Finder By Owner ---------------------------
-@catch_async
-async def reward_case_callback(
-    update: Update, context: ContextTypes.DEFAULT_TYPE
-) -> int:
-    """Handles the reward process when advertiser clicks 'Reward'."""
-    query = update.callback_query
-    await query.answer()
-    user_id = update.effective_user.id
-    case_id = query.data.removeprefix("reward_")
-    
-    try:
-        case = await Case.find_one({"_id": ObjectId(case_id)}, fetch_links=True)
-        if not case:
-            await query.message.edit_text(get_text(user_id, "case_not_found", "listing"))
-            return State.END
-        
-        finders = await Finder.find({"case.$id": PydanticObjectId(case.id)}).to_list()
-        if not finders:
-            await query.message.edit_text(get_text(user_id, "no_finders_for_case", "listing"))
-            return State.END
-        
-        # Construct case details message
-        case_details = get_text(user_id, "case_details_template", "listing").format(
-            person_name=case.person_name,
-            last_seen_location=case.last_seen_location,
-            age=case.age or "Unknown",
-            reward=case.reward or "0",
-            reward_type=case.wallet.wallet_type if case.wallet else "None",
-            last_seen_date=case.created_at.strftime("%d %B %Y")
-            if case.created_at
-            else "Unknown",
-            height=case.height or "Unknown",
-        )
-        
-        # Show finders list below case details
-        message = (
-            case_details + "\n" + get_text(user_id, "finder_list_header", "listing") + "\n"
-        )
-        keyboard = []
-        
-        for finder in finders:
-            keyboard.append([
-                InlineKeyboardButton(
-                    f"👤 Finder ID: {finder.user_id}",
-                    callback_data=f"finder_details_{finder.user_id}_{case.id}",
-                )
-            ])
-        
-        reply_markup = InlineKeyboardMarkup(keyboard)
-        await query.message.edit_text(
-            message.strip(),
-            reply_markup=reply_markup,
-            parse_mode="Markdown",
-        )
-        return State.CASE_DETAILS
-        
-    except Exception as e:
-        logger.error(f"Error in reward_case_callback: {str(e)}\n{traceback.format_exc()}")
-        await query.message.edit_text(get_text(user_id, "error_processing_reward", "listing"))
-        return State.END
-
-@catch_async
-async def finder_details_callback(
-    update: Update, context: ContextTypes.DEFAULT_TYPE
-) -> int:
-    """Displays details of the selected finder along with case details."""
-    query = update.callback_query
-    await query.answer()
-    user_id = update.effective_user.id
-    data = query.data.removeprefix("finder_details_")
-    finder_id, case_id = data.split("_")
-    
-    try:
-        case = await Case.find_one({"_id": ObjectId(case_id)}, fetch_links=True)
-        finder = await Finder.find_one(
-            {"user_id": int(finder_id), "case.$id": PydanticObjectId(case.id)}
-        )
-        
-        if not case or not finder:
-            await query.message.edit_text(get_text(user_id, "case_or_finder_not_found", "listing"))
-            return State.END
-        
-        # Construct case details message
-        case_details = get_text(user_id, "case_details_template", "listing").format(
-            person_name=case.person_name,
-            last_seen_location=case.last_seen_location,
-            age=case.age or "Unknown",
-            reward=case.reward or "0",
-            reward_type=case.wallet.wallet_type if case.wallet else "None",
-            last_seen_date=case.created_at.strftime("%d %B %Y")
-            if case.created_at
-            else "Unknown",
-            height=case.height or "Unknown",
-        )
-        
-        # Finder details
-        proof_text = (
-            "\n".join(f"[Proof]({url})" for url in finder.proof_url)
-            if finder.proof_url
-            else get_text(user_id, "no_proof_available", "listing")
-        )
-        
-        finder_details = (
-            f"👤 *Finder ID:* `{finder.user_id}`\n"
-            f"📍 *Location:* {finder.reported_location}\n"
-            f"📎 *Proof:* {proof_text}\n"
-        )
-        
-        message = case_details + "\n" + finder_details
-        keyboard = [
-            [
-                InlineKeyboardButton(
-                    get_text(user_id, "reward_this_finder", "listing"),
-                    callback_data=f"send_reward_{finder.user_id}_{case.id}",
-                )
-            ]
-        ]
-        
-        reply_markup = InlineKeyboardMarkup(keyboard)
-        await query.message.edit_text(
-            message.strip(),
-            reply_markup=reply_markup,
-            parse_mode="Markdown",
-        )
-        return State.CASE_DETAILS
-        
-    except Exception as e:
-        logger.error(f"Error in finder_details_callback: {str(e)}\n{traceback.format_exc()}")
-        await query.message.edit_text(get_text(user_id, "error_fetching_finder", "listing"))
-        return State.END
 
 @catch_async
 async def ask_reward_amount(update: Update, context: ContextTypes.DEFAULT_TYPE) -> int:
@@ -1204,12 +1524,6 @@ async def cancel_reward(update: Update, context: ContextTypes.DEFAULT_TYPE) -> i
     return State.END
 
 # -------------------------- Extend Reward By Advertiser ---------------------------
-@catch_async
-async def extend_reward_callback(
-    update: Update, context: ContextTypes.DEFAULT_TYPE
-) -> int:
-    """Handles the Extend Reward process when advertiser clicks 'Extend'."""
-    return await handle_extend_reward_flow(update, context, update.callback_query.data.removeprefix("extend_reward_"))
 
 @catch_async
 async def approve_extend_callback(
@@ -1554,5 +1868,213 @@ async def action_callback(update: Update, context: ContextTypes.DEFAULT_TYPE) ->
         await query.edit_message_text(
             get_text(user_id, "invalid_choice"), 
             parse_mode="HTML"
+        )
+        return State.END
+    
+    
+    
+    
+    
+@catch_async
+async def update_choose_country(
+    update: Update, context: ContextTypes.DEFAULT_TYPE
+) -> int:
+
+    user_id = update.effective_user.id
+    txt = update.message.text.strip()
+    matches = get_country_matches(txt)
+    if not matches:
+        await update.message.reply_text(
+            get_text(user_id, "country_not_found"), parse_mode="HTML"
+        )
+        return State.CHOOSE_COUNTRY
+    if len(matches) == 1:
+        context.user_data["country"] = matches[0]
+        # Choose the country
+        await update.message.reply_text("Choose a city:")
+        return State.CHOOSE_CITY
+    else:
+
+        context.user_data["country_matches"] = matches
+        context.user_data["country_page"] = 1
+
+        paginated, total = paginate_list(matches, 1)
+        kb = []
+        for c in paginated:
+            kb.append([InlineKeyboardButton(c, callback_data=f"country_select_{c}")])
+        # Pagination buttons
+        if total > 1:
+            kb.append(
+                [
+                    InlineKeyboardButton("⬅️", callback_data="country_page_0"),
+                    InlineKeyboardButton("➡️", callback_data="country_page_2"),
+                ]
+            )
+        markup = InlineKeyboardMarkup(kb)
+        await update.message.reply_text(
+            get_text(user_id, "country_multi", "start-complaints").format(page=1, total=total), ## TODO: Getting it from the start command
+            reply_markup=markup,
+            parse_mode="HTML",
+        )
+        return State.CHOOSE_COUNTRY
+
+
+@catch_async
+async def country_callback(update: Update, context: ContextTypes.DEFAULT_TYPE) -> int:
+    query = update.callback_query
+    await query.answer()
+    data = query.data
+    user_id = query.from_user.id
+    if data.startswith("country_select_"):
+
+        country = data.replace("country_select_", "")
+        context.user_data["country"] = country
+
+        await query.edit_message_text(
+            f"{get_text(user_id, 'country_selected', "start-complaints")} {country}.",  ## TODO: Getting it from the start command
+            parse_mode="HTML",
+        )
+        # Choose the country
+        await update.message.reply_text("Choose a city:")
+        return State.CHOOSE_CITY
+    elif data.startswith("country_page_"):
+        page_str = data.replace("country_page_", "")
+        try:
+            page_num = int(page_str)
+            if page_num < 1:
+                page_num = 1
+        except ValueError:
+            page_num = 1
+        matches = context.user_data.get("country_matches", [])
+        paginated, total = paginate_list(matches, page_num)
+        kb = []
+        for c in paginated:
+            kb.append([InlineKeyboardButton(c, callback_data=f"country_select_{c}")])
+        nav_row = []
+        if page_num > 1:
+            nav_row.append(
+                InlineKeyboardButton("⬅️", callback_data=f"country_page_{page_num-1}")
+            )
+        if page_num < total:
+            nav_row.append(
+                InlineKeyboardButton("➡️", callback_data=f"country_page_{page_num+1}")
+            )
+        if nav_row:
+            kb.append(nav_row)
+        markup = InlineKeyboardMarkup(kb)
+        await query.edit_message_text(
+            get_text(user_id, "country_multi", "start-complaints").format(page=page_num, total=total), ## TODO: Getting it from the start command
+            reply_markup=markup,
+            parse_mode="HTML",
+        )
+
+        context.user_data["country_page"] = page_num
+        return State.CHOOSE_COUNTRY
+    else:
+        await query.edit_message_text(
+            get_text(user_id, "invalid_choice", "start-complaints"), parse_mode="HTML" ## TODO: Getting it from the start command
+        )
+        return State.END
+
+
+@catch_async
+async def choose_city(update: Update, context: ContextTypes.DEFAULT_TYPE) -> int:
+    user_id = update.effective_user.id
+    city_input = update.message.text.strip()
+    country = context.user_data.get("country")
+    if not country:
+        await update.message.reply_text(
+            get_text(user_id, "invalid_choice", "start-complaints"), parse_mode="HTML" ## TODO: Getting it from the start command
+        )
+        return State.END
+    matches = get_city_matches(country, city_input)
+    if not matches:
+        await update.message.reply_text(
+            get_text(user_id, "city_not_found", "start-complaints"), parse_mode="HTML" ## TODO: Getting it from the start command
+        )
+        return State.CHOOSE_CITY
+    if len(matches) == 1:
+        context.user_data["city"] = matches[0]
+        await update.message.reply_text(
+            f"{get_text(user_id, 'city_selected', "start-complaints")} {matches[0]}", ## TODO: Getting it from the start command
+            parse_mode="HTML",
+        )
+        update.message.reply_text("Updated Successfully")
+        return State.END
+    else:
+        context.user_data["city_matches"] = matches
+        context.user_data["city_page"] = 1
+        paginated, total = paginate_list(matches, 1)
+        kb = []
+        for c in paginated:
+            kb.append([InlineKeyboardButton(c, callback_data=f"city_select_{c}")])
+        # Pagination
+        if total > 1:
+            kb.append(
+                [
+                    InlineKeyboardButton("⬅️", callback_data="city_page_0"),
+                    InlineKeyboardButton("➡️", callback_data="city_page_2"),
+                ]
+            )
+        markup = InlineKeyboardMarkup(kb)
+        await update.message.reply_text(
+            get_text(user_id, "city_multi", "start-complaints").format(page=1, total=total), ## TODO: Getting it from the start command
+            reply_markup=markup,
+            parse_mode="HTML",
+        )
+        return State.CHOOSE_CITY
+
+
+@catch_async
+async def city_callback(update: Update, context: ContextTypes.DEFAULT_TYPE) -> int:
+    query = update.callback_query
+    await query.answer()
+    user_id = query.from_user.id
+    data = query.data
+    if data.startswith("city_select_"):
+        city = data.replace("city_select_", "")
+        context.user_data["city"] = city
+        await update_or_create_case(user_id, city=city)
+
+        await query.edit_message_text(
+            f"{get_text(user_id, 'city_selected')} {city}", parse_mode="HTML" ## TODO: Getting it from the start command
+        )
+        await choose_action(update, context) ## TODO: Import Issues 
+        return State.CHOOSE_ACTION
+    elif data.startswith("city_page_"):
+        page_str = data.replace("city_page_", "")
+        try:
+            page_num = int(page_str)
+            if page_num < 1:
+                page_num = 1
+        except ValueError:
+            page_num = 1
+        matches = context.user_data.get("city_matches", [])
+        paginated, total = paginate_list(matches, page_num)
+        kb = []
+        for c in paginated:
+            kb.append([InlineKeyboardButton(c, callback_data=f"city_select_{c}")])
+        nav_row = []
+        if page_num > 1:
+            nav_row.append(
+                InlineKeyboardButton("⬅️", callback_data=f"city_page_{page_num-1}")
+            )
+        if page_num < total:
+            nav_row.append(
+                InlineKeyboardButton("➡️", callback_data=f"city_page_{page_num+1}")
+            )
+        if nav_row:
+            kb.append(nav_row)
+        markup = InlineKeyboardMarkup(kb)
+        await query.edit_message_text(
+            get_text(user_id, "city_multi", "start-complaints").format(page=page_num, total=total), ## TODO: Getting it from the start command
+            reply_markup=markup,
+            parse_mode="HTML",
+        )
+        context.user_data["city_page"] = page_num
+        return State.CHOOSE_CITY
+    else:
+        await query.edit_message_text(
+            get_text(user_id, "invalid_choice", "start-complaints"), parse_mode="HTML"
         )
         return State.END
