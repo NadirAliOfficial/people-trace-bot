@@ -4,12 +4,10 @@ from handlers.listing_handler import (
     advertiser_wallet_type_callback,
     approve_extend_callback,
     ask_reward_amount,
-    back_to_listing_callback,
     cancel_delete_callback,
     cancel_edit_callback,
     cancel_extend_callback,
     cancel_reward,
-    case_details_callback,
     confirm_extend_callback,
     confirm_reward,
     delete_case_callback,
@@ -18,7 +16,6 @@ from handlers.listing_handler import (
     finder_details_callback,
     listing_command,
     listing_complaint_callback,
-    pagination_callback,
     process_city,
     process_country,
     process_reward_transfer,
@@ -135,21 +132,16 @@ from handlers.start_handler import (
 
 
 listing_conv_handler = ConversationHandler(
-    entry_points=[CommandHandler("listing", listing_command)],
+    entry_points=[CommandHandler("listing", listing_command)], # In Use
     states={
          State.LISTING.VIEW_COMPLAINTS: [
             CallbackQueryHandler(
                 listing_complaint_callback,
                 pattern="^(complaint_next_|complaint_back_|edit_|delete_)",
             ),
-            
-        ],
-        
+        ], # In Use
         State.CASE_DETAILS: [
-            CallbackQueryHandler(case_details_callback, pattern=r"^case_.*$"),
-            CallbackQueryHandler(pagination_callback, pattern=r"^(page_previous|page_next)$"),
-            CallbackQueryHandler(back_to_listing_callback, pattern=r"^back_to_listing$"),
-
+        
             # Reward Flow
             CallbackQueryHandler(reward_case_callback, pattern=r"^reward_.*$"),
             CallbackQueryHandler(finder_details_callback, pattern=r"^finder_details_.*$"),
@@ -159,8 +151,8 @@ listing_conv_handler = ConversationHandler(
 
             # Edit/Delete (existing handlers remain untouched)
    
-            CallbackQueryHandler(edit_field_callback, pattern="^edit_field_.*$"),
-            CallbackQueryHandler(delete_case_callback, pattern=r"^delete_.*$"),
+            CallbackQueryHandler(edit_field_callback, pattern="^edit_field_.*$"), # In Use
+            CallbackQueryHandler(delete_case_callback, pattern=r"^confirm_delete$"),
             CallbackQueryHandler(cancel_edit_callback, pattern=r"^cancel_edit$"),
             CallbackQueryHandler(cancel_delete_callback, pattern=r"^delete_cancel$"),
         ],
@@ -171,7 +163,7 @@ listing_conv_handler = ConversationHandler(
             MessageHandler(filters.TEXT & ~filters.COMMAND, process_city),
         ],
         State.EDIT_FIELD: [
-            MessageHandler(filters.TEXT & ~filters.COMMAND, update_case_field),
+            MessageHandler(filters.TEXT & ~filters.COMMAND, update_case_field), # In Use
         ],
         State.CONFIRM_EXTEND: [
             CallbackQueryHandler(approve_extend_callback, pattern=r"^approve_extend_.*$"),

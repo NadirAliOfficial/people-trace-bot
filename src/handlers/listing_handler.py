@@ -31,150 +31,6 @@ from utils.logger import logger
 from utils.error_wrapper import catch_async
 from utils.helper import get_city_matches, get_country_matches, get_username, paginate_list
 
-
-
-# ------------------------
-# 🖼️ UTILITY: FORMATTED CASE CARD DISPLAY
-# ------------------------
-async def format_case_card(case: Case, user_id: int, lang: str) -> str:
-    """Generate a clean, readable case card in MarkdownV2"""
-    proof_text = (
-        f"[📸 Proof]({case.case_photo})"
-        if case.case_photo and case.case_photo.startswith("http")
-        else "❌ No proof available"
-    )
-
-    # Format last seen wearing (if exists)
-    clothing = case.last_seen_wearing or "Unknown"
-
-    return (
-        f"🔍 **Case #{case.case_no or 'N/A'}**\n\n"
-        f"👤 **Name**: {escape_markdown(case.person_name, version=2)}\n"
-        f"📍 **Last Seen**: {escape_markdown(case.last_seen_location, version=2)}\n"
-        f"📅 **Date Reported**: {case.created_at.strftime('%d %B %Y') if case.created_at else 'Unknown'}\n"
-        f"🎂 **Age**: {case.age or 'Unknown'}\n"
-        f"🧥 **Last Seen Wearing**: {escape_markdown(clothing, version=2)}\n"
-        f"💰 **Reward**: {case.reward or '0'} {case.wallet.wallet_type if case.wallet else 'N/A'}\n"
-        f"🧾 **Posted by**: @{(await case.get_user()).username if await case.get_user() else 'Unknown'}\n\n"
-        f"{proof_text}\n"
-    )
-
-# ------------------------
-# 📋 UTILITY: FORMATTED FINDER LIST CARD
-# ------------------------
-async def format_finder_list_card(case: Case, finders: List[Finder], user_id: int, lang: str) -> str:
-    """Format the header for finder list view"""
-    total_finders = len(finders)
-    return (
-        f"👥 **Finders ({total_finders}) for Case #{case.case_no or 'N/A'}**\n\n"
-        f"👤 **Name**: {escape_markdown(case.person_name, version=2)}\n"
-        f"📍 **Last Seen**: {escape_markdown(case.last_seen_location, version=2)}\n"
-        f"📅 **Date Reported**: {case.created_at.strftime('%d %B %Y') if case.created_at else 'Unknown'}\n"
-        f"💰 **Reward**: {case.reward or '0'} {case.wallet.wallet_type if case.wallet else 'N/A'}\n"
-        f"🧾 **Posted by**: @{(await case.get_user()).username if await case.get_user() else 'Unknown'}\n\n"
-        f"📌 Tap a finder below to view details & send reward.\n"
-    )
-
-# ------------------------
-# 🧩 UTILITY: FORMATTED FINDER DETAIL CARD
-# ------------------------
-async def format_finder_detail_card(
-    case: Case,
-    finder: Finder,
-    user_id: int,
-    lang: str
-) -> str:
-    """Format detailed finder info with proof links"""
-    proof_urls = "\n".join([f"[📸 Proof]({url})" for url in finder.proof_url]) if finder.proof_url else "❌ No proof uploaded"
-    
-    return (
-        f"👤 **Finder Details**\n\n"
-        f"🆔 **Finder ID**: `{finder.user_id}`\n"
-        f"📍 **Reported Location**: {escape_markdown(finder.reported_location, version=2)}\n"
-        f"📎 **Proofs**:\n{proof_urls}\n\n"
-        f"⚠️ Only the case owner can send the reward.\n"
-    )
-
-# ------------------------
-# 🔢 UTILITY: CREATE PAGINATED KEYBOARD FOR CASES
-# ------------------------
-async def create_cases_pagination_keyboard(
-    cases: List[Case],
-    page: int,
-    total_pages: int,
-    user_id: int,
-    lang: str
-) -> InlineKeyboardMarkup:
-    """Create pagination keyboard for case listings"""
-    keyboard = []
-    paginated_cases, _ = paginate_list(cases, page)
-
-    for case in paginated_cases:
-        # Count active finders
-        finders = await Finder.find(
-            {"case.$id": case.id, "status": FinderStatus.FIND}
-        ).to_list()
-        finder_count = len(finders)
-
-        # Get pending extend requests
-        extend_requests = await ExtendReward.find(
-            {"case.$id": case.id, "status": {"$ne": ExtendRewardStatus.COMPLETED}}
-        ).to_list()
-        extend_count = len(extend_requests)
-
-        # Case button (name + ID)
-        row = [
-            InlineKeyboardButton(
-                f"{escape_markdown(case.person_name, version=2)} ({case.id})", 
-                callback_data=f"case_{str(case.id)}"
-            )
-        ]
-
-        # Owner-only buttons: Edit/Delete (only if no finder)
-        if case.user_id == user_id and finder_count == 0:
-            row.append(
-                InlineKeyboardButton("🧩 Edit", callback_data=f"edit_{str(case.id)}")
-            )
-            row.append(
-                InlineKeyboardButton("🗑️ Delete", callback_data=f"delete_{str(case.id)}")
-            )
-
-        # Owner-only: Reward button (if finder exists)
-        elif case.user_id == user_id and finder_count > 0:
-            row.append(
-                InlineKeyboardButton(f"📬 View Finders ({finder_count})", callback_data=f"reward_{str(case.id)}")
-            )
-
-        # Owner-only: Extend Reward button (if pending extend request)
-        elif case.user_id == user_id and extend_count > 0:
-            row.append(
-                InlineKeyboardButton(f"🔄 Extend ({extend_count})", callback_data=f"extend_reward_{str(case.id)}")
-            )
-
-        # Admin-only: Reward button (for admin to reward any finder)
-        elif str(user_id) == str(OWNER_TELEGRAM_ID) and finder_count > 0:
-            row.append(
-                InlineKeyboardButton(f"📬 Reward Finder ({finder_count})", callback_data=f"reward_{str(case.id)}")
-            )
-
-        keyboard.append(row)
-
-    # Pagination controls
-    nav_buttons = []
-    if page > 1:
-        nav_buttons.append(
-            InlineKeyboardButton("◀️ Back", callback_data="page_previous")
-        )
-    if page < total_pages:
-        nav_buttons.append(
-            InlineKeyboardButton("▶️ Next", callback_data="page_next")
-        )
-
-    if nav_buttons:
-        keyboard.append(nav_buttons)
-
-    return InlineKeyboardMarkup(keyboard)
-
 # ------------------------
 # 🚀 MAIN HANDLERS
 # ------------------------
@@ -274,7 +130,6 @@ async def show_complaint(user_id, update, context):
         )
 
 
-
 @catch_async
 async def listing_complaint_callback(update: Update, context: ContextTypes.DEFAULT_TYPE) -> int:
     query = update.callback_query
@@ -357,66 +212,45 @@ async def listing_complaint_callback(update: Update, context: ContextTypes.DEFAU
         return State.CASE_DETAILS
 
     elif data.startswith("delete_"):
-    #     # Extract index from callback_data
         selected_index = int(data.split("_")[1])
+        complaints = context.user_data.get("listing_complaints", [])
+        total = len(complaints)
+
+        if selected_index >= total:
+            await query.answer("❌ Complaint not found", show_alert=True)
+            return State.LISTING.VIEW_COMPLAINTS
+
         selected_complaint = complaints[selected_index]
+        context.user_data["deleting_complaint"] = selected_complaint
+        context.user_data["deleting_index"] = selected_index
 
-        print("selecting the complaint", selected_complaint)
+        # Ask for confirmation
+        kb = [
+            [
+                InlineKeyboardButton("✅ Confirm Delete", callback_data="confirm_delete"),
+                InlineKeyboardButton("❌ Cancel", callback_data="cancel_delete"),
+            ]
+        ]
 
-        # return State.HANDLER_END;
-    
-        if not selected_complaint:
-            await query.message.edit_text(get_text(update.effective_user.id, "case_not_found", "listing"))
-            return State.HANDLER_END
-        
-        editable_fields = get_text(user_id, "editable_fields", "listing")
-
-        print("Editable fields are", editable_fields)
-         # Group buttons in rows of 2
-        keyboard = []
-        field_items = list(editable_fields.items())
-        
-        # Create pairs of buttons
-        for i in range(0, len(field_items), 2):
-            row = []
-            # First button
-            k1, v1 = field_items[i]
-            row.append(InlineKeyboardButton(f"{k1}", callback_data=f"edit_field_{v1}_{selected_complaint.id}"))
-            
-            # Second button if available
-            if i + 1 < len(field_items):
-                k2, v2 = field_items[i + 1]
-                row.append(InlineKeyboardButton(f"{k2}", callback_data=f"edit_field_{v2}_{selected_complaint.id}"))
-            
-            keyboard.append(row)
-        
-        # Add cancel button
-        keyboard.append([
-            InlineKeyboardButton(
-                # get_text(user_id, "cancel_edit_button", "listing"), 
-                "Cancel Button",
-                callback_data="cancel_edit"
-            )
-        ])
-        
-        reply_markup = InlineKeyboardMarkup(keyboard)
-        new_text = get_text(user_id, "edit_field_prompt", "listing")
+        new_text = (
+            f"⚠️ Are you sure you want to delete case:\n\n"
+            f"👤 {selected_complaint.person_name}\n"
+            f"📍 {selected_complaint.last_seen_location}"
+        )
 
         if query.message.photo:
-            # If original message had a photo
             await query.edit_message_caption(
                 caption=new_text,
-                reply_markup=reply_markup,
+                reply_markup=InlineKeyboardMarkup(kb),
                 parse_mode="Markdown",
             )
         else:
             await query.edit_message_text(
                 text=new_text,
-                reply_markup=reply_markup,
+                reply_markup=InlineKeyboardMarkup(kb),
                 parse_mode="Markdown",
             )
-        
-        context.user_data["editing_complaint"] = selected_complaint
+
         return State.CASE_DETAILS
 
 
@@ -459,133 +293,101 @@ async def listing_complaint_callback(update: Update, context: ContextTypes.DEFAU
     return State.LISTING.VIEW_COMPLAINTS
 
 
-
-
-
 @catch_async
-async def case_details_callback(update: Update, context: ContextTypes.DEFAULT_TYPE) -> int:
-    """Show full case details when a case button is clicked."""
+async def edit_field_callback(
+    update: Update, context: ContextTypes.DEFAULT_TYPE
+) -> int:
+    """Ask the user to enter a new value for the selected field."""
     query = update.callback_query
     await query.answer()
+    
+    user_id = update.effective_user.id
+    field_name = query.data.removeprefix("edit_field_")
 
-    case_id_str = query.data.removeprefix("case_")
-    try:
-        case_id = PydanticObjectId(case_id_str)
-        case = await Case.find_one({"_id": case_id, "deleted": False}, fetch_links=True)
-        if not case:
-            await query.message.edit_text(get_text(query.from_user.id, "case_not_found", "listing"), parse_mode="MarkdownV2")
-            return State.END
-
-        # Format and send case card
-        lang = context.user_data.get("lang", "en")
-        case_card = await format_case_card(case, query.from_user.id, lang)
-
-        # Get finder count
-        finders = await Finder.find({"case.$id": case_id, "status": FinderStatus.FIND}).to_list()
-        finder_count = len(finders)
-
-        # Build buttons based on ownership and finder status
-        keyboard = []
-
-        # Owner: Can edit/delete if no finder
-        if case.user_id == query.from_user.id and finder_count == 0:
-            keyboard.append([
-                InlineKeyboardButton("🧩 Edit", callback_data=f"edit_{case_id}"),
-                InlineKeyboardButton("🗑️ Delete", callback_data=f"delete_{case_id}")
-            ])
-        # Owner or Admin: Reward button if finders exist
-        elif (case.user_id == query.from_user.id or str(query.from_user.id) == str(OWNER_TELEGRAM_ID)) and finder_count > 0:
-            keyboard.append([
-                InlineKeyboardButton(f"📬 View Finders ({finder_count})", callback_data=f"reward_{case_id}")
-            ])
-        # Owner: Extend reward button if pending extends
-        elif case.user_id == query.from_user.id:
-            extend_requests = await ExtendReward.find(
-                {"case.$id": case_id, "status": {"$ne": ExtendRewardStatus.COMPLETED}}
-            ).to_list()
-            if extend_requests:
-                keyboard.append([
-                    InlineKeyboardButton(f"🔄 Extend ({len(extend_requests)})", callback_data=f"extend_reward_{case_id}")
-                ])
-
-        # Always add back navigation
-        keyboard.append([
-            InlineKeyboardButton("◀️ Back to Cases", callback_data="back_to_listing")
-        ])
-
-        reply_markup = InlineKeyboardMarkup(keyboard)
-
-        await query.message.edit_text(
-            case_card,
-            reply_markup=reply_markup,
-            parse_mode="MarkdownV2"
+    context.user_data["editing_field"] = field_name
+    # Handle special cases
+    if field_name == "country":
+        await query.message.edit_text("🌍 Please enter your country:")
+        return State.ENTER_COUNTRY
+    elif field_name == "city":
+        if "country" not in context.user_data:
+            await query.message.edit_text("🌍 Please enter your country first:")
+            return State.ENTER_COUNTRY
+        await query.message.edit_text("🏙️ Please enter your city:")
+        return State.ENTER_CITY
+    
+ 
+    
+    if query.message.photo:
+        await query.edit_message_caption(
+             get_text(user_id, "enter_new_value", "listing").format(
+            field_name=field_name.replace("_", " ").title()
+        ),
+        parse_mode="Markdown",
         )
-        return State.CASE_DETAILS
-
-    except Exception as e:
-        logger.error(f"Error showing case details: {e}")
-        await query.message.edit_text(get_text(query.from_user.id, "error_fetching_case_details", "listing"), parse_mode="MarkdownV2")
-        return State.END
-
-
-@catch_async
-async def pagination_callback(update: Update, context: ContextTypes.DEFAULT_TYPE) -> int:
-    """Handle Next/Previous page navigation."""
-    query = update.callback_query
-    await query.answer()
-
-    current_page = context.user_data.get("page", 1)
-    cases = context.user_data.get("cases", [])
-    user_id = query.from_user.id
-    lang = context.user_data.get("lang", "en")
-
-    if query.data == "page_next":
-        new_page = min(current_page + 1, (len(cases) + 9) // 10)
-    elif query.data == "page_previous":
-        new_page = max(current_page - 1, 1)
     else:
-        new_page = current_page
-
-    context.user_data["page"] = new_page
-
-    reply_markup = await create_cases_pagination_keyboard(
-        cases, new_page, (len(cases) + 9) // 10, user_id, lang
-    )
-
-    message = get_text(user_id, "select_case_details", "listing")
-
-    try:
-        await query.message.edit_text(message, reply_markup=reply_markup, parse_mode="MarkdownV2")
-    except Exception as e:
-        if "Message is not modified" in str(e):
-            await query.answer("No change in page.")
-        else:
-            logger.error(f"Pagination error: {e}")
-            await query.message.edit_text(get_text(user_id, "error_paginating_cases", "listing"))
-
-    return State.CASE_DETAILS
-
+        await query.edit_message_text(
+             get_text(user_id, "enter_new_value", "listing").format(
+            field_name=field_name.replace("_", " ").title()
+        ),
+        parse_mode="Markdown",
+        )
+    
+    return State.EDIT_FIELD
 
 @catch_async
-async def back_to_listing_callback(update: Update, context: ContextTypes.DEFAULT_TYPE) -> int:
-    """Return to main case list after viewing a case."""
-    query = update.callback_query
-    await query.answer()
-
-    # Re-render the current page
-    cases = context.user_data.get("cases", [])
-    page = context.user_data.get("page", 1)
-    user_id = query.from_user.id
-    lang = context.user_data.get("lang", "en")
-
-    reply_markup = await create_cases_pagination_keyboard(
-        cases, page, (len(cases) + 9) // 10, user_id, lang
-    )
-
-    message = get_text(user_id, "select_case_details", "listing")
-
-    await query.message.edit_text(message, reply_markup=reply_markup, parse_mode="MarkdownV2")
-    return State.CASE_DETAILS
+async def update_case_field(update: Update, context: ContextTypes.DEFAULT_TYPE) -> int:
+    """Update the specified field in the case document."""
+    print("I'm Calling :smile")
+    case = context.user_data.get("editing_complaint")
+    field_name = context.user_data.get("editing_field")
+    user_id = update.effective_user.id
+    new_value = update.message.text.strip()
+    
+    
+    print(f"Field name: {field_name}")
+    print("New value: ", new_value)
+    print("Case: ", case)
+    # Fetch the case
+    if not case:
+        await update.message.reply_text(get_text(user_id, "case_not_found", "listing"))
+        return State.HANDLER_END
+    
+    try:
+        if field_name == "country":
+            country_matches = get_country_matches(new_value)
+            if not country_matches:
+                raise ValueError("Invalid country. Please provide a valid country.")
+            new_value = country_matches[0]
+        elif field_name == "city":
+            country = context.user_data.get("country")
+            if not get_city_matches(country, new_value):
+                raise ValueError(f"Invalid city for country {country}.")
+        
+        # Update the case document
+        setattr(case, field_name, new_value)
+        case.updated_at = datetime.utcnow()
+        await case.save()
+        
+        await update.message.reply_text(
+            get_text(
+                user_id,
+                "field_updated_successfully",
+                "listing"
+            ).format(
+                field_name=field_name.replace("_", " ").title(),
+                new_value=new_value,
+            ),
+            parse_mode="Markdown",
+        )
+        
+    except ValueError as e:
+        await update.message.reply_text(
+            get_text(user_id, "invalid_value", "listing").format(error_message=str(e))
+        )
+        return State.EDIT_FIELD
+    
+    return State.HANDLER_END
 
 
 
@@ -1129,101 +931,6 @@ async def handle_extend_reward_flow(
 
 
 
-@catch_async
-async def edit_field_callback(
-    update: Update, context: ContextTypes.DEFAULT_TYPE
-) -> int:
-    """Ask the user to enter a new value for the selected field."""
-    query = update.callback_query
-    await query.answer()
-    
-    user_id = update.effective_user.id
-    field_name = query.data.removeprefix("edit_field_")
-
-    context.user_data["editing_field"] = field_name
-    # Handle special cases
-    if field_name == "country":
-        await query.message.edit_text("🌍 Please enter your country:")
-        return State.ENTER_COUNTRY
-    elif field_name == "city":
-        if "country" not in context.user_data:
-            await query.message.edit_text("🌍 Please enter your country first:")
-            return State.ENTER_COUNTRY
-        await query.message.edit_text("🏙️ Please enter your city:")
-        return State.ENTER_CITY
-    
- 
-    
-    if query.message.photo:
-        await query.edit_message_caption(
-             get_text(user_id, "enter_new_value", "listing").format(
-            field_name=field_name.replace("_", " ").title()
-        ),
-        parse_mode="Markdown",
-        )
-    else:
-        await query.edit_message_text(
-             get_text(user_id, "enter_new_value", "listing").format(
-            field_name=field_name.replace("_", " ").title()
-        ),
-        parse_mode="Markdown",
-        )
-    
-    return State.EDIT_FIELD
-
-@catch_async
-async def update_case_field(update: Update, context: ContextTypes.DEFAULT_TYPE) -> int:
-    """Update the specified field in the case document."""
-    print("I'm Calling :smile")
-    case = context.user_data.get("editing_complaint")
-    field_name = context.user_data.get("editing_field")
-    user_id = update.effective_user.id
-    new_value = update.message.text.strip()
-    
-    
-    print(f"Field name: {field_name}")
-    print("New value: ", new_value)
-    print("Case: ", case)
-    # Fetch the case
-    if not case:
-        await update.message.reply_text(get_text(user_id, "case_not_found", "listing"))
-        return State.HANDLER_END
-    
-    try:
-        if field_name == "country":
-            country_matches = get_country_matches(new_value)
-            if not country_matches:
-                raise ValueError("Invalid country. Please provide a valid country.")
-            new_value = country_matches[0]
-        elif field_name == "city":
-            country = context.user_data.get("country")
-            if not get_city_matches(country, new_value):
-                raise ValueError(f"Invalid city for country {country}.")
-        
-        # Update the case document
-        setattr(case, field_name, new_value)
-        case.updated_at = datetime.utcnow()
-        await case.save()
-        
-        await update.message.reply_text(
-            get_text(
-                user_id,
-                "field_updated_successfully",
-                "listing"
-            ).format(
-                field_name=field_name.replace("_", " ").title(),
-                new_value=new_value,
-            ),
-            parse_mode="Markdown",
-        )
-        
-    except ValueError as e:
-        await update.message.reply_text(
-            get_text(user_id, "invalid_value", "listing").format(error_message=str(e))
-        )
-        return State.EDIT_FIELD
-    
-    return State.HANDLER_END
 
 @catch_async
 async def enter_country(update: Update, context: ContextTypes.DEFAULT_TYPE):
@@ -1285,55 +992,36 @@ async def delete_case_callback(
 ) -> int:
     """Handler for confirming and soft deleting a case."""
     query = update.callback_query
+    print("calling from the delete case callback", query.data)
     await query.answer()
-    case_id = query.data.removeprefix("delete_")
+
+    case = context.user_data.get("deleting_complaint", None)
     user_id = update.effective_user.id
-    
-    # Check if user is confirming deletion
-    if case_id.startswith("confirm_"):
-        case_id = case_id.removeprefix("confirm_")
-        case = await Case.find_one({"_id": PydanticObjectId(case_id)})
-        if not case:
-            await query.edit_message_text(get_text(user_id, "case_not_found", "listing"))
-            return State.END
-        
-        if case.user_id != user_id:
+
+    if not case:
+        await query.message.edit_text(get_text(user_id, "case_not_found", "listing"))
+        return State.HANDLER_END
+
+    # Authorization check
+    if case.user_id != user_id:
+        if query.message.photo:
+            await query.edit_message_caption(get_text(user_id, "not_authorized_delete", "listing"))
+        else:
             await query.edit_message_text(get_text(user_id, "not_authorized_delete", "listing"))
-            return State.END
-        
-        await update_case(case_id=PydanticObjectId(case_id), deleted=True)
-        await query.edit_message_text(get_text(user_id, "case_deleted_successfully", "listing"))
-        return await listing_command(update, context)
-    
-    # Show confirmation dialog
-    keyboard = [
-        [
-            InlineKeyboardButton(
-                get_text(user_id, "yes", "listing"), 
-                callback_data=f"delete_confirm_{case_id}"
-            ),
-            InlineKeyboardButton(
-                get_text(user_id, "no", "listing"), 
-                callback_data="delete_cancel"
-            ),
-        ]
-    ]
-    reply_markup = InlineKeyboardMarkup(keyboard)
-    
-    try:
-        await query.edit_message_text(
-            get_text(user_id, "confirm_delete", "listing"), 
-            reply_markup=reply_markup
-        )
-    except Exception as e:
-        logger.error(f"Error sending delete confirmation: {e}")
-        await context.bot.send_message(
-            chat_id=user_id,
-            text=get_text(user_id, "confirm_delete", "listing"),
-            reply_markup=reply_markup,
-        )
-    
-    return State.CASE_DETAILS
+        return State.HANDLER_END
+
+    # Soft delete
+    await update_case(case_id=PydanticObjectId(case.id), deleted=True)
+
+    # Send success message
+    success_text = get_text(user_id, "case_deleted_successfully", "listing")
+    if query.message.photo:
+        await query.edit_message_caption(success_text)
+    else:
+        await query.edit_message_text(success_text)
+
+    # Show updated listing
+    return await listing_command(update, context)
 
 @catch_async
 async def cancel_delete_callback(

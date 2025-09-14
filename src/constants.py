@@ -155,7 +155,8 @@ class State(Enum):
     class LISTING(Enum): 
         COMPLAINT_ACTION = "COMPLAINT_ACTION"
         VIEW_COMPLAINTS = "VIEW_COMPLAINTS"
-
+        CONFIRM_DELETE = "CONFIRM_DELETE"
+        CASE_DETAILS = "CASE_DETAILS"
 # ======================
 # Language Data & Constants
 # ======================
