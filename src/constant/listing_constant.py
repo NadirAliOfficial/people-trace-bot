@@ -130,6 +130,7 @@ LISTING_CONSTANT = {
         "no_wallet_selected": "🚫 No wallet selected. Please try again.",
         "error_fetching_finder": "❌ Error fetching finder details. Please try again.",
         "no_proof_available": "🚫 No proof available. Please upload a valid image file.",
+        "invalid_request": "Invalid request. Please try again.",
     },
     "chinese": {
         "no_advertise_cases": "未找到任何广告案件。",

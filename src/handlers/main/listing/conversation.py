@@ -13,7 +13,6 @@ from handlers.listing_handler import (
     confirm_extend_callback,
     confirm_reward,
     delete_case_callback,
-    edit_case_callback,
     edit_field_callback,
     extend_reward_callback,
     finder_details_callback,
@@ -55,8 +54,6 @@ from handlers.start_handler import (
 #                 pagination_callback, pattern="^(page_previous|page_next)$"
 #             ),
 #             # Editing and deleting cases
-#             CallbackQueryHandler(edit_field_callback, pattern="^edit_field_.*$"),
-#             CallbackQueryHandler(edit_case_callback, pattern="^edit_.*$"),
 #             CallbackQueryHandler(cancel_edit_callback, pattern="^cancel_edit$"),
 #             CallbackQueryHandler(delete_case_callback, pattern="^delete_.*$"),
 #             CallbackQueryHandler(cancel_delete_callback, pattern="^delete_cancel$"),
@@ -143,8 +140,9 @@ listing_conv_handler = ConversationHandler(
          State.LISTING.VIEW_COMPLAINTS: [
             CallbackQueryHandler(
                 listing_complaint_callback,
-                pattern="^(complaint_next_|complaint_back_|lead_|reward_)",
-            )
+                pattern="^(complaint_next_|complaint_back_|edit_|delete_)",
+            ),
+            
         ],
         
         State.CASE_DETAILS: [
@@ -160,7 +158,8 @@ listing_conv_handler = ConversationHandler(
             CallbackQueryHandler(extend_reward_callback, pattern=r"^extend_reward_.*$"),
 
             # Edit/Delete (existing handlers remain untouched)
-            CallbackQueryHandler(edit_case_callback, pattern=r"^edit_.*$"),
+   
+            CallbackQueryHandler(edit_field_callback, pattern="^edit_field_.*$"),
             CallbackQueryHandler(delete_case_callback, pattern=r"^delete_.*$"),
             CallbackQueryHandler(cancel_edit_callback, pattern=r"^cancel_edit$"),
             CallbackQueryHandler(cancel_delete_callback, pattern=r"^delete_cancel$"),

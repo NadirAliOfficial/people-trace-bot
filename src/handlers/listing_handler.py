@@ -293,10 +293,132 @@ async def listing_complaint_callback(update: Update, context: ContextTypes.DEFAU
     elif data.startswith("complaint_back_") and index > 0:
         context.user_data["listing_index"] -= 1
 
-    # elif data.startswith("lead_"):
+    elif data.startswith("edit_"):
     #     # Extract index from callback_data
-    #     selected_index = int(data.split("_")[1])
-    #     selected_complaint = complaints[selected_index]
+        selected_index = int(data.split("_")[1])
+        selected_complaint = complaints[selected_index]
+
+        print("selecting the complaint", selected_complaint)
+
+        # return State.HANDLER_END;
+    
+        if not selected_complaint:
+            await query.message.edit_text(get_text(update.effective_user.id, "case_not_found", "listing"))
+            return State.HANDLER_END
+        
+        editable_fields = get_text(user_id, "editable_fields", "listing")
+
+        print("Editable fields are", editable_fields)
+         # Group buttons in rows of 2
+        keyboard = []
+        field_items = list(editable_fields.items())
+        
+        # Create pairs of buttons
+        for i in range(0, len(field_items), 2):
+            row = []
+            # First button
+            k1, v1 = field_items[i]
+            row.append(InlineKeyboardButton(f"{k1}", callback_data=f"edit_field_{v1}"))
+            
+            # Second button if available
+            if i + 1 < len(field_items):
+                k2, v2 = field_items[i + 1]
+                row.append(InlineKeyboardButton(f"{k2}", callback_data=f"edit_field_{v2}"))
+            
+            keyboard.append(row)
+        
+        # Add cancel button
+        keyboard.append([
+            InlineKeyboardButton(
+                # get_text(user_id, "cancel_edit_button", "listing"), 
+                "Cancel Button",
+                callback_data="cancel_edit"
+            )
+        ])
+        
+        reply_markup = InlineKeyboardMarkup(keyboard)
+        new_text = get_text(user_id, "edit_field_prompt", "listing")
+
+        if query.message.photo:
+            # If original message had a photo
+            await query.edit_message_caption(
+                caption=new_text,
+                reply_markup=reply_markup,
+                parse_mode="Markdown",
+            )
+        else:
+            await query.edit_message_text(
+                text=new_text,
+                reply_markup=reply_markup,
+                parse_mode="Markdown",
+            )
+        
+        context.user_data["editing_complaint"] = selected_complaint
+        return State.CASE_DETAILS
+
+    elif data.startswith("delete_"):
+    #     # Extract index from callback_data
+        selected_index = int(data.split("_")[1])
+        selected_complaint = complaints[selected_index]
+
+        print("selecting the complaint", selected_complaint)
+
+        # return State.HANDLER_END;
+    
+        if not selected_complaint:
+            await query.message.edit_text(get_text(update.effective_user.id, "case_not_found", "listing"))
+            return State.HANDLER_END
+        
+        editable_fields = get_text(user_id, "editable_fields", "listing")
+
+        print("Editable fields are", editable_fields)
+         # Group buttons in rows of 2
+        keyboard = []
+        field_items = list(editable_fields.items())
+        
+        # Create pairs of buttons
+        for i in range(0, len(field_items), 2):
+            row = []
+            # First button
+            k1, v1 = field_items[i]
+            row.append(InlineKeyboardButton(f"{k1}", callback_data=f"edit_field_{v1}_{selected_complaint.id}"))
+            
+            # Second button if available
+            if i + 1 < len(field_items):
+                k2, v2 = field_items[i + 1]
+                row.append(InlineKeyboardButton(f"{k2}", callback_data=f"edit_field_{v2}_{selected_complaint.id}"))
+            
+            keyboard.append(row)
+        
+        # Add cancel button
+        keyboard.append([
+            InlineKeyboardButton(
+                # get_text(user_id, "cancel_edit_button", "listing"), 
+                "Cancel Button",
+                callback_data="cancel_edit"
+            )
+        ])
+        
+        reply_markup = InlineKeyboardMarkup(keyboard)
+        new_text = get_text(user_id, "edit_field_prompt", "listing")
+
+        if query.message.photo:
+            # If original message had a photo
+            await query.edit_message_caption(
+                caption=new_text,
+                reply_markup=reply_markup,
+                parse_mode="Markdown",
+            )
+        else:
+            await query.edit_message_text(
+                text=new_text,
+                reply_markup=reply_markup,
+                parse_mode="Markdown",
+            )
+        
+        context.user_data["editing_complaint"] = selected_complaint
+        return State.CASE_DETAILS
+
 
     #     # Store selected complaint in user_data
     #     context.user_data["selected_complaint"] = selected_complaint
@@ -1006,75 +1128,6 @@ async def handle_extend_reward_flow(
         return State.END
 
 
-@catch_async
-async def edit_case_callback(update: Update, context: ContextTypes.DEFAULT_TYPE) -> int:
-    """Handler for editing a case."""
-    query = update.callback_query
-    await query.answer()
-    
-    # Extract case_id from callback data
-    case_id = query.data.removeprefix("edit_")
-    if "_" in case_id:
-        case_id = case_id.split("_", maxsplit=1)[-1]
-    
-    print(f"Extracted case_id: {case_id}")
-    
-    # Validate case_id
-    try:
-        case_id_obj = ObjectId(case_id)
-    except errors.InvalidId:
-        await query.message.edit_text(get_text(update.effective_user.id, "invalid_case_id", "listing"))
-        return State.END
-    
-    # Fetch the case from the database
-    case = await Case.find_one({"_id": case_id_obj})
-    if not case:
-        await query.message.edit_text(get_text(update.effective_user.id, "case_not_found", "listing"))
-        return State.END
-    
-    user_id = update.effective_user.id
-    if case.user_id != user_id:
-        await query.message.edit_text(get_text(user_id, "not_authorized_edit", "listing"))
-        return State.END
-    
-    # Fetch editable fields based on the user's language
-    editable_fields = get_text(user_id, "editable_fields", "listing")
-    
-    # Group buttons in rows of 2
-    keyboard = []
-    field_items = list(editable_fields.items())
-    
-    # Create pairs of buttons
-    for i in range(0, len(field_items), 2):
-        row = []
-        # First button
-        k1, v1 = field_items[i]
-        row.append(InlineKeyboardButton(f"{k1}", callback_data=f"edit_field_{v1}_{case_id}"))
-        
-        # Second button if available
-        if i + 1 < len(field_items):
-            k2, v2 = field_items[i + 1]
-            row.append(InlineKeyboardButton(f"{k2}", callback_data=f"edit_field_{v2}_{case_id}"))
-        
-        keyboard.append(row)
-    
-    # Add cancel button
-    keyboard.append([
-        InlineKeyboardButton(
-            get_text(user_id, "cancel_edit_button", "listing"), 
-            callback_data="cancel_edit"
-        )
-    ])
-    
-    reply_markup = InlineKeyboardMarkup(keyboard)
-    await query.message.edit_text(
-        get_text(user_id, "edit_field_prompt", "listing"),
-        reply_markup=reply_markup,
-        parse_mode="Markdown",
-    )
-    
-    context.user_data["editing_case_id"] = case_id
-    return State.CASE_DETAILS
 
 @catch_async
 async def edit_field_callback(
@@ -1085,17 +1138,9 @@ async def edit_field_callback(
     await query.answer()
     
     user_id = update.effective_user.id
-    callback_data = query.data.removeprefix("edit_field_")
-    last_underscore_index = callback_data.rfind("_")
-    field_name = callback_data[:last_underscore_index]
-    case_id = callback_data[last_underscore_index + 1 :]
-    
-    print("Field name:", field_name, "Case ID:", case_id)
-    
-    # Store editing info
-    context.user_data["editing_case_id"] = case_id
+    field_name = query.data.removeprefix("edit_field_")
+
     context.user_data["editing_field"] = field_name
-    
     # Handle special cases
     if field_name == "country":
         await query.message.edit_text("🌍 Please enter your country:")
@@ -1107,13 +1152,22 @@ async def edit_field_callback(
         await query.message.edit_text("🏙️ Please enter your city:")
         return State.ENTER_CITY
     
-    # For other fields
-    await query.message.edit_text(
-        get_text(user_id, "enter_new_value", "listing").format(
+ 
+    
+    if query.message.photo:
+        await query.edit_message_caption(
+             get_text(user_id, "enter_new_value", "listing").format(
             field_name=field_name.replace("_", " ").title()
         ),
         parse_mode="Markdown",
-    )
+        )
+    else:
+        await query.edit_message_text(
+             get_text(user_id, "enter_new_value", "listing").format(
+            field_name=field_name.replace("_", " ").title()
+        ),
+        parse_mode="Markdown",
+        )
     
     return State.EDIT_FIELD
 
@@ -1121,22 +1175,19 @@ async def edit_field_callback(
 async def update_case_field(update: Update, context: ContextTypes.DEFAULT_TYPE) -> int:
     """Update the specified field in the case document."""
     print("I'm Calling :smile")
-    case_id = context.user_data.get("editing_case_id")
+    case = context.user_data.get("editing_complaint")
     field_name = context.user_data.get("editing_field")
     user_id = update.effective_user.id
     new_value = update.message.text.strip()
     
-    print(f"CaseId: {case_id}, Field Name: {field_name}, New Value: {new_value}")
     
-    if not case_id or not field_name:
-        await update.message.reply_text(get_text(user_id, "invalid_request"))
-        return State.END
-    
+    print(f"Field name: {field_name}")
+    print("New value: ", new_value)
+    print("Case: ", case)
     # Fetch the case
-    case = await Case.find_one({"_id": PydanticObjectId(case_id)})
     if not case:
         await update.message.reply_text(get_text(user_id, "case_not_found", "listing"))
-        return State.END
+        return State.HANDLER_END
     
     try:
         if field_name == "country":
@@ -1172,7 +1223,7 @@ async def update_case_field(update: Update, context: ContextTypes.DEFAULT_TYPE) 
         )
         return State.EDIT_FIELD
     
-    return State.END
+    return State.HANDLER_END
 
 @catch_async
 async def enter_country(update: Update, context: ContextTypes.DEFAULT_TYPE):
