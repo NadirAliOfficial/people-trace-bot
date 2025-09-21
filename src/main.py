@@ -37,7 +37,7 @@ setup_logging()
 
 async def main_setup():
     # application = ApplicationBuilder().token(TOKEN if NODE_ENV.lower() == "production" else "8466947355:AAHUohQPzgpQi5OyoEH1G_4MR1CC-msnwOo").build()
-    application = ApplicationBuilder().token("8466947355:AAHUohQPzgpQi5OyoEH1G_4MR1CC-msnwOo" if NODE_ENV.lower() == "production" else "7333467475:AAEj3gKOVlc1MG_PiyCrrVkOZU4WY7x9A48").build()
+    application = ApplicationBuilder().token("8466947355:AAHUohQPzgpQi5OyoEH1G_4MR1CC-msnwOo" if NODE_ENV.lower() == "production" else "8466947355:AAHUohQPzgpQi5OyoEH1G_4MR1CC-msnwOo").build()
     # application = ApplicationBuilder().token("7333467475:AAEj3gKOVlc1MG_PiyCrrVkOZU4WY7x9A48" if NODE_ENV.lower() == "production" else "7333467475:AAEj3gKOVlc1MG_PiyCrrVkOZU4WY7x9A48").build()
 
     application.add_handler(start_handler)

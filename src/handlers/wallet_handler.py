@@ -6,6 +6,7 @@ from services.tron_wallet_service import TronWallet
 from services.wallet_service import WalletService
 from utils.get_network import get_network
 from utils.error_wrapper import catch_async
+from utils.logger import logger
 from telegram.ext import ContextTypes
 import re
 
@@ -435,9 +436,10 @@ async def show_specific_address(update: Update, context: ContextTypes.DEFAULT_TY
     wallet = await WalletService.get_wallet_by_id(wallet_id)
 
     if wallet:
-        # Format the wallet details using the language-specific template
-        message = get_text(user_id, "wallet_details", "wallets").format(
-            name=wallet["name"], public_key=wallet["public_key"]
+        # Format the wallet details using HTML to avoid Markdown parsing issues
+        message = (
+            f"<b>Wallet Name:</b> {wallet['name']}\n\n"
+            f"<b>Public Address:</b> <code>{wallet['public_key']}</code>"
         )
 
         # Add a back button for navigation
@@ -454,9 +456,16 @@ async def show_specific_address(update: Update, context: ContextTypes.DEFAULT_TY
         kb = []  # No keyboard if wallet is not found
 
     # Edit the message with the formatted text and keyboard
-    await update.callback_query.message.edit_text(
-        message, parse_mode="Markdown", reply_markup=InlineKeyboardMarkup(kb)
-    )
+    try:
+        await update.callback_query.message.edit_text(
+            message, parse_mode="HTML", reply_markup=InlineKeyboardMarkup(kb)
+        )
+    except error.BadRequest as e:
+        if "message is not modified" in str(e):
+            # Ignore duplicate message errors
+            logger.info("Message not modified - ignoring duplicate")
+        else:
+            raise
     return State.WALLETS.WALLET_MENU
 
 
