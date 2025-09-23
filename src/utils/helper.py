@@ -94,9 +94,11 @@ def setup_logging():
 
 
 def get_username(chat) -> str:
-    if chat.first_name:
-        return f"{chat.first_name} {chat.last_name or ''}".strip()
-    elif chat.username:
-        return f"@{chat.username}"
+    """Get username in a consistent format for display."""
+    if chat.username:
+        return f"@{chat.username}"  # Always return username if available
+    elif chat.first_name:
+        # Return first name only for cleaner display
+        return chat.first_name
     else:
         return "N/A"

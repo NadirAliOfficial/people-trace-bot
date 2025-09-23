@@ -35,6 +35,8 @@ from services.finder_service import FinderService
 from models.user_model import User
 
 
+#  SECTION - UTILITIES
+
 async def get_available_countries() -> list[str]:
     """Fetch distinct countries from active cases."""
     countries = await Case.distinct(
@@ -56,6 +58,10 @@ async def get_provinces_by_country(country: str) -> list[str]:
     )
     # Return sorted, unique list (distinct already ensures uniqueness)
     return sorted(p for p in provinces if p)
+
+
+# SECTION  - HANDLERS
+
 
 
 # //NOTE - This the codebase for finder country selection
@@ -905,7 +911,8 @@ async def case_details(update: Update, context: ContextTypes.DEFAULT_TYPE) -> in
         print(f"Case ID: {case_id}")
         await FinderService.update_or_create_finder(user_id, case=case_id)
         case = await fetch_case_by_number(case_id)
-
+        
+        
         if not case:
             await query.edit_message_text(get_text(user_id, "case_not_found", "start-complaints"))
             return State.END
@@ -943,6 +950,8 @@ async def case_details(update: Update, context: ContextTypes.DEFAULT_TYPE) -> in
                 )
             ],
         ]
+
+        context.user_data["finder_case"] = case
 
         # Send case details
         await query.message.reply_text(
@@ -1259,8 +1268,10 @@ async def finder_wallet_name_handler(
         )
         return State.FINDER_NAME_WALLET
 
-    case_id = context.user_data.get("found_case_no")
-    case = await get_case_by_id(case_id)
+    case = context.user_data.get("selected_complaint")
+
+    print("Case from finder_wallet_name_handler", case)
+    
 
     print(f"Wallet name: {wallet_name}")
 
@@ -1270,17 +1281,15 @@ async def finder_wallet_name_handler(
         )
         return State.FINDER_NAME_WALLET
 
-    wallet_type = context.user_data.get("wallet_type")
-    wallet = await WalletService.create_wallet(user_id, wallet_type, wallet_name)
+    wallet = await WalletService.create_wallet(user_id,  wallet_type=case.wallet.wallet_type, wallet_name=wallet_name)
 
     if wallet:
-        if wallet_type == "SOL":
+        if case.wallet.wallet_type == "SOL":
             total_sol = await WalletService.get_sol_balance(wallet.public_key)
-        elif wallet_type == "USDT":
+        elif case.wallet.wallet_type == "USDT":
             total_sol = await WalletService.get_usdt_balance(wallet.public_key)
 
         print(f"Total SOL: {total_sol}")
-        print(f"This is the wallet type: {wallet_type}")
 
         context.user_data["wallet"] = wallet
 
@@ -1294,12 +1303,12 @@ async def finder_wallet_name_handler(
         ]
 
         print(
-            f"Confirm transfer of {case.reward} {wallet.wallet_type} from {wallet.name}?\n"
+            f"Confirm transfer of {case.reward} {case.wallet.wallet_type} from {wallet.name}?\n"
             f"Wallet address: {wallet.public_key}"
         )
 
         await update.message.reply_text(
-            f"Confirm transfer of {case.reward} {wallet.wallet_type} from {wallet.name}?\n"
+            f"Confirm transfer of {case.reward} {case.wallet.wallet_type} from {wallet.name}?\n"
             f"Wallet address: {wallet.public_key}",
             reply_markup=InlineKeyboardMarkup(keyboard),
         )
@@ -1710,7 +1719,7 @@ async def handle_extend_reward(update: Update, context: ContextTypes.DEFAULT_TYP
             )
             return State.FINDER_CHOOSE_WALLET_TYPE
         else:
-            msg = get_text(user_id, "wallet_name_prompt")
+            msg = get_text(user_id, "wallet_name_prompt", "start-complaints")
             if update.message:
                 await update.message.reply_text(msg, parse_mode="HTML")
             elif update.callback_query:
