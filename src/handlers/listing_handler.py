@@ -441,7 +441,7 @@ class FinderDisplayBuilder:
         )
 
     @staticmethod
-    def build_finder_detail_keyboard(
+    async def build_finder_detail_keyboard(
         finder: Finder,
         case: Case,
         user_id: int,
@@ -467,12 +467,15 @@ class FinderDisplayBuilder:
                 ]
             )
 
+            print("case id: ", case.id)
+            extend_reward_count = await ExtendReward.find({"case.$id": case.id}).count()
+            print("Extend Count: ", extend_reward_count)
             # Extend reward button (if not already extended)
-            if not finder.extended_reward_requested:
+            if extend_reward_count > 0:
                 keyboard.append(
                     [
                         InlineKeyboardButton(
-                            "⏩ Extend Reward",
+                            f"⏩ Extend Reward ({extend_reward_count})",
                             callback_data=f"extend_reward_{finder.id}_{case.id}",
                         )
                     ]
@@ -681,6 +684,7 @@ async def listing_complaint_callback(
     elif data.startswith("delete_"):
         return await _handle_delete_action(update, context, user_id, data, complaints)
     elif data.startswith("view_finder_"):
+        context.user_data["selected_complaint"] = complaints[index]
         print("Viewing the finders for the first case")
         return await _handle_view_finders(update, context, user_id, data, complaints)
     else:
@@ -779,7 +783,7 @@ async def show_finder(
 
     # Build finder display components (same pattern as cases)
     text = FinderDisplayBuilder.build_finder_detail_text(case, finder, user_id)
-    keyboard = FinderDisplayBuilder.build_finder_detail_keyboard(
+    keyboard = await FinderDisplayBuilder.build_finder_detail_keyboard(
         finder, case, user_id, index, total
     )
     reply_markup = InlineKeyboardMarkup(keyboard)
@@ -896,8 +900,10 @@ async def finder_navigation_callback(
         # return await _handle_send_reward_action(update, context, user_id, data, finders)
 
     # Handle actions (similar to cases but for finders)
-    # elif data.startswith("extend_reward_"):
-    #     return await _handle_extend_reward_action(update, context, user_id, data, finders)
+    elif data.startswith("extend_reward_"):
+        return await _handle_extend_reward_action(
+            update, context, user_id, data, finders
+        )
     # elif data.startswith("view_proof_"):
     #     return await _handle_view_proof_action(update, context, user_id, data, finders)
     # elif data.startswith("back_to_case_"):
@@ -1131,8 +1137,68 @@ async def edit_field_callback(
     text = get_text(user_id, "enter_new_value", "listing").format(
         field_name=field_name.replace("_", " ").title()
     )
-    await MessageHandler.send_or_edit_message(update, text)
+    await MessageHandler.send_or_edit_message(update, text, parse_mode="Markdown")
     return State.EDIT_FIELD
+
+
+async def _validate_and_process_field_value(field_name: str, value: str, context):
+    """Validate and process field values depending on the field type."""
+    fname = field_name.lower().strip()
+
+    # ✅ Name / Person Name / Relationship / Reason
+    if fname in ["name", "person_name", "relationship", "reason"]:
+        if len(value) < 2:
+            raise ValueError("Value must be at least 2 characters long.")
+        return value.strip().title()
+
+    # ✅ Location fields
+    elif fname in ["last_seen_location", "country", "province", "city"]:
+        if len(value) < 2:
+            raise ValueError(f"{field_name.replace('_', ' ').title()} cannot be empty.")
+        return value.strip().title()
+
+    # ✅ Gender
+    elif fname == "gender":
+        allowed = ["MALE", "FEMALE", "OTHER"]
+        if value.upper() not in allowed:
+            raise ValueError(f"Invalid gender. Allowed: {', '.join(allowed)}")
+        return value.upper()
+
+    # ✅ Numeric: Age, Height, Weight
+    elif fname in ["age", "height", "weight"]:
+        try:
+            num_value = int(value)
+            if num_value <= 0:
+                raise ValueError(
+                    f"{field_name.replace('_', ' ').title()} must be greater than 0."
+                )
+            return num_value
+        except ValueError:
+            raise ValueError(
+                f"{field_name.replace('_', ' ').title()} must be a valid number."
+            )
+
+    # ✅ Hair / Eye Color / Distinctive Features
+    elif fname in ["hair_color", "eye_color", "distinctive_features"]:
+        if not value.strip():
+            raise ValueError(f"{field_name.replace('_', ' ').title()} cannot be empty.")
+        return value.strip().title()
+
+    # ✅ Mobile Number (11 digits, starts with country code 92)
+    elif fname in ["mobile", "mobile_number", "contact_number"]:
+        if not value.isdigit():
+            raise ValueError("Mobile number must contain only digits.")
+        if len(value) != 11:
+            raise ValueError("Mobile number must be exactly 11 digits.")
+        if not value.startswith("92"):
+            raise ValueError(
+                "Mobile number must start with the country code (e.g., 92...)."
+            )
+        return value.strip()
+
+    # 🔄 Default
+    else:
+        return value.strip()
 
 
 @catch_async
@@ -1148,48 +1214,79 @@ async def update_case_field(update: Update, context: ContextTypes.DEFAULT_TYPE) 
         await MessageHandler.send_error_message(update, user_id, "case_not_found")
         return State.END
 
-    try:
-        # Validate and process field value
-        processed_value = await _validate_and_process_field_value(
-            field_name, new_value, context
+    # Validate and process field value
+    processed_value = await _validate_and_process_field_value(
+        field_name, new_value, context
+    )
+    # Update the case document
+    print("Field name ", field_name, "New Value", new_value)
+
+    setattr(case, field_name, processed_value)
+    case.updated_at = datetime.utcnow()
+    await case.save()
+    # Update the complaint in the listing
+    editing_index = context.user_data.get("editing_index", 0)
+    complaints = context.user_data.get("listing_complaints", [])
+    if editing_index < len(complaints):
+        complaints[editing_index] = case
+    # Send success message and return to complaint view
+    success_text = get_text(user_id, "field_updated_successfully", "listing").format(
+        field_name=field_name.replace("_", " ").title(),
+        new_value=processed_value,
+    )
+    await update.message.reply_text(success_text, parse_mode="HTML")
+    # Clear edit context
+    _clear_edit_context(context)
+    # Return to complaint view
+    await show_complaint(user_id, update, context)
+    return State.LISTING.VIEW_COMPLAINTS
+
+
+@catch_async
+async def _handle_extend_reward_action(
+    update: Update,
+    context: ContextTypes.DEFAULT_TYPE,
+    user_id: int,
+    data: str,
+    finders: List[Finder],
+) -> int:
+    """Handle extend reward action for a specific finder."""
+    query = update.callback_query
+    await query.answer()
+    user_id = query.from_user.id
+
+    finder = context.user_data.get("finder_current_finder")
+    case = context.user_data.get("selected_complaint")
+
+    # Get all extend rewards for this case
+    extend_rewards = await ExtendReward.find(
+        {"case.$id": PydanticObjectId(case.id)}
+    ).to_list()
+
+    if not extend_rewards:
+        await query.message.edit_text(
+            get_text(user_id, "extend_reward_not_found", "listing")
         )
-
-        # Update the case document
-        setattr(case, field_name, processed_value)
-        case.updated_at = datetime.utcnow()
-        await case.save()
-
-        # Update the complaint in the listing
-        editing_index = context.user_data.get("editing_index", 0)
-        complaints = context.user_data.get("listing_complaints", [])
-        if editing_index < len(complaints):
-            complaints[editing_index] = case
-
-        # Send success message and return to complaint view
-        success_text = get_text(
-            user_id, "field_updated_successfully", "listing"
-        ).format(
-            field_name=field_name.replace("_", " ").title(),
-            new_value=processed_value,
-        )
-        await update.message.reply_text(success_text, parse_mode="HTML")
-
-        # Clear edit context
-        _clear_edit_context(context)
-
-        # Return to complaint view
-        await show_complaint(user_id, update, context)
-        return State.LISTING.VIEW_COMPLAINTS
-
-    except ValueError as e:
-        await update.message.reply_text(
-            ERROR_MESSAGES["invalid_value"].format(error_message=str(e))
-        )
-        return State.EDIT_FIELD
-    except Exception as e:
-        logger.error(f"Error updating case field: {e}")
-        await MessageHandler.send_error_message(update, user_id, "error_updating_field")
         return State.END
+
+    # Build buttons from DB values
+    kb = [
+        [
+            InlineKeyboardButton(
+                f"💰 Extend Reward ({er.extend_reward_amount})",
+                callback_data=f"extend_amount_{er.id}",
+            )
+        ]
+        for er in extend_rewards
+        if er.extend_reward_amount
+    ]
+
+    # Replace old button with new ones
+    await query.message.edit_reply_markup(reply_markup=InlineKeyboardMarkup(kb))
+
+    return State.EXTEND_REWARD_CHOICE
+
+    # return await handle_extend_reward_flow(update, context, case_id)
 
 
 def _clear_edit_context(context: ContextTypes.DEFAULT_TYPE) -> None:
@@ -1312,7 +1409,7 @@ async def view_finder_callback(
     detail_card = FinderDisplayBuilder.build_finder_detail_text(
         case, first_finder, user_id
     )
-    keyboard = FinderDisplayBuilder.build_finder_detail_keyboard(
+    keyboard = await FinderDisplayBuilder.build_finder_detail_keyboard(
         first_finder, case, user_id, 0, len(finders)
     )
     reply_markup = InlineKeyboardMarkup(keyboard)
@@ -1349,7 +1446,7 @@ async def view_finder_callback(
 
 #         # Build detailed finder information
 #         detail_card = FinderDisplayBuilder.build_finder_detail_text(case, finder, user_id)
-#         keyboard = FinderDisplayBuilder.build_finder_detail_keyboard(
+#         keyboard = await FinderDisplayBuilder.build_finder_detail_keyboard(
 #             finder, case, user_id, finder_index, total_finders
 #         )
 #         reply_markup = InlineKeyboardMarkup(keyboard)
@@ -1394,7 +1491,7 @@ async def view_finder_callback(
 #         return State.END
 #     # Build detailed finder information
 #     detail_card = FinderDisplayBuilder.build_finder_detail_text(case, finder, user_id)
-#     keyboard = FinderDisplayBuilder.build_finder_detail_keyboard(finder, case, user_id)
+#     keyboard = await FinderDisplayBuilder.build_finder_detail_keyboard(finder, case, user_id)
 #     reply_markup = InlineKeyboardMarkup(keyboard)
 #     await MessageHandler.send_or_edit_message(
 #         update, detail_card, reply_markup, "HTML"
@@ -1894,94 +1991,75 @@ async def handle_extend_reward_flow(
 ) -> int:
     """Unified handler for extend reward flows"""
     user_id = update.effective_user.id
-    try:
-        case = await Case.find_one({"_id": PydanticObjectId(case_id)}, fetch_links=True)
-        if not case:
-            await update.callback_query.message.edit_text(
-                get_text(user_id, "case_not_found")
-            )
-            return State.END
-
-        # Fetch all pending extend rewards
-        extend_rewards = await ExtendReward.find(
-            {
-                "case.$id": PydanticObjectId(case_id),
-                "status": {"$ne": ExtendRewardStatus.COMPLETED},
-            }
-        ).to_list()
-
-        if not extend_rewards:
-            await update.callback_query.message.edit_text(
-                get_text(user_id, "extend_reward_not_found")
-            )
-            return State.END
-
-        # Build case details
-        proof_text = (
-            f"[Proof]({case.case_photo})"
-            if case.case_photo and case.case_photo.startswith("http")
-            else get_text(user_id, "no_proof_available", "listing")
+    case = await Case.find_one({"_id": PydanticObjectId(case_id)}, fetch_links=True)
+    if not case:
+        await update.callback_query.message.edit_text(
+            get_text(user_id, "case_not_found")
         )
-
-        case_details = get_text(user_id, "case_details_template", "listing").format(
-            person_name=case.person_name,
-            last_seen_location=case.last_seen_location,
-            age=case.age or "Unknown",
-            reward=case.reward or "0",
-            reward_type=case.wallet.wallet_type if case.wallet else "None",
-            last_seen_date=(
-                case.created_at.strftime("%d %B %Y") if case.created_at else "Unknown"
-            ),
-            height=case.height or "Unknown",
+        return State.END
+    # Fetch all pending extend rewards
+    extend_rewards = await ExtendReward.find(
+        {
+            "case.$id": PydanticObjectId(case_id),
+            "status": {"$ne": ExtendRewardStatus.COMPLETED},
+        }
+    ).to_list()
+    if not extend_rewards:
+        await update.callback_query.message.edit_text(
+            get_text(user_id, "extend_reward_not_found")
         )
-
-        full_message = case_details + f"\n<b>Proof:</b> {proof_text}\n\n"
-        full_message += get_text(user_id, "extend_reward_header", "listing") + "\n"
-
-        keyboard = []
-        for extend_reward in extend_rewards:
-            full_message += (
-                f"👤 <b>Requested By:</b> <code>{extend_reward.user_id}</code>\n"
-            )
-            full_message += f"   <b>Amount Requested:</b> {extend_reward.extend_reward_amount} {case.wallet.wallet_type}\n\n"
-
-            if action == "approve":
-                keyboard.append(
-                    [
-                        InlineKeyboardButton(
-                            f"Approve Extend by {extend_reward.user_id}",
-                            callback_data=f"approve_extend_{extend_reward.id}_{case_id}",
-                        )
-                    ]
-                )
-
-        # Add cancel button
+        return State.END
+    # Build case details
+    proof_text = (
+        f"[Proof]({case.case_photo})"
+        if case.case_photo and case.case_photo.startswith("http")
+        else get_text(user_id, "no_proof_available", "listing")
+    )
+    case_details = get_text(user_id, "case_details_template", "listing").format(
+        person_name=case.person_name,
+        last_seen_location=case.last_seen_location,
+        age=case.age or "Unknown",
+        reward=case.reward or "0",
+        reward_type=case.wallet.wallet_type if case.wallet else "None",
+        last_seen_date=(
+            case.created_at.strftime("%d %B %Y") if case.created_at else "Unknown"
+        ),
+        height=case.height or "Unknown",
+    )
+    full_message = case_details + f"\n<b>Proof:</b> {proof_text}\n\n"
+    full_message += get_text(user_id, "extend_reward_header", "listing") + "\n"
+    keyboard = []
+    for extend_reward in extend_rewards:
+        full_message += (
+            f"👤 <b>Requested By:</b> <code>{extend_reward.user_id}</code>\n"
+        )
+        full_message += f"   <b>Amount Requested:</b> {extend_reward.extend_reward_amount} {case.wallet.wallet_type}\n\n"
         if action == "approve":
             keyboard.append(
                 [
                     InlineKeyboardButton(
-                        get_text(user_id, "cancel_button", "listing"),
-                        callback_data="cancel_extend",
+                        f"Approve Extend by {extend_reward.user_id}",
+                        callback_data=f"approve_extend_{extend_reward.id}_{case_id}",
                     )
                 ]
             )
-
-        reply_markup = InlineKeyboardMarkup(keyboard) if keyboard else None
-
-        await update.callback_query.message.edit_text(
-            full_message.strip(),
-            reply_markup=reply_markup,
-            parse_mode="HTML",
+    # Add cancel button
+    if action == "approve":
+        keyboard.append(
+            [
+                InlineKeyboardButton(
+                    get_text(user_id, "cancel_button", "listing"),
+                    callback_data="cancel_extend",
+                )
+            ]
         )
-
-        return State.CONFIRM_EXTEND if action == "approve" else State.CASE_DETAILS
-
-    except Exception as e:
-        logger.error(f"Error in extend_reward_flow: {str(e)}")
-        await update.callback_query.message.edit_text(
-            get_text(user_id, "error_processing_extend", "listing")
-        )
-        return State.END
+    reply_markup = InlineKeyboardMarkup(keyboard) if keyboard else None
+    await update.callback_query.message.edit_text(
+        full_message.strip(),
+        reply_markup=reply_markup,
+        parse_mode="HTML",
+    )
+    return State.CONFIRM_EXTEND if action == "approve" else State.CASE_DETAILS
 
 
 @catch_async
@@ -3160,7 +3238,7 @@ async def finder_detail_navigation_callback(
         detail_card = FinderDisplayBuilder.build_finder_detail_text(
             case, finder, user_id
         )
-        keyboard = FinderDisplayBuilder.build_finder_detail_keyboard(
+        keyboard = await FinderDisplayBuilder.build_finder_detail_keyboard(
             finder, case, user_id, finder_index, len(finders)
         )
         reply_markup = InlineKeyboardMarkup(keyboard)

@@ -11,7 +11,7 @@ LISTING_CONSTANT = {
         "not_authorized_delete": "❌ You are not authorized to delete this case.",
         "case_deleted_successfully": "✅ Case has been successfully deleted.",
         "edit_canceled": "📋 Edit canceled. Returning to case listing.",
-        "enter_new_value": "✏️ Please enter the new value for **{field_name}**: ",
+        "enter_new_value": '✏️ What should the new value for "{field_name}" be?',
         "field_updated_successfully": "✅ **{field_name}** updated to: **{new_value}**",
         "invalid_value": "❌ {error_message} Please enter a valid value.",
         "edit_field_prompt": "📝 **Which field would you like to edit?**",
@@ -61,7 +61,7 @@ LISTING_CONSTANT = {
         "owner_message": (
             "📢 <b>New Reward Transfer Completed</b>\n\n"
             "🆔 <b>User ID:</b> <code>{user_id}</code>\n"
-        "📄 <b>Case ID:</b> <code>{case.id}</code>\n"
+            "📄 <b>Case ID:</b> <code>{case.id}</code>\n"
             "💰 <b>Amount:</b> {reward_amount} {wallet_type}\n"
             "🔐 <b>Wallet:</b> <code>{wallet.public_key}</code>\n"
             "🏷️ <b>Wallet Name:</b> {wallet.name}\n\n"
@@ -126,7 +126,6 @@ LISTING_CONSTANT = {
             "📥 To: `{to_wallet}`\n\n"
             "Please select a wallet from the options below:"
         ),
-
         ## ERROR CASES
         "error_processing_reward": "❌ Error processing your reward. Please try again.",
         "error_asking_reward_amount": "❌ Error asking reward amount. Please try again.",
@@ -137,5 +136,5 @@ LISTING_CONSTANT = {
         "no_proof_available": "🚫 No proof available. Please upload a valid image file.",
         "invalid_request": "Invalid request. Please try again.",
         "case_deleted_successfully": "✅ Case has been successfully deleted.",
-    }    
+    }
 }

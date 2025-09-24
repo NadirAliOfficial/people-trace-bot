@@ -90,6 +90,11 @@ listing_conv_handler = ConversationHandler(
             CallbackQueryHandler(cancel_delete_callback, pattern=r"^delete_cancel$"),
         ],
         # # SECTION: EDIT FIELD
+        State.EDIT_FIELD: [
+            MessageHandler(
+                filters.TEXT & ~filters.COMMAND, update_case_field
+            ),  # In Use
+        ],
         # State.ENTER_COUNTRY: [
         #     MessageHandler(filters.TEXT & ~filters.COMMAND, process_country),
         # ],
@@ -105,9 +110,6 @@ listing_conv_handler = ConversationHandler(
         # State.VERIFY_MOBILE_OTP: [
         #     MessageHandler(filters.TEXT & ~filters.COMMAND, verify_mobile_otp),
         #     CallbackQueryHandler(cancel_mobile_edit_callback, pattern=r"^cancel_mobile_edit$"),
-        # ],
-        # State.EDIT_FIELD: [
-        #     MessageHandler(filters.TEXT & ~filters.COMMAND, update_case_field), # In Use
         # ],
         # State.CONFIRM_EXTEND: [
         #     CallbackQueryHandler(approve_extend_callback, pattern=r"^approve_extend_.*$"),

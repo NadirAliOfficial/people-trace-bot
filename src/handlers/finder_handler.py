@@ -63,7 +63,6 @@ async def get_provinces_by_country(country: str) -> list[str]:
 # SECTION  - HANDLERS
 
 
-
 # //NOTE - This the codebase for finder country selection
 
 @catch_async
@@ -568,29 +567,63 @@ async def handle_proof(update: Update, context: ContextTypes.DEFAULT_TYPE) -> in
     await update.message.reply_text(get_text(user_id, "proof_received",  "finder"))
     return State.ENTER_LOCATION
 
-
 @catch_async
 async def handle_enter_location(
     update: Update, context: ContextTypes.DEFAULT_TYPE
 ) -> int:
     """Notify the advertiser and ask them to confirm the reward transfer."""
     user_id = update.effective_user.id
-    location = update.message.text.strip()
-    context.user_data["finder_location"] = location
 
-    await FinderService.update_or_create_finder(user_id, reported_location=location)
-    await update.message.reply_text(
-        "Do you want to extend the reward?",
-        reply_markup=InlineKeyboardMarkup(
-            [
+    # Case 1: User typed location as a message
+    if update.message:
+        location = update.message.text.strip()
+        context.user_data["finder_location"] = location
+
+        selected_case = context.user_data.get("selected_complaint")
+        await FinderService.update_or_create_finder(user_id, reported_location=location)
+
+        existing_wallets = await WalletService.get_wallet_by_type(
+            user_id, selected_case.wallet.wallet_type
+        )
+
+        if existing_wallets:
+            kb = [
                 [
-                    InlineKeyboardButton("Yes", callback_data="yes_extend"),
-                    InlineKeyboardButton("No", callback_data="no_extend"),
-                ],
+                    InlineKeyboardButton(
+                        wallet.name, callback_data=f"wallet_{str(wallet.id)}"
+                    )
+                ]
+                for wallet in existing_wallets
             ]
-        ),
-    )
-    return State.EXTEND_REWARD
+            kb.append(
+                [
+                    InlineKeyboardButton(
+                        get_text(user_id, "create_wallet", "globals"),
+                        callback_data="create_new_wallet",
+                    )
+                ]
+            )
+
+            await update.message.reply_text(
+                get_text(user_id, "choose_existing_or_new_wallet", "settings"),
+                reply_markup=InlineKeyboardMarkup(kb),
+                parse_mode="HTML",
+            )
+            return State.FINDER_CHOOSE_WALLET_TYPE
+
+        # No wallets → ask to create one
+        msg = get_text(user_id, "wallet_name_prompt", "start-complaints")
+        await update.message.reply_text(msg, parse_mode="HTML")
+        return State.FINDER_NAME_WALLET
+
+    # Case 2: User pressed a button
+    elif update.callback_query:
+        query = update.callback_query
+        await query.answer()
+
+        msg = get_text(user_id, "wallet_name_prompt", "start-complaints")
+        await query.message.reply_text(msg, parse_mode="HTML")
+        return State.FINDER_NAME_WALLET
 
 
 # -----------------------------------------------------------------------------------------------------------
