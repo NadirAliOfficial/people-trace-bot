@@ -507,7 +507,7 @@ async def handle_proof(update: Update, context: ContextTypes.DEFAULT_TYPE) -> in
         file_id = update.message.video.file_id
         file_extension = update.message.video.mime_type.split("/")[
             1
-        ]  
+        ]
         # Get video format (e.g., mp4, mov, etc.)
         file_size = update.message.video.file_size  # File size in bytes
         is_video = True  # Mark this as a video upload
@@ -862,7 +862,7 @@ async def show_advertisements(
     except Exception as e:
         logger.error(f"Error showing advertisements: {e}")
         await update.effective_message.reply_text(
-            get_text(user_id, "error_loading_cases") # !SECTION ->  Skipped  
+            get_text(user_id, "error_loading_cases") # !SECTION ->  Skipped
         )
         return State.END
 
@@ -1230,7 +1230,7 @@ async def finder_wallet_selection_callback(
 
     else:
         await query.message.reply_text(
-            get_text(user_id, "wallet_not_found", "wallets"), parse_mode="HTML" 
+            get_text(user_id, "wallet_not_found", "wallets"), parse_mode="HTML"
         )
         return State.END
 
