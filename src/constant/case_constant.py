@@ -134,7 +134,7 @@ CASE_CONSTANT = {
         "increase_reward_button": "💰 Increase Reward",
         "back_button": "🔙 Back",
         "refresh_button": "🔄 Refresh",
-        "submit_case_button": "📤 Submit Case", 
+        "submit_case_button": "📤 Submit Case",
         "edit_button": "🔁 Edit",
         "cancel_button": "❌ Cancel",
         "increase_reward_btn": "💰 Increase Reward",
