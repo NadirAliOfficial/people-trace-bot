@@ -151,7 +151,7 @@ class WalletService:
         offset: int = 0
     ) -> List[Wallet]:
         print(f"Getting wallets by type: {wallet_type}, page offset: {offset}, limit: {limit}")
-        
+
         query = {
             "user_id": user_id,
             "wallet_type": wallet_type,
