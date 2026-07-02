@@ -27,7 +27,7 @@ STATS_CONSTANT = {
 
         # Buttons
         "view_unsolved_cases_button": "🕵️ View Unsolved Cases",
-      
+
         "view_local_stats_button": "🔍 View Local Stats",
         "my_submissions_button": "📂 View My Submissions",
         "back_to_menu_button": "🔙 Back to Menu",
@@ -63,7 +63,7 @@ STATS_CONSTANT = {
         "no_local_cases_found": "🕵️ No cases found in {city}, {province}.",
         "local_cases_found_title": "<b>📂 Cases in {city}, {province}:</b>",
     },
-    
+
     "chinese": {
         "community_stats_title": "<b>📊 PeopleTrace 社区数据</b>",
         "total_cases_submitted": "• <b>提交的总案件数：</b> {}",
