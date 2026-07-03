@@ -279,7 +279,7 @@ start_handler = ConversationHandler(
             CallbackQueryHandler(handle_edit_case, pattern="^edit_case$"),
             CallbackQueryHandler(handle_cancel_case_selection, pattern="^cancel_case$"),
         ],
-        ##!SECTION -  Handle Links  -  to transfer or cancel case 
+        ##!SECTION -  Handle Links  -  to transfer or cancel case
         State.CREATE_CASE_CONFIRM_TRANSFER: [
             CallbackQueryHandler(handle_submit_case, pattern="^submit_case$"),
             CallbackQueryHandler(handle_edit_case, pattern="^edit_case$"),
@@ -294,14 +294,14 @@ start_handler = ConversationHandler(
                 filters.TEXT & ~filters.COMMAND, handle_custom_cancel_reason
             ),
         ],
-        ##!SECTION - After Published Show the detail what to edit / cancel / back to the menu 
+        ##!SECTION - After Published Show the detail what to edit / cancel / back to the menu
         State.POST_SUBMISSION_MENU: [
             CallbackQueryHandler(handle_edit_published_case, pattern="^edit_published_case$"),
             CallbackQueryHandler(handle_cancel_published_case, pattern="^cancel_published_case$"),
             CallbackQueryHandler(handle_back_to_menu, pattern="^back_to_menu$"),
         ],
-        
-        
+
+
         ##SECTION -   Finder
         State.FINDER.CREATE_CASE_MOBILE: [
             MessageHandler(filters.TEXT & ~filters.COMMAND, handle_finder_new_mobile)
@@ -338,15 +338,15 @@ start_handler = ConversationHandler(
                 pattern="^(complaint_next_|complaint_back_|lead_|reward_)",
             )
         ],
-        
+
         State.UPLOAD_PROOF: [
             MessageHandler(filters.PHOTO | filters.VIDEO, handle_proof)
         ],
         State.ENTER_LOCATION: [
             MessageHandler(filters.TEXT & ~filters.COMMAND, handle_enter_location)
         ],
-        
-        
+
+
         ## TODO: WOrking on it
         State.FINDER_CHOOSE_WALLET_TYPE: [
             CallbackQueryHandler(finder_wallet_type_callback, pattern="^(SOL|USDT)$"),
@@ -359,14 +359,14 @@ start_handler = ConversationHandler(
             MessageHandler(filters.TEXT & ~filters.COMMAND, finder_wallet_name_handler),
         ],
 
-        
+
 
         State.EXTEND_REWARD: [
             CallbackQueryHandler(
                 handle_extend_reward, pattern="^(yes_extend|no_extend)$"
             )
         ],
-    
+
         State.FINDER_CONFIRM_TRANSACTION: [
             CallbackQueryHandler(
                 finder_handle_transaction_confirmation,
@@ -416,7 +416,7 @@ start_handler = ConversationHandler(
         # ---------------------- Settings End ---------------------
         State.END: [CommandHandler("start", start)],
         # FINDER FUNCTIONALITY (FINDER)
-        
+
     },
     fallbacks=[
         CommandHandler("cancel", cancel),
