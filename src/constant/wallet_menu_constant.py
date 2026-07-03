@@ -6,7 +6,7 @@ WALLET_MENU_CONSTANT = {
         "usdt_btn": "💵 USDT (TRC20 - Tron Network)",
         "address_btn": "💼 Show Address",
         "history_btn": "📜 History",
-        
+
         "no_wallet": "You don't have any wallets yet.",
     },
     "zh": {
