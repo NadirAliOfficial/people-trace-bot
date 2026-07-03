@@ -629,7 +629,7 @@ async def handle_submit_case(
                 # Calculate fees
                 platform_fee = round(case.reward * 0.05, 2)
                 net_escrow = round(case.reward - platform_fee, 2)
-                
+
                 # Format location properly - handle all possible combinations
                 location_parts = []
                 if case.city:
@@ -638,9 +638,9 @@ async def handle_submit_case(
                     location_parts.append(case.province)
                 if case.country:
                     location_parts.append(case.country)
-                
+
                 location = ", ".join(location_parts) if location_parts else "Not specified"
-                
+
                 # Create detailed summary message with proper HTML formatting
                 advertiser_message = (
                     "🎉 <b>Congratulations!</b> Your case has been submitted to the PeopleTrace community.\n\n"
@@ -736,10 +736,10 @@ async def handle_cancel_case(
     else:
         await query.edit_message_text("⚠️ No draft case found to delete.")
 
-    await start(update, context)  
-    
-    
-    
+    await start(update, context)
+
+
+
 
 # === NEW: Cancel Case Selection Handler ===
 @catch_async
@@ -749,24 +749,24 @@ async def handle_cancel_case_selection(
     """Show cancellation reason options when user selects 'Cancel Case'."""
     query = update.callback_query
     await query.answer()
-    
+
     user_id = query.from_user.id
     case = await Case.find_one({"user_id": user_id, "status": CaseStatus.DRAFT})
-    
+
     if not case:
         await query.edit_message_text("❌ Case not found. Please start over.")
         return State.MAIN_MENU
-    
+
     # Store case ID in context for later use
     context.user_data["cancel_case_id"] = str(case.id)
-    
+
     # Show cancellation reason options
     cancel_msg = (
         "❗ <b>You are about to cancel this case.</b>\n"
         "Please tell us the reason for cancellation:\n\n"
         "<i>Your reason will be recorded for review. Cases submitted in bad faith may result in a ban.</i>"
     )
-    
+
     buttons = [
         [
             InlineKeyboardButton(
@@ -789,13 +789,13 @@ async def handle_cancel_case_selection(
             )
         ],
     ]
-    
+
     await query.edit_message_text(
         text=cancel_msg,
         parse_mode="HTML",
         reply_markup=InlineKeyboardMarkup(buttons)
     )
-    
+
     return State.CASE_CANCEL_SELECT_REASON
 
 
@@ -807,10 +807,10 @@ async def handle_cancel_reason(
     """Process selected cancellation reason or prompt for custom reason."""
     query = update.callback_query
     await query.answer()
-    
+
     user_id = query.from_user.id
     data = query.data.split(":")[1] if len(query.data.split(":")) > 1 else ""
-    
+
     if data == "other":
         # Prompt for custom reason
         await query.edit_message_text(
@@ -818,7 +818,7 @@ async def handle_cancel_reason(
             parse_mode="HTML"
         )
         return State.CASE_CANCEL_ENTER_REASON
-    
+
     # Process predefined reason
     return await _process_cancel_reason(update, context, data)
 
@@ -831,7 +831,7 @@ async def handle_custom_cancel_reason(
     """Process custom cancellation reason entered by user."""
     user_id = update.effective_user.id
     text = update.message.text.strip()
-    
+
     # Process the custom reason
     return await _process_cancel_reason(update, context, "custom", text)
 
@@ -843,7 +843,7 @@ async def _process_cancel_reason(
     """Common logic to process cancellation reason and update case."""
     user_id = update.effective_user.id
     query = update.callback_query if update.callback_query else None
-    
+
     # Get case ID from context
     case_id = context.user_data.get("cancel_case_id")
     if not case_id:
@@ -852,7 +852,7 @@ async def _process_cancel_reason(
         else:
             await update.message.reply_text("❌ Error: Case ID not found.")
         return State.MAIN_MENU
-    
+
     # Get the case
     case = await Case.get(case_id)
     if not case:
@@ -861,7 +861,7 @@ async def _process_cancel_reason(
         else:
             await update.message.reply_text("❌ Case not found.")
         return State.MAIN_MENU
-    
+
     # Determine cancel reason text
     reason_map = {
         "found": "Found the person",
@@ -869,27 +869,27 @@ async def _process_cancel_reason(
         "mistake": "Posted by mistake",
         "other": "Other"
     }
-    
+
     if reason_type == "custom":
         cancel_reason = custom_reason
     else:
         cancel_reason = reason_map.get(reason_type, "Other")
-    
+
     # Update case with cancellation reason
     case.status = CaseStatus.CANCELLED
     case.cancel_reason = cancel_reason
     await case.save()
-    
+
     # Calculate fee deduction
     platform_fee = round(case.reward * 0.05, 2) if case.reward else 0
-    
+
     # Create confirmation message
     confirmation_msg = (
         "✅ <b>Thank you. Your case has been cancelled.</b>\n\n"
         f"⛔ A 5% admin fee ({platform_fee} USDT) has been deducted from your escrow balance. "
         "Remaining balance will be transferred to your wallet in 24-48 hours."
     )
-    
+
     # Show confirmation message
     if query:
         await query.edit_message_text(
@@ -901,7 +901,7 @@ async def _process_cancel_reason(
             text=confirmation_msg,
             parse_mode="HTML"
         )
-    
+
     return State.MAIN_MENU
 
 
@@ -952,7 +952,7 @@ async def handle_back_to_reason(
     """Re-prompt user for reward amount (simplified version)"""
     query = update.callback_query
     await query.answer()
-    
+
     # === CHANGED: Removed last-entered amount display ===
     msg = (
         "💰 <b>Reward Setup</b>\n\n"
@@ -1177,14 +1177,14 @@ async def handle_edit_case(
     """Allow user to edit the case details."""
     query = update.callback_query
     await query.answer()
-    
+
     user_id = query.from_user.id
     case = await Case.find_one({"user_id": user_id, "status": CaseStatus.DRAFT})
-    
+
     if not case:
         await query.edit_message_text("❌ Case not found. Please start over.")
         return State.MAIN_MENU
-    
+
     # Go back to reason input step
     await query.edit_message_text(
         text="✏️ <b>Edit Case Details</b>\n\n"
