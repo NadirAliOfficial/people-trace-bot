@@ -26,7 +26,7 @@ try:
 
 except ImportError:
     client = None
-    
+
 
 
 async def transfer_solana_funds(
