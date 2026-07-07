@@ -16,7 +16,7 @@ from config.config_manager import OWNER_TELEGRAM_ID
 
 async def stats_command(update: Update, context: ContextTypes.DEFAULT_TYPE):
     user_id = update.effective_user.id
-    
+
     # Check if the user is the owner
     if str(user_id) != OWNER_TELEGRAM_ID:
         await update.message.reply_text(
