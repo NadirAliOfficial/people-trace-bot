@@ -66,12 +66,12 @@ LANG_CODE_MAP = {
 
 def get_text(user_id, key, handler_constant):
     user_lang_code = user_data_store.get(user_id, {}).get("lang", "english")
-    
+
     handler_data = LANG_DATA.get(handler_constant, {})
-    
+
     # Use global english_dict as fallback
     lang_dict = handler_data.get(user_lang_code)
-    
+
     return lang_dict.get(
         key,
         f"Undefined text for key '{key}' in handler '{handler_constant}'"
