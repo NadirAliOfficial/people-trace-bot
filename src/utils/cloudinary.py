@@ -47,8 +47,8 @@ async def upload_video(file_path: str):
         )
 
         print(f"Cloudinary upload result: {upload_result}")
-        
-        
+
+
         # Return the secure URL for the uploaded video
         file_url = upload_result["secure_url"]
         print(f"Uploaded Video URL: {file_url}")
