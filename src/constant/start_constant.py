@@ -28,7 +28,7 @@ START_LANG_DATA = {
         "choose_action": "You're all set! What would you like to do? ",
         "advertise_btn": "📢 Post a Case",
         "find_btn": "🔍 Find People ",
-    
+
         # "lang_button": " 🇬🇧 English",
         # "start_msg": "*👋 Welcome to PeopleTrace. \n \n🌐 Please select your language:",
         # "disclaimer_title": "Disclaimer\n\n",
