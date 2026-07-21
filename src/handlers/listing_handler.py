@@ -16,7 +16,7 @@ from telegram import Update, InlineKeyboardMarkup, InlineKeyboardButton, error
 from telegram.helpers import escape_markdown
 from telegram.ext import (
     ContextTypes,
-     
+
 
 )
 from bson import ObjectId, errors
@@ -174,7 +174,7 @@ async def case_details_callback(
             await query.message.edit_text(get_text(user_id, "case_not_found", "listing"))
             return State.END
 
-     
+
 
         # Build proof text
         proof_text = (
@@ -446,7 +446,7 @@ async def update_case_field(update: Update, context: ContextTypes.DEFAULT_TYPE) 
     print(f"CaseId: {case_id}, Field Name: {field_name}, New Value: {new_value}")
 
     if not case_id or not field_name:
-        await update.message.reply_text(get_text(user_id, "invalid_request")) # TODO: not exist in the constant 
+        await update.message.reply_text(get_text(user_id, "invalid_request")) # TODO: not exist in the constant
         return State.END
 
     # Fetch the case
@@ -714,7 +714,7 @@ async def city_callback(update: Update, context: ContextTypes.DEFAULT_TYPE) -> i
         await query.edit_message_text(
             f"{get_text(user_id, 'city_selected')} {city}", parse_mode="HTML" ## TODO: Getting it from the start command
         )
-        await choose_action(update, context) ## TODO: Import Issues 
+        await choose_action(update, context) ## TODO: Import Issues
         return State.CHOOSE_ACTION
     elif data.startswith("city_page_"):
         page_str = data.replace("city_page_", "")
@@ -1030,14 +1030,14 @@ async def ask_reward_amount(update: Update, context: ContextTypes.DEFAULT_TYPE) 
 
         await query.message.edit_text(
             # --- (TODO: Would be check here)
-            get_text(user_id, "enter_reward_amount", "listing").format(max_amount=case.reward), 
+            get_text(user_id, "enter_reward_amount", "listing").format(max_amount=case.reward),
             parse_mode="Markdown",
         )
         return State.REWARD_TRANSFER_PROCESS  # Next step: user enters amount
 
     except Exception as e:
         logger.error(f"Error in ask_reward_amount: {str(e)}\n{traceback.format_exc()}")
-        await query.message.edit_text(get_text(user_id, "error_asking_reward_amount", "listing")) 
+        await query.message.edit_text(get_text(user_id, "error_asking_reward_amount", "listing"))
         return State.END
 
 
@@ -1512,7 +1512,7 @@ async def extend_reward_callback(
         )
         await query.message.edit_text(get_text(user_id, "error_processing_extend", "listing"))
         return State.END
-        
+
 @catch_async
 async def approve_extend_callback(
     update: Update, context: ContextTypes.DEFAULT_TYPE
@@ -1601,7 +1601,7 @@ async def approve_extend_callback(
         logger.error(f"Error in approve_extend_callback: {str(e)}")
         await query.message.edit_text(get_text(user_id, "error_approving_extend", "listing"))
         return State.END
-    
+
 @catch_async
 async def select_wallet_callback(
     update: Update, context: ContextTypes.DEFAULT_TYPE
@@ -1615,7 +1615,7 @@ async def select_wallet_callback(
     extend_reward_id = context.user_data.get("extend_reward_id", None)
     case_id = context.user_data.get("case_id", None)
     print(f"Wallet ID: {wallet_id}")
-    
+
 
     print("I am calling from the select_wallet_callback")
     # Fetch case and extend reward details
@@ -1667,7 +1667,7 @@ async def select_wallet_callback(
     )
     return State.CONFIRM_EXTEND
 
- 
+
 
 # @catch_async
 # async def extend_reward_callback(
@@ -1753,8 +1753,8 @@ async def confirm_extend_callback(
     print("Case ID: ", case_id)
     print("User ID: ", user_id)
 
-    
-    
+
+
     # Fetch case and extend reward details
     case = await Case.find_one({"_id": PydanticObjectId(case_id)}, fetch_links=True)
     extend_reward = await ExtendReward.find_one({"case.$id": PydanticObjectId(case_id)})
